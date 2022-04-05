@@ -5,5 +5,31 @@
 </head>
 <body>
 <h1>Listed questions: </h1>
+<table>
+    <thead>
+    <th>ID</th>
+    <th>submission_time</th>
+    <th>view_number</th>
+    <th>vote_number</th>
+    <th> title </th>
+    <th> message </th>
+    <th> image </th>
+    </thead>
+    <tbody>
+    {%  for row in questions %}
+        <tr>
+            <td>
+                {{ row.id }}
+            </td>
+            <td>{{ row.submission_time }}</td>
+            <td>{{ row.view_number }}</td>
+            <td>{{ row.vote_number }}</td>
+            <td> {{ row.title }} </td>
+            <td> {{ row.message }} </td>
+            <td> {{ row.image }} </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 </body>
 </html>
