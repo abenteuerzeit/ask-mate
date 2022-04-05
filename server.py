@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -6,7 +6,8 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def route_list():
-    return "Hello World!"
+    # TODO create data handler
+    return render_template('list.html')
 
 
 if __name__ == "__main__":
