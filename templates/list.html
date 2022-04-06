@@ -2,9 +2,38 @@
 <html lang="en">
 <head>
     <title>List questions </title>
+    <style>
+        body {
+            background-color: saddlebrown;
+            color: bisque;
+        }
+        div {
+            padding: 25px;
+            margin: 100px
+        }
+         table {
+             margin: 15px;
+             padding: 5px;
+             border: solid black 1px;
+             background-color: bisque;
+             color: black
+         }
+         th {
+             margin: 2px;
+             padding: 2px;
+             text-align-all: left;
+         }
+         td {
+             margin: 2px;
+             padding: 2px;
+             text-align: left;
+         }
+    </style>
+
 </head>
 <body>
-<h1>Listed questions: </h1>
+<div>
+<h1>All questions</h1>
 <table>
     <thead>
     <th>ID</th>
@@ -31,5 +60,6 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
 </body>
 </html>
