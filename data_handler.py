@@ -19,6 +19,14 @@ def get_answer_data():
     return [{header: entry[index] for index, header in enumerate(A_HEADER)} for entry in lines]
 
 
+def save_question_data():
+    pass
+
+
+def save_answer_data():
+    pass
+
+
 if __name__ == '__main__':
     q = get_question_data()
     for line in q:
