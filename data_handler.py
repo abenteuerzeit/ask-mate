@@ -6,12 +6,9 @@ DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', '
 
 
 def get_question_data():
-    result = []
     with open(DATA_FILE_PATH) as csvfile:
         lines = [row.strip().split(",") for row in csvfile if DATA_HEADER[0] not in row]
-    for entry in lines:
-        result.append({header: entry[index] for index, header in enumerate(DATA_HEADER)})
-    return result
+    return [{header: entry[index] for index, header in enumerate(DATA_HEADER)} for entry in lines]
 
 
 if __name__ == '__main__':
