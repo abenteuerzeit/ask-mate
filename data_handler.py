@@ -1,20 +1,37 @@
 import csv
 import os
 
-DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else './sample_data/question.csv'
-DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sample_data/question.csv'
+A_FILE_PATH = os.getenv('A_FILE_PATH') if 'A_FILE_PATH' in os.environ else './sample_data/answer.csv'
+Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
 
 
 def get_question_data():
-    result = []
-    with open(DATA_FILE_PATH) as csvfile:
-        lines = [row.strip().split(",") for row in csvfile if DATA_HEADER[0] not in row]
-    for entry in lines:
-        result.append({header: entry[index] for index, header in enumerate(DATA_HEADER)})
-    return result
+    with open(Q_FILE_PATH) as csvfile:
+        lines = [row.strip().split(",") for row in csvfile if Q_HEADER[0] not in row]
+    return [{header: entry[index] for index, header in enumerate(Q_HEADER)} for entry in lines]
+
+
+def get_answer_data():
+    with open(A_FILE_PATH) as csvfile:
+        lines = [row.strip().split(",") for row in csvfile if A_HEADER[3] not in row]
+    return [{header: entry[index] for index, header in enumerate(A_HEADER)} for entry in lines]
+
+
+def save_question_data():
+    pass
+
+
+def save_answer_data():
+    pass
 
 
 if __name__ == '__main__':
-    res = get_question_data()
-    for line in res:
+    q = get_question_data()
+    for line in q:
+        print(line)
+
+    a = get_answer_data()
+    for line in a:
         print(line)
