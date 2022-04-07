@@ -10,10 +10,7 @@ def get_question_data():
     with open(DATA_FILE_PATH) as csvfile:
         lines = [row.strip().split(",") for row in csvfile if DATA_HEADER[0] not in row]
     for entry in lines:
-        questions = {}
-        for index, header in enumerate(DATA_HEADER):
-            questions[header] = entry[index]
-        result.append(questions)
+        result.append({header: entry[index] for index, header in enumerate(DATA_HEADER)})
     return result
 
 
