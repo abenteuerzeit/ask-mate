@@ -1,5 +1,6 @@
 import csv
 import os
+import datetime
 
 Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sample_data/question.csv'
 A_FILE_PATH = os.getenv('A_FILE_PATH') if 'A_FILE_PATH' in os.environ else './sample_data/answer.csv'
@@ -10,8 +11,10 @@ A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'i
 def get_question_data():
     with open(Q_FILE_PATH) as csvfile:
         lines = [row.strip().split(",") for row in csvfile if Q_HEADER[0] not in row]
+        for line in lines:
+            line[1] = datetime.datetime.fromtimestamp(int(line[1])).strftime('%Y-%m-%d %H:%M:%S')
     return sorted([{header: entry[index] for index, header in enumerate(Q_HEADER)}
-                   for entry in lines], key=lambda d: d['submission_time'])
+                   for entry in lines], key=lambda d: d['submission_time'], reverse=True)
 
 def get_answer_data():
     with open(A_FILE_PATH) as csvfile:
@@ -29,9 +32,7 @@ def save_answer_data():
 
 if __name__ == '__main__':
     q = get_question_data()
-    for line in q:
-        print(line)
-
-    a = get_answer_data()
-    for line in a:
-        print(line)
+    print(q)
+    # a = get_answer_data()
+    # for line in a:
+    #     print(line)
