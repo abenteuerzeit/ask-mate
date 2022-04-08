@@ -10,8 +10,8 @@ A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'i
 def get_question_data():
     with open(Q_FILE_PATH) as csvfile:
         lines = [row.strip().split(",") for row in csvfile if Q_HEADER[0] not in row]
-    return [{header: entry[index] for index, header in enumerate(Q_HEADER)} for entry in lines]
-
+    return sorted([{header: entry[index] for index, header in enumerate(Q_HEADER)}
+                   for entry in lines], key=lambda d: d['submission_time'])
 
 def get_answer_data():
     with open(A_FILE_PATH) as csvfile:
