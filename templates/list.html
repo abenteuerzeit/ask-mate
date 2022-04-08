@@ -4,19 +4,29 @@
     <title>List questions </title>
     <style>
         body {
-            background-color: saddlebrown;
-            color: bisque;
+            background-image: url(https://tinyurl.com/askmate);
+            background-repeat: no-repeat;
+            background-size: 100%;
         }
         div {
             padding: 25px;
             margin: 100px
         }
+        h1 {
+            color: lightgreen;
+            background-color: black;
+            text-align: center;
+            height: 50px;
+            margin: 20px;
+            padding: 10px;
+        }
          table {
              margin: 15px;
              padding: 5px;
-             border: solid black 1px;
-             background-color: bisque;
-             color: black
+             border: solid green 1px;
+             background-color: black;
+             background-blend-mode: lighten;
+             color: white
          }
          th {
              margin: 2px;
@@ -33,16 +43,16 @@
 <body>
 <div>
 <h1>All questions</h1>
-<p> <a href="/add-question"> Add a question </a></p>
+<p style="background-color: white; text-align: center; margin: 10px; padding: 5px"> <a href="/add-question"> Add a question </a></p>
 <table>
     <thead>
     <th>ID</th>
-    <th>submission_time</th>
-    <th>view_number</th>
-    <th>vote_number</th>
-    <th> title </th>
-    <th> message </th>
-    <th> image </th>
+    <th>Submission Date and Time </th>
+    <th>Views </th>
+    <th> Votes </th>
+    <th> Title </th>
+    <th> Question </th>
+    <th> Image </th>
     </thead>
     <tbody>
     {%  for row in questions %}
