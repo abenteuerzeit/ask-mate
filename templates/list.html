@@ -63,7 +63,9 @@
             <td>{{ row.submission_time }}</td>
             <td>{{ row.view_number }}</td>
             <td>{{ row.vote_number }}</td>
-            <td> {{ row.title }} </td>
+            <td>
+                <a href="/question/{{ row.id }}"> {{ row.title }} </a>
+            </td>
             <td> {{ row.message }} </td>
             <td> {{ row.image }} </td>
         </tr>
