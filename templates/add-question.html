@@ -7,12 +7,12 @@
 <!-- Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'image'] -->
 <body>
 <h1>Add question</h1>
-<form action="/add" method="POST">
+<form  method="post" action="/add-question">
     <label for="title">Question title:</label><br>
     <input type="text" name="title" id="title"><br>
     <label for="message">Message</label><br>
     <textarea name="message" id="message"></textarea><br>
-    <input type="submit" value="Add new user story"><br>
+    <button type="submit">Add new user story</button>><br>
 </form>
 </body>
 </html>
