@@ -44,7 +44,8 @@ def add_answer(id):
     elif request.method == 'POST':
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'], 'image': None}
         data_handler.save_answer_data(answer_data)
-        return redirect('/')
+        print(id)
+        return redirect('/question/' + id)
 
 
 if __name__ == "__main__":
