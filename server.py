@@ -41,7 +41,8 @@ def add_answer(id):
         answers = data_handler.get_answer_for_question(id)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
-        pass
+
+        return redirect('/question/<id>')
 
 
 if __name__ == "__main__":
