@@ -19,11 +19,17 @@ def get_questions():
     with open(Q_FILE_PATH) as csvfile:
         reader = csv.DictReader(csvfile)
         for question in reader:
-            question['submission_time'] = datetime.fromtimestamp(int(question['submission_time']))
+            question['submission_time'] = int(question['submission_time'])
+            # Removed datetime.fromtimestamp because it changes the CSV file values.
+            # Moved to a new function: convert_to_datetime(epoch)
             question['view_number'] = int(question['view_number'])
             question['vote_number'] = int(question['vote_number'])
             questions.append(question)
     return questions
+
+
+def convert_to_datetime(epoch):
+    return datetime.fromtimestamp(int(epoch))
 
 
 def get_question(id):
