@@ -35,6 +35,14 @@ def display_question(id):
 #     return render_template('edit-question.html')
 
 
+@app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
+def add_answer(id):
+    if request.method == 'GET':
+        return render_template('add_answer.html', question=data_handler.get_question(id), answers=answers)
+    elif request.method == 'POST':
+        pass
+
+
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
