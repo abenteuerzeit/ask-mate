@@ -6,7 +6,7 @@
     <form method="post" action="{{ '/question/'+ question.id }}/new-answer"> <!--
         "{{ '/question/' + question.id + '/new-answer' }}" moze tez tak byc-->
         <label for="question_id"></label>
-        <input name="question_id" id="question_id" value="{{ question.id }}" readonly><br>
+        <input name="question_id" id="question_id" value="{{ question.id }}" readonly style="display: None;"><br>
         <label for="message">Message</label><br>
         <textarea name="message" id="message"></textarea><br>
         <button type="submit">Submit answer</button>
