@@ -1,5 +1,5 @@
-from csv import DictWriter, DictReader
 import os
+from csv import DictWriter, DictReader
 from datetime import datetime
 
 Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sample_data/question.csv'
@@ -61,6 +61,7 @@ def save_question_data(user_input):
         writer.writerow(new_question)
         csvfile.close()
     return new_question
+
 
 def save_answer_data(user_input):
     new_answer = {'id': str(get_new_id(A_FILE_PATH)), 'submission_time': NOW, 'vote_number': '0',

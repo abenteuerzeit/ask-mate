@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
-from markupsafe import escape
+from flask import Flask, render_template, request, redirect
 
 import data_handler
 
