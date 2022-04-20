@@ -19,8 +19,9 @@ def add_question():
         return render_template("add-question.html")
     elif request.method == "POST":
         data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
-        data_handler.save_question_data(data)
-        return render_template("question.html", question=data)
+        new_question = data_handler.save_question_data(data)
+        new_question_id = new_question['id']
+        return redirect('/question/' + new_question_id)
     return redirect('/')
 
 
@@ -43,8 +44,8 @@ def add_answer(id):
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'], 'image': None}
-        data_handler.save_answer_data(answer_data)
-        print(id)
+        new_answer_id = data_handler.save_answer_data(answer_data)
+        print(new_answer_id)
         return redirect('/question/' + id)
 
 

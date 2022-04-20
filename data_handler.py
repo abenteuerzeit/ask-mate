@@ -1,4 +1,4 @@
-import csv
+from csv import DictWriter, DictReader
 import os
 from datetime import datetime
 
@@ -10,19 +10,11 @@ NOW = int(datetime.now().timestamp())
 
 
 def get_questions():
-    # with open(Q_FILE_PATH) as csvfile:
-    #     lines = [row.strip().split(",") for row in csvfile if Q_HEADER[0] not in row]
-    #     for line in lines:
-    #         line[1] = datetime.fromtimestamp(int(line[1])).strftime('%Y-%m-%d %H:%M:%S')
-    # return sorted([{header: entry[index] for index, header in enumerate(Q_HEADER)}
-    #                for entry in lines], key=lambda d: d['submission_time'], reverse=True)
     questions = []
     with open(Q_FILE_PATH) as csvfile:
-        reader = csv.DictReader(csvfile)
+        reader = DictReader(csvfile)
         for question in reader:
             question['submission_time'] = int(question['submission_time'])
-            # Removed datetime.fromtimestamp because it changes the CSV file values.
-            # Moved to a new function: convert_to_datetime(epoch)
             question['view_number'] = int(question['view_number'])
             question['vote_number'] = int(question['vote_number'])
             questions.append(question)
@@ -41,12 +33,9 @@ def get_question(id):
 
 
 def get_answers():
-    # with open(A_FILE_PATH) as csvfile:
-    #     lines = [row.strip().split(",") for row in csvfile if A_HEADER[3] not in row]
-    # return [{header: entry[index] for index, header in enumerate(A_HEADER)} for entry in lines]
     answers = []
     with open(A_FILE_PATH) as csvfile:
-        reader = csv.DictReader(csvfile)
+        reader = DictReader(csvfile)
         for answer in reader:
             answer['submission_time'] = int(answer['submission_time'])
             answer['vote_number'] = int(answer['vote_number'])
@@ -64,25 +53,24 @@ def get_answer_for_question(question_id):
 
 
 def save_question_data(user_input):
-    question_list = get_questions()
-    question_list.append({'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
-                          'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
-                          'message': user_input['message'], 'image': user_input['image']})
-    with open(Q_FILE_PATH, 'w', newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=Q_HEADER)
-        writer.writeheader()
-        writer.writerows(question_list)
-
+    new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
+                    'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
+                    'message': user_input['message'], 'image': user_input['image']}
+    with open(Q_FILE_PATH, 'a', newline=None) as csvfile:
+        writer = DictWriter(csvfile, fieldnames=Q_HEADER)
+        writer.writerow(new_question)
+        csvfile.close()
+    return new_question
 
 def save_answer_data(user_input):
-    answer_list = get_answers()
-    answer_list.append({'id': str(get_new_id(A_FILE_PATH)), 'submission_time': NOW, 'vote_number': '0',
-                        'question_id': user_input['question_id'], 'message': user_input['message'],
-                        'image': user_input['image']})
-    with open(A_FILE_PATH, 'w', newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=A_HEADER)
-        writer.writeheader()
-        writer.writerows(answer_list)
+    new_answer = {'id': str(get_new_id(A_FILE_PATH)), 'submission_time': NOW, 'vote_number': '0',
+                  'question_id': user_input['question_id'], 'message': user_input['message'],
+                  'image': user_input['image']}
+    with open(A_FILE_PATH, 'a', newline=None) as csvfile:
+        writer = DictWriter(csvfile, fieldnames=A_HEADER)
+        writer.writerow(new_answer)
+        csvfile.close()
+    return new_answer
 
 
 def get_new_id(csvfile):
@@ -95,12 +83,6 @@ if __name__ == '__main__':
     for i in Q_HEADER:
         data[i] = 'test'
     save_question_data(data)
-    # q = get_answer_data()
-    # print(q)
-
-    # a = get_answer_data()
-    # for line in a:
-    #     print(line)
 
 """
 id,submission_time,view_number,vote_number,title,message,image
