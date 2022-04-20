@@ -90,6 +90,20 @@ def get_new_id(csvfile):
         return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
 
 
+def delete_question(id):
+    lines = []
+    with open(Q_FILE_PATH, 'r') as readfile:
+        reader = csv.reader(readfile)
+        for row in reader:
+            lines.append(row)
+            for field in row:
+                if field == id:
+                    lines.remove(row)
+    with open(Q_FILE_PATH, 'w') as writefile:
+        writer = csv.writer(writefile)
+        writer.writerows(lines)
+
+
 if __name__ == '__main__':
     data = {}
     for i in Q_HEADER:
