@@ -3,7 +3,7 @@
 {% block body %}
 
     <h1>Add a new answer</h1>
-    <form method="post" action="/question/<id>/new-answer">
+    <form method="post" action="{{ '/question/'+ question.id }}/new-answer"> <-- "{{ '/question/' + question.id + '/new-answer' }}" moze tez tak byc-->
         <label for="question_id"></label>
         <input name="question_id" id="question_id" value="{{ question.id }}" readonly><br>
         <label for="message">Message</label><br>
