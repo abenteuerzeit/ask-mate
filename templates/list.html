@@ -1,41 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>List questions </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-</head>
-<body>
-<div>
-<h1>All questions</h1>
-<p style="background-color: white; text-align: center; margin: 10px; padding: 5px"> <a href="/add-question"> Add a question </a></p>
-<table>
-    <thead>
-    <th>ID</th>
-    <th>Submission Date and Time </th>
-    <th>Views </th>
-    <th> Votes </th>
-    <th> Title </th>
-    <th> Question </th>
-    <th> Image </th>
-    </thead>
-    <tbody>
-    {%  for row in questions %}
-        <tr>
-            <td>
-                {{ row.id }}
-            </td>
-            <td>{{ row.submission_time }}</td>
-            <td>{{ row.view_number }}</td>
-            <td>{{ row.vote_number }}</td>
-            <td>
-                <a href="/question/{{ row.id }}"> {{ row.title }} </a>
-            </td>
-            <td> {{ row.message }} </td>
-            <td> {{ row.image }} </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}List Questions{% endblock %}
+{% block body %}
+
+    <div>
+        <h1>All questions</h1>
+        <p style="background-color: white; text-align: center; margin: 10px; padding: 5px"><a href="/add-question"> Add
+            a question </a></p>
+        <table>
+            <thead>
+            <th>ID</th>
+            <th>Submission Date and Time</th>
+            <th>Views</th>
+            <th> Votes</th>
+            <th> Title</th>
+            <th> Question</th>
+            <th> Image</th>
+            </thead>
+            <tbody>
+            {% for row in questions %}
+                <tr>
+                    <td>
+                        {{ row.id }}
+                    </td>
+                    <td>{{ row.submission_time }}</td>
+                    <td>{{ row.view_number }}</td>
+                    <td>{{ row.vote_number }}</td>
+                    <td>
+                        <a href="/question/{{ row.id }}"> {{ row.title }} </a>
+                    </td>
+                    <td> {{ row.message }} </td>
+                    <td> {{ row.image }} </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

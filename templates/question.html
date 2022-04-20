@@ -1,38 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Question</title>
-</head>
-<body>
-<h1>Question</h1>
-<p>
-    <a href="/list">Return to all questions</a>
-</p>
-<table>
-    <tbody>
-        <tr>
-            <td>
-                {{ question.title }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ question.message }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ question.image }}
-            </td>
-        </tr>
-        </tbody>
-    </table>
-<ul>
-    {% for answer in answers %}
-    <li>{{ answer.message }}</li>
-    {% endfor %}
-    <li> <a href="/question/{{ question.id }}/new-answer">Add a new answer</a></li>
-</ul>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}Question {{ question.id }}{% endblock %}
+{% block body %}
+
+    <h1>Question</h1>
+    <div class="display_question">
+        <p>
+            <a href="/list">Return to all questions</a>
+        </p>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    {{ question.title }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ question.message }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ question.image }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <ul>
+            {% for answer in answers %}
+                <li>{{ answer.message }}</li>
+            {% endfor %}
+            <li><a href="/question/{{ question.id }}/new-answer">Add a new answer</a></li>
+        </ul>
+    </div>
+{% endblock %}

@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add a question</title>
-</head>
-<!-- Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'image'] -->
-<body>
-<h1>Add question</h1>
-<form  method="post" action="/add-question">
-    <label for="title">Question title:</label><br>
-    <input type="text" name="title" id="title"><br>
-    <label for="message">Message</label><br>
-    <textarea name="message" id="message"></textarea><br>
-    <button type="submit">Add question</button><br>
-</form>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}Add Question{% endblock %}
+{% block body %}
+
+    <h1>Add question</h1>
+    <form method="post" action="/add-question">
+        <label for="title">Question title:</label><br>
+        <input type="text" name="title" id="title"><br>
+        <label for="message">Message</label><br>
+        <textarea name="message" id="message"></textarea><br>
+        <button type="submit">Add question</button>
+        <br>
+    </form>
+{% endblock %}
