@@ -41,9 +41,18 @@ def get_question(id):
 
 
 def get_answers():
+    # with open(A_FILE_PATH) as csvfile:
+    #     lines = [row.strip().split(",") for row in csvfile if A_HEADER[3] not in row]
+    # return [{header: entry[index] for index, header in enumerate(A_HEADER)} for entry in lines]
+    answers = []
     with open(A_FILE_PATH) as csvfile:
-        lines = [row.strip().split(",") for row in csvfile if A_HEADER[3] not in row]
-    return [{header: entry[index] for index, header in enumerate(A_HEADER)} for entry in lines]
+        reader = csv.DictReader(csvfile)
+        for answer in reader:
+            answer['submission_time'] = int(answer['submission_time'])
+            answer['vote_number'] = int(answer['vote_number'])
+            answer['message'] = str(answer['message'])
+            answers.append(answer)
+    return answers
 
 
 def get_answer_for_question(question_id):
@@ -57,8 +66,8 @@ def get_answer_for_question(question_id):
 def save_question_data(user_input):
     question_list = get_questions()
     question_list.append({'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
-                          'view_number': '0', 'vote_number': '0', 'title': user_input["title"],
-                          'message': user_input["message"], 'image': user_input['image']})
+                          'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
+                          'message': user_input['message'], 'image': user_input['image']})
     with open(Q_FILE_PATH, 'w', newline="") as file:
         writer = csv.DictWriter(file, fieldnames=Q_HEADER)
         writer.writeheader()
@@ -67,7 +76,7 @@ def save_question_data(user_input):
 
 def save_answer_data(user_input):
     answer_list = get_answers()
-    answer_list.append({'id': get_new_id(A_FILE_PATH), 'submission_time': NOW, 'vote_number': '0',
+    answer_list.append({'id': str(get_new_id(A_FILE_PATH)), 'submission_time': NOW, 'vote_number': '0',
                         'question_id': user_input['question_id'], 'message': user_input['message'],
                         'image': user_input['image']})
     with open(A_FILE_PATH, 'w', newline="") as file:
