@@ -6,6 +6,7 @@ Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sa
 A_FILE_PATH = os.getenv('A_FILE_PATH') if 'A_FILE_PATH' in os.environ else './sample_data/answer.csv'
 Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
 A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
+NOW = int(datetime.now().timestamp())
 
 
 def get_questions():
@@ -55,7 +56,7 @@ def get_answer_for_question(question_id):
 
 def save_question_data(user_input):
     question_list = get_questions()
-    question_list.append({'id': str(get_new_id()), 'submission_time': int(datetime.now().timestamp()),
+    question_list.append({'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
                           'view_number': '0', 'vote_number': '0', 'title': user_input["title"],
                           'message': user_input["message"], 'image': user_input['image']})
     with open(Q_FILE_PATH, 'w', newline="") as file:
@@ -64,12 +65,19 @@ def save_question_data(user_input):
         writer.writerows(question_list)
 
 
-def save_answer_data():
-    pass
+def save_answer_data(user_input):
+    answer_list = get_answers()
+    answer_list.append({'id': get_new_id(A_FILE_PATH), 'submission_time': NOW, 'vote_number': '0',
+                        'question_id': user_input['question_id'], 'message': user_input['message'],
+                        'image': user_input['image']})
+    with open(A_FILE_PATH, 'w', newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=A_HEADER)
+        writer.writeheader()
+        writer.writerows(answer_list)
 
 
-def get_new_id():
-    with open(Q_FILE_PATH, 'r') as file:
+def get_new_id(csvfile):
+    with open(csvfile, 'r') as file:
         return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
 
 
@@ -81,11 +89,9 @@ if __name__ == '__main__':
     # q = get_answer_data()
     # print(q)
 
-
     # a = get_answer_data()
     # for line in a:
     #     print(line)
-
 
 """
 id,submission_time,view_number,vote_number,title,message,image
