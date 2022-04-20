@@ -4,33 +4,23 @@
 
     <h1>Question</h1>
     <div class="display_question">
-        <p>
-            <a href="/list">Return to all questions</a>
-        </p>
-        <table>
-            <tbody>
-            <tr>
-                <td>
-                    {{ question.title }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    {{ question.message }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    {{ question.image }}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <ul>
+        <a href="/list">
+            <button>Return to all questions</button>
+        </a>
+        <hr>
+        <h2>{{ question.title }}</h2>
+        <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
+        <img src="{{ question.image if question.image }}" alt="Uploaded image">
+        <hr>
+        <h3>Answers</h3>
+        <ol style="text-align: left;">
             {% for answer in answers %}
-                <li>{{ answer.message }}</li>
+                <li> {{ answer.message }} </li>
             {% endfor %}
-            <li><a href="/question/{{ question.id }}/new-answer">Add a new answer</a></li>
-        </ul>
+        </ol>
+        <a href="/question/{{ question.id }}/new-answer">
+            <button style="alignment: center">Add a new answer</button>
+        </a>
+
     </div>
 {% endblock %}
