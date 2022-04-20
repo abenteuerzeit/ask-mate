@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect
+
 import data_handler
+
 app = Flask(__name__)
 
 
@@ -21,9 +23,8 @@ def add_question():
     return redirect('/')
 
 
-
 @app.route('/question/<id>')
-def question(id):
+def display_question(id):
     if request.method == "GET":
         answers = data_handler.get_answer_for_question(id)
         return render_template('question.html', question=data_handler.get_question(id), answers=answers)
