@@ -8,6 +8,8 @@
 <body>
 <h1>Add a new answer</h1>
 <form  method="post" action="/question/<id>/new-answer">
+    <label for="question_id"></label>
+    <input name="question_id" id="question_id" value="{{ question.id }}" readonly><br>
     <label for="message">Message</label><br>
     <textarea name="message" id="message"></textarea><br>
     <button type="submit">Submit answer</button><br>
