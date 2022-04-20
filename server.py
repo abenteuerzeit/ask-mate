@@ -38,7 +38,8 @@ def display_question(id):
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
 def add_answer(id):
     if request.method == 'GET':
-        return render_template('add_answer.html', question=data_handler.get_question(id), answers=answers)
+        answers = data_handler.get_answer_for_question(id)
+        return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
         pass
 
