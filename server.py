@@ -41,7 +41,8 @@ def add_answer(id):
         answers = data_handler.get_answer_for_question(id)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
-
+        answer_data = {'message': request.form['message'], "question_id": id, 'image': None}
+        data_handler.save_answer_data(answer_data)
         return redirect('/question/<id>')
 
 
