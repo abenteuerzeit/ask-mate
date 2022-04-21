@@ -2,3 +2,4 @@ id,submission_time,view_number,vote_number,title,message,image
 1,1493368154,29,7,"How to make lists in Python? I am totally new to this, any hints?",None,
 2,1493068124,15,9,Wordpress loading multiple jQuery Versions.," ""I developed a plugin that uses the jquery booklet plugin (http://builtbywill.com/booklet/#/) this plugin binds a function to $ so I cann call $('.myBook').booklet(); I could easy managing the loading order with wp_enqueue_script so first I load jquery then I load booklet so everything is fine. BUT in my theme i also using jquery via webpack so the loading order is now following: jquery booklet app.js (bundled file with webpack including jquery)""",images/image1.png
 3,1650492406,0,0,Bored,What are you doing?,None
+4,1650519166,0,0,Sleep,What time do you go to sleep? ,None

@@ -9,6 +9,7 @@ app = Flask(__name__)
 @app.route("/list")
 def list_questions():
     questions = data_handler.get_questions()
+    questions = data_handler.convert_to_datetime(questions)
     return render_template("list.html", questions=questions)
 
 
@@ -28,6 +29,7 @@ def add_question():
 def display_question(id):
     if request.method == "GET":
         answers = data_handler.get_answer_for_question(id)
+        answers = data_handler.convert_to_datetime(answers)
         return render_template('question.html', question=data_handler.get_question(id), answers=answers)
 
 
@@ -40,6 +42,7 @@ def display_question(id):
 def add_answer(id):
     if request.method == 'GET':
         answers = data_handler.get_answer_for_question(id)
+        answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'], 'image': None}
