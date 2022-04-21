@@ -61,7 +61,7 @@ def get_answer_for_question(question_id):
 def increase_view_count(question_id):
     question_list = get_questions()
     for question_dictionary in question_list:
-        if question_dictionary['id'] == question_id:
+        if question_dictionary.get('id') == str(question_id['id']):
             question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
             write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
