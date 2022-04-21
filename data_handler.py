@@ -58,7 +58,15 @@ def get_answer_for_question(question_id):
     return answers
 
 
-def save_question_data(user_input):
+def increase_view_count(question_id):
+    question_list = get_questions()
+    for question_dictionary in question_list:
+        if question_dictionary['id'] == question_id:
+            question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
+            write_over(Q_FILE_PATH, Q_HEADER, question_list)
+
+
+def save_new_question_data(user_input):
     question_list = get_questions()
     new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
                     'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
@@ -91,10 +99,12 @@ def get_new_id(csvfile):
 
 
 if __name__ == '__main__':
-    data = {}
-    for i in Q_HEADER:
-        data[i] = 'test'
-    save_question_data(data)
+    # data = {}
+    # for i in Q_HEADER:
+    #     data[i] = 'test'
+    # save_new_question_data(data)
+    question = increase_view_count('4')
+    print(question)
 
 """
 id,submission_time,view_number,vote_number,title,message,image
