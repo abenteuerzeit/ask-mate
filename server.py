@@ -29,7 +29,7 @@ def add_question():
 def delete_question(id):
     if request.method == "GET":
         data_handler.delete_question(id)
-    return redirect("/")  # moze tez byc ("/list")
+    return redirect("/")
 
 
 @app.route('/question/<id>')
