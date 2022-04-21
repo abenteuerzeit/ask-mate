@@ -59,12 +59,18 @@ def get_answer_for_question(question_id):
     return answers
 
 
-def increase_view_count(select_qdict):
-    question_list = get_questions()
-    for question_dictionary in question_list:
-        if question_dictionary.get('id') == str(select_qdict['id']):
-            question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
-            write_over(Q_FILE_PATH, Q_HEADER, question_list)
+def increase_question_view_count(select_qdict):
+    # I don't know why it tries to get /question/None... This should not be here.
+    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "POST /question/4/edit HTTP/1.1" 302 -
+    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/4 HTTP/1.1" 200 -
+    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /static/css/main.css HTTP/1.1" 304 -
+    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/None HTTP/1.1" 200 -
+    if select_qdict is not None:
+        question_list = get_questions()
+        for question_dictionary in question_list:
+            if question_dictionary.get('id') == str(select_qdict['id']):
+                question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
+                write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def increase_question_vote(selected_dictionary):
@@ -107,6 +113,18 @@ def save_new_question_data(user_input):
     question_list.append(new_question)
     write_over(Q_FILE_PATH, Q_HEADER, question_list)
     return new_question
+
+
+def edit_question(updated_dict):
+    question_list = get_questions()
+    original_question = get_question(updated_dict['id'])
+    for heading in Q_HEADER:
+        if updated_dict.get(heading):
+            original_question[heading] = updated_dict[heading]
+    for index, q in enumerate(question_list):
+        if q['id'] == updated_dict['id']:
+            question_list[index] = original_question
+    write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def save_answer_data(user_input):

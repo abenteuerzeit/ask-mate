@@ -38,15 +38,21 @@ def delete_question(id):
 def display_question(id):
     if request.method == "GET":
         question = data_handler.get_question(id)
-        data_handler.increase_view_count(question)
+        data_handler.increase_question_view_count(question)
         question = data_handler.convert_to_datetime(question)
         answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
         return render_template('question.html', question=question, answers=answers)
 
 
-# @app.route("/question/<id>/edit")
-# def edit_question(id):
-#     return render_template('edit-question.html')
+@app.route("/question/<id>/edit", methods=['GET', 'POST'])
+def edit_question(id):
+    if request.method == 'GET':
+        question = data_handler.get_question(id)
+        return render_template('edit-question.html', question=question)
+    elif request.method == 'POST':
+        updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
+        data_handler.edit_question(updated_dict)
+        return redirect('/question/'+id)
 
 
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
