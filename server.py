@@ -19,7 +19,7 @@ def add_question():
         return render_template("add-question.html")
     elif request.method == "POST":
         data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
-        new_question = data_handler.save_question_data(data)
+        new_question = data_handler.save_new_question_data(data)
         new_question_id = new_question['id']
         return redirect('/question/' + new_question_id)
     return redirect('/')
@@ -28,7 +28,9 @@ def add_question():
 @app.route('/question/<id>')
 def display_question(id):
     if request.method == "GET":
-        question = data_handler.convert_to_datetime(data_handler.get_question(id))
+        question = data_handler.get_question(id)
+        data_handler.increase_view_count(question)
+        question = data_handler.convert_to_datetime(question)
         answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
         return render_template('question.html', question=question, answers=answers)
 
