@@ -28,7 +28,7 @@ def list_questions():
 def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
-    data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
+    data = {'title': request.form['title'], 'message': request.form['message'], 'image': None}
     new_question = data_handler.save_new_question_data(data)
     new_question_id = new_question['id']
     return redirect('/question/' + new_question_id)
@@ -120,8 +120,7 @@ def allowed_file(filename):
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/upload-image', methods=['GET', 'POST'])
@@ -137,7 +136,9 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # data_handler.save_image('uploaded_file', filename=filename)
             return redirect(url_for('uploaded_file', filename=filename))
+
     return ''' <!doctype html>
         <title>Upload new File</title>
         <h1>Upload new File</h1>
