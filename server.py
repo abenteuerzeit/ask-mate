@@ -28,9 +28,9 @@ def add_question():
 @app.route('/question/<id>')
 def display_question(id):
     if request.method == "GET":
-        answers = data_handler.get_answer_for_question(id)
-        answers = data_handler.convert_to_datetime(answers)
-        return render_template('question.html', question=data_handler.get_question(id), answers=answers)
+        question = data_handler.convert_to_datetime(data_handler.get_question(id))
+        answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
+        return render_template('question.html', question=question, answers=answers)
 
 
 # @app.route("/question/<id>/edit")

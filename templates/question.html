@@ -10,12 +10,13 @@
         <hr>
         <h2>{{ question.title }}</h2>
         <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
-        <img src="{{ question.image if question.image }}" alt="Uploaded image">
+        <img src="{{ question.image if question.image }}" alt="Uploaded image"><br>
+        <small>Added: {{ question.submission_time }}</small>
         <hr>
         <h3>Answers</h3>
         <ol style="text-align: left;">
             {% for answer in answers %}
-                <li> {{ answer.message }} </li>
+                <li> {{ answer.submission_time }}: {{ answer.message }}</li>
             {% endfor %}
         </ol>
         <a href="/question/{{ question.id }}/new-answer">
