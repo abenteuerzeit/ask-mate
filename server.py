@@ -20,6 +20,7 @@ def add_question():
     elif request.method == "POST":
         data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
         new_question = data_handler.save_question_data(data)
+        new_question = data_handler.convert_to_datetime(new_question)
         new_question_id = new_question['id']
         return redirect('/question/' + new_question_id)
     return redirect('/')
