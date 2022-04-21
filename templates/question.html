@@ -1,39 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Question</title>
-</head>
-<body>
-<h1>Question</h1>
-<p>
-    <a href="/list">Return to all questions</a>
-</p>
-<table>
-    <tbody>
-        <tr>
-            <td>
-                {{ question.title }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ question.message }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ question.image }}
-            </td>
-        </tr>
-        </tbody>
-    </table>
-<ul>
-    {% for answer in answers %}
-    <li>{{ answer.message }}</li>
-    {% endfor %}
-    <li> <a href="/question/{{ question.id }}/new-answer">Add a new answer</a></li>
-    <li> <a href="/question/{{ question.id }}/delete">Delete question</a></li>
-</ul>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}Question {{ question.id }}{% endblock %}
+{% block body %}
+
+    <h1>Question</h1>
+    <div class="display_question">
+        <a href="/list">
+            <button>Return to all questions</button>
+        </a>
+        <hr>
+        <h2>{{ question.title }}</h2>
+        <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
+        <img src="{{ question.image if question.image }}" alt="Uploaded image"><br>
+        <small>Added: {{ question.submission_time }}</small>
+        <hr>
+        <h3>Answers</h3>
+        <ol style="text-align: left;">
+            {% for answer in answers %}
+                <li> {{ answer.submission_time }}: {{ answer.message }}</li>
+            {% endfor %}
+        </ol>
+        <a href="/question/{{ question.id }}/new-answer">
+        <button style="alignment: center">Add a new answer</button>
+        </a>
+        <a href="/question/{{ question.id }}/delete">
+          <button style="alignment: center">Delete question</button>
+        </a>
+    </div>
+{% endblock %}
