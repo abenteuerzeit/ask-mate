@@ -163,6 +163,10 @@ def delete_question(id):
         writer.writerows(lines)
 
 
+# def save_image(url):
+#     return url
+
+
 if __name__ == '__main__':
     # data = {}
     # for i in Q_HEADER:
