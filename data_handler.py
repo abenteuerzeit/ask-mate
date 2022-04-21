@@ -21,8 +21,10 @@ def get_questions():
     return questions
 
 
-def convert_to_datetime(epoch):
-    return datetime.fromtimestamp(int(epoch))
+def convert_to_datetime(dictionary_list):
+    for dictionary in dictionary_list:
+        dictionary['submission_time'] = datetime.fromtimestamp(int(dictionary['submission_time']))
+    return dictionary_list
 
 
 def get_question(id):
