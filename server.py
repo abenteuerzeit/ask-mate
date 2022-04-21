@@ -61,21 +61,41 @@ def add_answer(id):
 
 
 @app.route('/question/<question_id>/vote-up', methods=['POST'])
-def upvote(question_id):
+def q_upvote(question_id):
     if request.method == 'POST':
         question_dict = data_handler.get_question(question_id)
-        data_handler.increase_vote_count(question_dict)
+        data_handler.increase_question_vote(question_dict)
     return redirect('/list')
-    pass
+
+
+@app.route('/answer/<answer_id>/vote-up', methods=['POST'])
+def a_upvote(answer_id):
+    if request.method == 'POST':
+        answers = data_handler.get_answers()
+        for answer in answers:
+            if str(answer_id) == answer['id']:
+                data_handler.increase_answer_vote(answer)
+                q_id = answer['question_id']
+                return redirect('/question/' + q_id)
 
 
 @app.route('/question/<question_id>/vote-down', methods=['POST'])
-def downvote(question_id):
+def q_downvote(question_id):
     if request.method == 'POST':
         question_dict = data_handler.get_question(question_id)
-        data_handler.decrease_vote_count(question_dict)
+        data_handler.decrease_question_vote(question_dict)
     return redirect('/list')
-    pass
+
+
+@app.route('/answer/<answer_id>/vote-down', methods=['POST'])
+def a_downvote(answer_id):
+    if request.method == 'POST':
+        answers = data_handler.get_answers()
+        for answer in answers:
+            if str(answer_id) == answer['id']:
+                data_handler.decrease_answer_vote(answer)
+                q_id = answer['question_id']
+                return redirect('/question/' + q_id)
 
 
 if __name__ == "__main__":

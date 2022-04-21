@@ -67,7 +67,7 @@ def increase_view_count(select_qdict):
             write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
-def increase_vote_count(selected_dictionary):
+def increase_question_vote(selected_dictionary):
     question_list = get_questions()
     for q_dict in question_list:
         if q_dict.get('id') == str(selected_dictionary['id']):
@@ -75,12 +75,28 @@ def increase_vote_count(selected_dictionary):
             write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
-def decrease_vote_count(selected_dictionary):
+def increase_answer_vote(selected_dictionary):
+    answers = get_answers()
+    for a_dict in answers:
+        if a_dict.get('id') == str(selected_dictionary['id']):
+            a_dict['vote_number'] = a_dict.get('vote_number') + 1
+            write_over(A_FILE_PATH, A_HEADER, answers)
+
+
+def decrease_question_vote(selected_dictionary):
     question_list = get_questions()
     for q_dict in question_list:
         if q_dict.get('id') == str(selected_dictionary['id']):
             q_dict['vote_number'] = q_dict.get('vote_number') - 1
             write_over(Q_FILE_PATH, Q_HEADER, question_list)
+
+
+def decrease_answer_vote(selected_dictionary):
+    answers = get_answers()
+    for a_dict in answers:
+        if a_dict.get('id') == str(selected_dictionary['id']):
+            a_dict['vote_number'] = a_dict.get('vote_number') - 1
+            write_over(A_FILE_PATH, A_HEADER, answers)
 
 
 def save_new_question_data(user_input):
