@@ -3,16 +3,25 @@
 {% block body %}
     <div>
         <h1>All questions</h1>
+        <p>{{ order_by }}</p>
+        <p>{{ order_direction }}</p>
         <a href="/add-question">
             <button>Add a question</button>
         </a>
         <table>
             <thead>
             <th>ID</th>
-            <th>Submission Date and Time</th>
+            <th>Submission Date and Time
+                <a href="/list?order_by=submission_time"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=submission_time&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+
+            </th>
             <th>Views</th>
             <th> Votes</th>
-            <th> Title</th>
+            <th> Title
+                <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
             <th> Question</th>
             <th> Image</th>
             </thead>
