@@ -3,7 +3,7 @@
 {% block body %}
 
     <h1>Add question</h1>
-        <form method="post" action="/add-question">
+        <form method="post" action="/add-question" enctype="multipart/form-data">
             <label for="title">Question title:</label><br>
             <input type="text" name="title" id="title"><br>
             <label for="message">Message</label><br>
