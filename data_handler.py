@@ -23,7 +23,7 @@ def get_questions():
 
 
 def convert_to_datetime(dictionary_data):
-    if type(dictionary_data) is list:
+    if type(dictionary_data) is list:  # do we need it?
         for dictionary in dictionary_data:
             dictionary['submission_time'] = datetime.fromtimestamp(int(dictionary['submission_time']))
         return dictionary_data
