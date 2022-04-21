@@ -29,8 +29,12 @@
                             <tbody>
                             <tr>
                                 <td>
-                                    <button><span>&#8679;</span></button>
-                                    <button><span>&#8681;</span></button>
+                                    <form method="post" action="/question/{{ row.id }}/vote-up">
+                                    <button type="submit"><span>&#8679;</span></button>
+                                    </form>
+                                    <form method="post" action="/question/{{ row.id }}/vote-down">
+                                    <button type="submit"><span>&#8681;</span></button>
+                                    </form>
                                 </td>
                             </tr>
                             </tbody>

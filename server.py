@@ -53,14 +53,20 @@ def add_answer(id):
         return redirect('/question/' + id)
 
 
-@app.route('/question/<question_id>/vote-up')
-def upvote():
+@app.route('/question/<question_id>/vote-up', methods=['POST'])
+def upvote(question_id):
+    if request.method == 'POST':
+        question_dict = data_handler.get_question(question_id)
+        data_handler.increase_vote_count(question_dict)
     return redirect('/list')
     pass
 
 
-@app.route('/question/<question_id>/vote-down')
-def downvote():
+@app.route('/question/<question_id>/vote-down', methods=['POST'])
+def downvote(question_id):
+    if request.method == 'POST':
+        question_dict = data_handler.get_question(question_id)
+        data_handler.decrease_vote_count(question_dict)
     return redirect('/list')
     pass
 
