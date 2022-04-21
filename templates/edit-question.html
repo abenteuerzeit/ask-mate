@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Edit Question{% endblock %}
+{% block body %}
+    <h1>Edit question</h1>
+    <form method="post" action="/question/{{ question.id }}/edit">
+        <label for="title">Question title:</label><br>
+        <input type="text" name="title" id="title" value="{{ question.title if question.title }}"><br>
+        <label for="message">Message</label><br>
+        <textarea name="message" id="message">{{ question.message if question.message }}</textarea><br>
+        <button type="submit">Submit</button>
+        <br>
+    </form>
+{% endblock %}

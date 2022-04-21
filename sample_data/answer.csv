@@ -1,7 +1,8 @@
 id,submission_time,vote_number,question_id,message,image
 1,1493398154,8,1,You need to use brackets: my_list = [],
 2,1493088154,34,1,Look it up in the Python docs,
-3,1650523325,0,4,Really?,
+3,1650523325,2,4,Really?,
 4,1650549412,2,1,new answer,
 5,1650558366,0,6,Python is the best programming language in the world!,
-6,1650558366,1,7,this is a new answer,
+6,1650558366,2,7,this is a new answer,
+7,1650572307,1,8,My house,
