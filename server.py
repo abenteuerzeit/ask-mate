@@ -25,6 +25,13 @@ def add_question():
     return redirect('/')
 
 
+@app.route("/question/<id>/delete")
+def delete_question(id):
+    if request.method == "GET":
+        data_handler.delete_question(id)
+    return redirect("/")  # moze tez byc ("/list")
+
+
 @app.route('/question/<id>')
 def display_question(id):
     if request.method == "GET":
@@ -74,6 +81,6 @@ def downvote(question_id):
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=8000,
         debug=True,
     )
