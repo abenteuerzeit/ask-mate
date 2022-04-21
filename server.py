@@ -53,6 +53,18 @@ def add_answer(id):
         return redirect('/question/' + id)
 
 
+@app.route('/question/<question_id>/vote-up')
+def upvote():
+    return redirect('/list')
+    pass
+
+
+@app.route('/question/<question_id>/vote-down')
+def downvote():
+    return redirect('/list')
+    pass
+
+
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',

@@ -24,11 +24,23 @@
                     </td>
                     <td>{{ row.submission_time }}</td>
                     <td>{{ row.view_number }}</td>
-                    <td>{{ row.vote_number }}</td>
+                    <td>{{ row.vote_number }}
+                        <table style="display: inline;">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <button><span>&#8679;</span></button>
+                                    <button><span>&#8681;</span></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
                     <td>
                         <a href="/question/{{ row.id }}"> {{ row.title }} </a>
                     </td>
-                    <td> {{ row.message }} </td>
+                    <td> {{ row.message }} <br>
+                    </td>
                     <td> {{ row.image }} </td>
                 </tr>
             {% endfor %}
