@@ -8,21 +8,23 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/list")
 def list_questions():
+    # / list?order_by = title & order_direction = desc
+    order_by = request.args.get('order_by', 'id')
+    order_direction = request.args.get('order_direction', 'desc')
     questions = data_handler.get_questions()
     questions = data_handler.convert_to_datetime(questions)
-    return render_template("list.html", questions=questions)
+    questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
+    return render_template("list.html", questions=questions, order_by=order_by, order_direction=order_direction)
 
 
 @app.route("/add-question", methods=["GET", "POST"])
 def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
-    elif request.method == "POST":
-        data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
-        new_question = data_handler.save_new_question_data(data)
-        new_question_id = new_question['id']
-        return redirect('/question/' + new_question_id)
-    return redirect('/')
+    data = {'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
+    new_question = data_handler.save_new_question_data(data)
+    new_question_id = new_question['id']
+    return redirect('/question/' + new_question_id)
 
 
 @app.route("/question/<id>/delete")
