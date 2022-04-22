@@ -42,15 +42,17 @@ def delete_question(id):
     if request.method == "GET":
         # Delete question image
         data = data_handler.get_question(id)
-        url_path = data['image']
-        filename = url_path[len('/uploads/'):]
-        os.remove(UPLOAD_FOLDER+"/"+filename)
+        if data['image'] != '':
+            url_path = data['image']
+            filename = url_path[len('/uploads/'):]
+            os.remove(UPLOAD_FOLDER+"/"+filename)
         # Delete answer images
         answers = data_handler.get_answer_for_question(id)
         for answer in answers:
-            url_path = answer['image']
-            answer_file = url_path[len('/uploads/'):]
-            os.remove(UPLOAD_FOLDER + "/" + answer_file)
+            if answer['image'] != '':
+                url_path = answer['image']
+                answer_file = url_path[len('/uploads/'):]
+                os.remove(UPLOAD_FOLDER + "/" + answer_file)
         data_handler.delete_question(id)
     return redirect("/")
 
@@ -84,9 +86,10 @@ def edit_question(id):
                             'image': question['image']}
         else:
             # Delete old image
-            url_path = question['image']
-            filename = url_path[len('/uploads/'):]
-            os.remove(UPLOAD_FOLDER + "/" + filename)
+            if question['image'] != "":
+                url_path = question['image']
+                filename = url_path[len('/uploads/'):]
+                os.remove(UPLOAD_FOLDER + "/" + filename)
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
                             'image': src}
         data_handler.edit_question(updated_dict)
