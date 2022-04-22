@@ -1,9 +1,9 @@
 import os
-import data_handler
 
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
+import data_handler
 
 UPLOAD_FOLDER = './sample_data/images'
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
@@ -70,12 +70,12 @@ def edit_question(id):
         src = url_for('uploaded_file', filename=filename)
         if src == question['image']:
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                        'image': question['image']}
+                            'image': question['image']}
         else:
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                        'image': src}
+                            'image': src}
         data_handler.edit_question(updated_dict)
-        return redirect('/question/'+id)
+        return redirect('/question/' + id)
 
 
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])

@@ -3,32 +3,17 @@
 {% block body %}
 
     <h1>Add question</h1>
-    <a href="/"><button value="Go back">Go back</button></a>
-{#    <table style="alignment: center">#}
-{#    <tr>#}
-{#        <td>#}
-        <form method="post" action="/add-question" enctype="multipart/form-data">
-            <label for="title">Question title:</label><br>
-            <input type="text" name="title" id="title"><br>
-            <label for="message">Message</label><br>
-            <textarea name="message" id="message"></textarea><br>
-            <input type="file" name="file"><br>
-{#            <input type="submit" value="Upload">#}
-{#        </td>#}
-
-{#            <label for="file">Choose an image:</label>#}
-{#            <input type="file" id="image" name="image" accept="image/png, image/jpeg">#}
-{#        <td>#}
-{#            <form method="post" action="/upload-image" enctype="multipart/form-data">#}
-{#            <input type="file" name="file">#}
-{#            <input type="submit" value="Upload">#}
-{#        </form>#}
-{#            <label for="file">Add Image</label><br>#}
-{#            <iframe src="/upload-image" title="Add Image" name="file"> </iframe><br>#}
-{#        </td>#}
-{#            </tr>#}
-{#            </table>#}
-            <button type="submit">Submit</button><br>
-        </form>
-
+    <a href="/">
+        <button value="Go back">Go back</button>
+    </a>
+    <form method="post" action="/add-question" enctype="multipart/form-data">
+        <label for="title">Question title:</label><br>
+        <input type="text" name="title" id="title" required><br>
+        <label for="message">Message</label><br>
+        <textarea name="message" id="message"></textarea><br>
+        <label for="file">Upload image</label><br>
+        <input type="file" name="file"><br>
+        <button type="submit">Submit</button>
+        <br>
+    </form>
 {% endblock %}
