@@ -145,8 +145,11 @@ def write_over(file, header, content):
 
 
 def get_new_id(csvfile):
+    # TODO Fix Bug with empty question csv file. Max don't work on None.
     with open(csvfile, 'r') as file:
-        return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
+        return len(file.readlines())
+        # return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
+
 
 
 def delete_question(id):
@@ -169,13 +172,7 @@ def save_image(url):
 
 
 if __name__ == '__main__':
-    # data = {}
-    # for i in Q_HEADER:
-    #     data[i] = 'test'
-    # save_new_question_data(data)
-    question = increase_view_count('4')
-    print(question)
-
+    pass
 """
 id,submission_time,view_number,vote_number,title,message,image
 1,1493368154,29,7,"How to make lists in Python? I am totally new to this, any hints?",None
