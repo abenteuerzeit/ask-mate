@@ -2,7 +2,7 @@
 {% block title %}Edit Question{% endblock %}
 {% block body %}
     <h1>Edit question</h1>
-    <form method="post" action="/question/{{ question.id }}/edit">
+    <form method="post" action="/question/{{ question.id }}/edit" enctype="multipart/form-data">
         <label for="title">Question title:</label><br>
         <input type="text" name="title" id="title" value="{{ question.title if question.title }}"><br>
         <label for="message">Message</label><br>
