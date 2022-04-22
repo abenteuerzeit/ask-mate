@@ -31,6 +31,10 @@
                 <p>{{ answer.message }}</p>
                 <br>
             </li>
+            {% if answer.image %}
+                <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
+                     style="float:left;"><br>
+            {% endif %}
         {% endfor %}
     </ol>
     <a href="/question/{{ question.id }}/new-answer">
