@@ -56,12 +56,24 @@ def display_question(id):
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
+    question = data_handler.get_question(id)
     if request.method == 'GET':
-        question = data_handler.get_question(id)
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                        'image': upload_image()}
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return question['image']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        src = url_for('uploaded_file', filename=filename)
+        if src == question['image']:
+            updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                        'image': question['image']}
+        else:
+            updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                        'image': src}
         data_handler.edit_question(updated_dict)
         return redirect('/question/'+id)
 
@@ -136,11 +148,11 @@ def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
-            return redirect(request.url)
+            return None
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            return None
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
