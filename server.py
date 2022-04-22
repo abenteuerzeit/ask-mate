@@ -10,6 +10,7 @@ ALLOWED_EXTENSIONS = {'jpg', 'png'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 
 @app.route("/")
@@ -28,10 +29,12 @@ def list_questions():
 def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
-    data = {'title': request.form['title'], 'message': request.form['message'], 'image': None}
-    new_question = data_handler.save_new_question_data(data)
-    new_question_id = new_question['id']
-    return redirect('/question/' + new_question_id)
+    if request.method == 'POST':
+        data = {'title': request.form['title'], 'message': request.form['message'],
+                'image': upload_image()}
+        new_question = data_handler.save_new_question_data(data)
+        new_question_id = new_question['id']
+        return redirect('/question/' + new_question_id)
 
 
 @app.route("/question/<id>/delete")
@@ -57,7 +60,8 @@ def edit_question(id):
         question = data_handler.get_question(id)
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'], 'image': 'None'}
+        updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                        'image': upload_image()}
         data_handler.edit_question(updated_dict)
         return redirect('/question/'+id)
 
@@ -69,7 +73,8 @@ def add_answer(id):
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
-        answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'], 'image': None}
+        answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
+                       'image': upload_image()}
         new_answer_id = data_handler.save_answer_data(answer_data)
         print(new_answer_id)
         return redirect('/question/' + id)
@@ -113,9 +118,7 @@ def a_downvote(answer_id):
                 return redirect('/question/' + q_id)
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# Below are functions for uploading an image
 
 
 @app.route('/uploads/<filename>')
@@ -123,8 +126,13 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/upload-image', methods=['GET', 'POST'])
-def upload_file():
+def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -136,9 +144,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # data_handler.save_image('uploaded_file', filename=filename)
-            return redirect(url_for('uploaded_file', filename=filename))
-
+            return url_for('uploaded_file', filename=filename)
     return ''' <!doctype html>
         <title>Upload new File</title>
         <h1>Upload new File</h1>
