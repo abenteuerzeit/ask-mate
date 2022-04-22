@@ -7,6 +7,9 @@
         <input type="text" name="title" id="title" value="{{ question.title if question.title }}"><br>
         <label for="message">Message</label><br>
         <textarea name="message" id="message">{{ question.message if question.message }}</textarea><br>
+        <img src="{{ question.image if question.image }}" height ="100px">
+        <label for="file">Upload New Image</label><br>
+        <input type="file" name="file"><br>
         <button type="submit">Submit</button>
         <br>
     </form>

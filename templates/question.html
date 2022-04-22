@@ -9,34 +9,34 @@
         </a>
         <hr>
         <h2>{{ question.title }}</h2>
+        <p><small>Added: {{ question.submission_time }}</small></p>
+        <img src="{{ question.image if question.image }}" height="100px" alt="Uploaded image" style="float:left;"><br>
         <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
-        <img src="{{ question.image if question.image }}" alt="Uploaded image"><br>
-        <small>Added: {{ question.submission_time }}</small>
         <form method="get" action="{{ question.id }}/edit">
             <button type="submit">Edit Question</button>
         </form>
         <hr>
-        <h3>Answers</h3>
-        <ol style="text-align: left;">
-            {% for answer in answers %}
-                <li> Added on {{ answer.submission_time }} <br>
-                    <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                        <button type="submit"><span>&#8679;</span></button>
-                    </form>
-                    <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                        <button type="submit"><span>&#8681;</span></button>
-                    </form>
-                    Votes: {{ answer.vote_number }}.<br>
-                    <p>{{ answer.message }}</p>
-                    <br>
-                </li>
-            {% endfor %}
-        </ol>
-        <a href="/question/{{ question.id }}/new-answer">
-            <button style="alignment: center">Add a new answer</button>
-        </a>
-        <a href="/question/{{ question.id }}/delete">
-            <button style="alignment: center">Delete question</button>
-        </a>
     </div>
+    <h3>Answers</h3>
+    <ol style="text-align: left;">
+        {% for answer in answers %}
+            <li> Added on {{ answer.submission_time }} <br>
+                <form method="post" action="/answer/{{ answer.id }}/vote-up">
+                    <button type="submit"><span>&#8679;</span></button>
+                </form>
+                <form method="post" action="/answer/{{ answer.id }}/vote-down">
+                    <button type="submit"><span>&#8681;</span></button>
+                </form>
+                Votes: {{ answer.vote_number }}.<br>
+                <p>{{ answer.message }}</p>
+                <br>
+            </li>
+        {% endfor %}
+    </ol>
+    <a href="/question/{{ question.id }}/new-answer">
+        <button style="alignment: center">Add a new answer</button>
+    </a>
+    <a href="/question/{{ question.id }}/delete">
+        <button style="alignment: center">Delete question</button>
+    </a>
 {% endblock %}

@@ -54,7 +54,12 @@
                     </td>
                     <td> {{ row.message }} <br>
                     </td>
-                    <td> {{ row.image }} </td>
+                    <td>
+                        {% if row.image %}
+                        <img src="{{ row.image }}" width="25px"> </td>
+                        {% else %}
+                        None
+                        {% endif %}
                 </tr>
             {% endfor %}
             </tbody>
