@@ -83,6 +83,10 @@ def edit_question(id):
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
                             'image': question['image']}
         else:
+            # Delete old image
+            url_path = question['image']
+            filename = url_path[len('/uploads/'):]
+            os.remove(UPLOAD_FOLDER + "/" + filename)
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
                             'image': src}
         data_handler.edit_question(updated_dict)
