@@ -16,7 +16,6 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 @app.route("/")
 @app.route("/list")
 def list_questions():
-    # / list?order_by = title & order_direction = desc
     order_by = request.args.get('order_by', 'id')
     order_direction = request.args.get('order_direction', 'desc')
     questions = data_handler.get_questions()
@@ -97,7 +96,7 @@ def display_question(id):
 
 @app.route("/error")
 def display_error_message(id):
-    error_dict = {'id': id, "title": "Format Error!", "message": "Only .jpg and .png files accepted!"}
+    error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
     return error_dict
 
 
