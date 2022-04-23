@@ -41,12 +41,12 @@ def add_question():
 def delete_question(id):
     # Delete question image
     question_data = data_handler.get_question(id)
-    delete(question_data)
+    image_delete_from_server(question_data)
     # Delete answer images
     answers = data_handler.get_answer_for_question(id)
     if answers:
         for answer in answers:
-            delete(answer)
+            image_delete_from_server(answer)
     data_handler.delete_question(id)
     return redirect("/")
 
@@ -54,11 +54,16 @@ def delete_question(id):
 @app.route('/answer/<id>/delete', methods=['POST'])
 def delete_answer(id):
     question_id = request.form['question_id']
+    # Delete image from server
+    answer_list = data_handler.get_answers()
+    for answer in answer_list:
+        if answer['id'] == str(id):
+            image_delete_from_server(answer)
     data_handler.delete_answer(id)
     return redirect('/question/' + question_id)
 
 
-def delete(item):
+def image_delete_from_server(item):
     if item['image'] != '':
         try:
             url_path = item['image']
