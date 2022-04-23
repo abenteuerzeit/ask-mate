@@ -35,6 +35,11 @@
                 <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
                      style="float:left;"><br>
             {% endif %}
+            <form method="post" action="/answer/{{ answer.id }}/delete">
+                <label for="question_id"></label>
+                <input name="question_id" id="question_id" value="{{ question.id }}" readonly style="display: None;"><br>
+                <input type="submit" value="Delete">
+            </form>
         {% endfor %}
     </ol>
     <a href="/question/{{ question.id }}/new-answer">

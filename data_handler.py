@@ -168,7 +168,7 @@ def delete_question(id):
 def delete_answer(id):
     answer_list = get_answers()
     for index, answer_dictionary in enumerate(answer_list):
-        if answer_dictionary['id'] == str(id):
+        if answer_dictionary['id'] == id:
             del answer_list[index]
     write_over(A_FILE_PATH, A_HEADER, answer_list)
 
@@ -181,4 +181,4 @@ if __name__ == '__main__':
     3,1493015432,1364,57,"Drawing canvas with an image picked with Cordova Camera Plugin", "I'm getting an image from device and drawing a canvas with filters using Pixi JS. It works all well using computer to get an image. But when I'm on IOS it throws errors such as cross origin issue or that I'm trying to use an unknown format. This is the code I'm using to draw the image (that works on web/desktop but not cordova built ios app)",None
     
     """
-    delete_answer(2)
+    pass
