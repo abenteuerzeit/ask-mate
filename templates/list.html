@@ -10,22 +10,36 @@
 {#                <button type="submit">Add a question</button>#}
 {#        </form>#}
         <table>
-            <thead>
+            <thead style="border: 2px">
             <tr>
-            <th>ID</th>
-            <th>Submission Date and Time
+            <th style="width: 10%">ID
+                <a href="/list?order_by=id"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=id&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
+            <th style="width: 10%">Added
                 <a href="/list?order_by=submission_time"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=submission_time&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-
             </th>
-            <th>Views</th>
-            <th> Votes</th>
+            <th>Views
+                <a href="/list?order_by=view_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=view_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
+            <th> Votes
+                <a href="/list?order_by=vote_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=vote_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
             <th> Title
                 <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th> Question</th>
-            <th> Image</th>
+            <th>Question
+                <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
+            <th>Image
+                <a href="/list?order_by=message"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                <a href="/list?order_by=message&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+            </th>
             </tr>
             </thead>
             <tbody>
