@@ -1,4 +1,3 @@
-import csv
 import os
 from csv import DictWriter, DictReader
 from datetime import datetime
@@ -117,6 +116,8 @@ def edit_question(updated_dict):
     for heading in Q_HEADER:
         if updated_dict.get(heading):
             original_question[heading] = updated_dict[heading]
+        if updated_dict['image'] is None:
+            original_question['image'] = updated_dict['image']
     for index, q in enumerate(question_list):
         if q['id'] == updated_dict['id']:
             question_list[index] = original_question

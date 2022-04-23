@@ -65,6 +65,15 @@ def delete_answer(id):
     return redirect('/question/' + question_id)
 
 
+@app.route('/question/<id>/delete-image', methods=["GET"])
+def edit_delete_image(id):
+    question = data_handler.get_question(id)
+    image_delete_from_server(question)
+    question['image'] = None
+    data_handler.edit_question(question)
+    return redirect('/question/' + id + '/edit')
+
+
 def image_delete_from_server(item):
     if item['image'] != '':
         try:
@@ -88,7 +97,6 @@ def display_question(id):
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
-    #TODO add image when editing
     question = data_handler.get_question(id)
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
@@ -99,21 +107,15 @@ def edit_question(id):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 src = url_for('uploaded_file', filename=filename)
-                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'], 'image': src}
-                data_handler.edit_question(updated_dict)
+                data_handler.edit_question({'id': id,
+                                            'title': request.form['title'],
+                                            'message': request.form['message'],
+                                            'image': src})
         else:
-            # Delete old image --- refactor --- change to function
-            if question['image'] != "":
-                # url_path = question['image']
-                # filename = url_path[len('/uploads/'):]
-                # os.remove(UPLOAD_FOLDER + "/" + filename)
-                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                               'image': question['image']}
-                data_handler.edit_question(updated_dict)
-            else:
-                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                                'image': None}
-                data_handler.edit_question(updated_dict)
+            data_handler.edit_question({'id': id,
+                                        'title': request.form['title'],
+                                        'message': request.form['message'],
+                                        'image': question['image']})
         return redirect('/question/' + id)
 
 
@@ -123,7 +125,7 @@ def add_answer(id):
         answers = data_handler.get_answer_for_question(id)
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
-    elif request.method == 'POST': # refactor for hackers
+    elif request.method == 'POST':  # refactor for hackers
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
