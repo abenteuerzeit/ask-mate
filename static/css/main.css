@@ -2,6 +2,7 @@ body, html {
     height: 100%;
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
 }
 
 * {
@@ -41,6 +42,7 @@ body, html {
     padding: 20px;
     text-align: center;
 }
+
 th {
     border-radius: 5px;
     border-style: dashed;
@@ -66,11 +68,13 @@ a:visited {
     background-color: transparent;
     text-decoration: none;
 }
+
 a:hover {
     color: lightgreen;
     background-color: transparent;
     text-underline-offset: 2px;
 }
+
 a:active {
     color: blue;
     background-color: transparent;
@@ -89,7 +93,7 @@ tbody {
 }
 
 img {
-    transition:transform 0.25s ease;
+    transition: transform 0.25s ease;
 }
 
 img:hover {
@@ -101,13 +105,92 @@ img:hover {
 }
 
 textarea {
-        width: 300px;
-        height: 200px;
-      }
+    width: 300px;
+    height: 200px;
+}
 
 input {
-    textarea {
-        width: 300px;
-      }
+    width: 300px;
+}
 
+.upload_image {
+    font-size: 20px;
+    background-color: purple;
+    color: white;
+    border: 30px;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.upload_image:hover {
+    background-color: green;
+    filter: brightness(200%);
+}
+.upload_image:active {
+    background-color: yellow;
+    box-shadow: 0 5px darkolivegreen;
+    transform: translateY(4px);
+}
+
+
+textarea {
+    width: 300px;
+}
+
+.logo {
+    height: 150px;
+    margin: 10px;
+    border-radius: 25px;
+}
+
+.logo:hover {
+    transform: none;
+}
+
+button {
+
+}
+
+button:hover {
+    background-color: green;
+}
+
+button {
+    background-color: purple;
+    color: white;
+    border: 30px;
+    margin: 5px;
+    border-radius: 15px;
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    box-shadow: 0 9px black;
+}
+
+button:active {
+    background-color: deeppink;
+    box-shadow: 0 5px darkolivegreen;
+    transform: translateY(4px);
+}
+
+.arrow {
+    border: 15px;
+    margin: 0;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 2px;
+    font-size: 12px;
+    box-shadow: 0 3px black;
+    position: relative;
+    left: 25px;
+}
+td {
+  text-align: center;
+  vertical-align: middle;
 }
