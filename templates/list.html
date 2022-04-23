@@ -20,23 +20,23 @@
                 <a href="/list?order_by=submission_time"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=submission_time&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th>Views
+            <th style="width: 10%">Views
                 <a href="/list?order_by=view_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=view_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th> Votes
+            <th style="width: 10%"> Votes
                 <a href="/list?order_by=vote_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=vote_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th> Title
+            <th style="width: 20%"> Title
                 <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th>Question
+            <th style="width: 30%">Question
                 <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
-            <th>Image
+            <th style="width: 10%">Image
                 <a href="/list?order_by=message"><i class="fa-solid fa-circle-arrow-down"></i></a>
                 <a href="/list?order_by=message&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
             </th>
@@ -69,7 +69,7 @@
                     <td>
                         <a href="/question/{{ row.id }}"> {{ row.title }} </a>
                     </td>
-                    <td> {{ row.message }} <br>
+                    <td> {{ row.message|truncate(100) }} <br>
                     </td>
                     <td>
                         {% if row.image %}
