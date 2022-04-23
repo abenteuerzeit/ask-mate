@@ -30,8 +30,10 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-        data = {'title': request.form['title'], 'message': request.form['message'],
+        data = {'title': request.form.get('title', default="not provided"),
+                'message': request.form.get('message', default="not provided"),
                 'image': upload_image()}
+        # TODO for other endpoint form processing data
         new_question = data_handler.save_new_question_data(data)
         new_question_id = new_question['id']
         return redirect('/question/' + new_question_id)
@@ -55,7 +57,6 @@ def delete_question(id):
 @app.route('/answer/<id>/delete', methods=['POST'])
 def delete_answer(id):
     question_id = request.form['question_id']
-    # Delete image from server
     answer_list = data_handler.get_answers()
     for answer in answer_list:
         if answer['id'] == str(id):
@@ -78,12 +79,11 @@ def image_delete_from_server(item):
 
 @app.route('/question/<id>')
 def display_question(id):
-    if request.method == "GET":
-        question = data_handler.get_question(id)
-        data_handler.increase_question_view_count(question)
-        question = data_handler.convert_to_datetime(question)
-        answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
-        return render_template('question.html', question=question, answers=answers)
+    question = data_handler.get_question(id)
+    data_handler.increase_question_view_count(question)
+    question = data_handler.convert_to_datetime(question)
+    answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
+    return render_template('question.html', question=question, answers=answers)
 
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
@@ -97,13 +97,13 @@ def edit_question(id):
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            src = url_for('uploaded_file', filename=filename)
-            if src == question['image']:
-                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                                'image': question['image']}
-                data_handler.edit_question(updated_dict)
+            # src = url_for('uploaded_file', filename=filename)
+            # if src == question['image']:
+            updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                            'image': question['image']}
+            data_handler.edit_question(updated_dict)
         else:
-            # Delete old image
+            # Delete old image --- refactor --- change to function
             if question['image'] != "":
                 url_path = question['image']
                 filename = url_path[len('/uploads/'):]
@@ -120,7 +120,7 @@ def add_answer(id):
         answers = data_handler.get_answer_for_question(id)
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
-    elif request.method == 'POST':
+    elif request.method == 'POST': # refactor for hackers
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
@@ -129,40 +129,36 @@ def add_answer(id):
 
 @app.route('/question/<question_id>/vote-up', methods=['POST'])
 def q_upvote(question_id):
-    if request.method == 'POST':
-        question_dict = data_handler.get_question(question_id)
-        data_handler.increase_question_vote(question_dict)
+    question_dict = data_handler.get_question(question_id)
+    data_handler.increase_question_vote(question_dict)
     return redirect('/list')
 
 
 @app.route('/answer/<answer_id>/vote-up', methods=['POST'])
 def a_upvote(answer_id):
-    if request.method == 'POST':
-        answers = data_handler.get_answers()
-        for answer in answers:
-            if str(answer_id) == answer['id']:
-                data_handler.increase_answer_vote(answer)
-                q_id = answer['question_id']
-                return redirect('/question/' + q_id)
+    answers = data_handler.get_answers()
+    # data_handler.get_answer_for_question(id)
+    for answer in answers:
+        if str(answer_id) == answer['id']:
+            data_handler.increase_answer_vote(answer)
+            return redirect('/question/' + answer['question_id'])
 
 
 @app.route('/question/<question_id>/vote-down', methods=['POST'])
 def q_downvote(question_id):
-    if request.method == 'POST':
-        question_dict = data_handler.get_question(question_id)
-        data_handler.decrease_question_vote(question_dict)
+    question_dict = data_handler.get_question(question_id)
+    data_handler.decrease_question_vote(question_dict)
     return redirect('/list')
 
 
 @app.route('/answer/<answer_id>/vote-down', methods=['POST'])
 def a_downvote(answer_id):
-    if request.method == 'POST':
-        answers = data_handler.get_answers()
-        for answer in answers:
-            if str(answer_id) == answer['id']:
-                data_handler.decrease_answer_vote(answer)
-                q_id = answer['question_id']
-                return redirect('/question/' + q_id)
+    answers = data_handler.get_answers()
+    for answer in answers:
+        if str(answer_id) == answer['id']:
+            data_handler.decrease_answer_vote(answer)
+            q_id = answer['question_id']
+            return redirect('/question/' + q_id)
 
 
 # Below are functions for uploading an image
