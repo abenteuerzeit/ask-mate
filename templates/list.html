@@ -4,11 +4,10 @@
     <div>
     <img src="/uploads/logo.jpg" alt="logo" height="100">
         <h1>All questions</h1>
-        <p>{{ order_by }}</p>
-        <p>{{ order_direction }}</p>
-        <a href="/add-question">
-            Add a question
-        </a>
+        <form>
+            <form method='get' action="/add-question">
+                <button type="submit">Add a question</button>
+        </form>
         <table>
             <thead>
             <tr>
@@ -68,4 +67,5 @@
             </tbody>
         </table>
     </div>
+    <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
 {% endblock %}
