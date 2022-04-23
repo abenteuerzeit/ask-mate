@@ -13,10 +13,11 @@
             <img src="{{ question.image if question.image }}" height="100px" alt="Uploaded Image"><br>
             <a href="/question/{{ question.id }}/delete-image">Delete Image</a><br>
         {% else %}
+            <h3>Upload a JPG or PNG image</h3>
             <label for="file">Upload Image</label><br>
             <input type="file" name="file"><br>
         {% endif %}
-        <button type="submit">Submit</button>
+        <button type="submit" style="margin: 25px">Submit</button>
         <br>
     </form>
 {% endblock %}
