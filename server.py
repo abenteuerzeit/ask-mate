@@ -29,6 +29,10 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
+        file = request.files['file']
+        if file.filename != "" and not allowed_file(file.filename):
+            error = display_error_message(id)
+            return render_template('error.html', error=error, is_question=False)
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
                 'image': upload_image()}
@@ -108,8 +112,7 @@ def edit_question(id):
     elif request.method == 'POST':
         file = request.files['file']
         if file.filename != "":
-            extension = "." + file.filename[-3:]
-            if extension in ALLOWED_EXTENSIONS:
+            if not allowed_file(file.filename):
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_question=True)
             if file and allowed_file(file.filename):
@@ -135,12 +138,10 @@ def add_answer(id):
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':  # refactor for hackers
-        # file = request.files['file']
-        # extension = file.filename[-3:]
-        # if file.filename != "":
-        #     if "." + extension in ALLOWED_EXTENSIONS:
-        #         error = display_error_message(id)
-        #         return render_template('error.html', error=error, is_question=False)
+        file = request.files['file']
+        if file.filename != "" and not allowed_file(file.filename):
+            error = display_error_message(id)
+            return render_template('error.html', error=error, is_question=False)
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
