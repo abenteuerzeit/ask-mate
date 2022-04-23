@@ -41,10 +41,8 @@ def add_question():
 
 @app.route("/question/<id>/delete")
 def delete_question(id):
-    # Delete question image
     question_data = data_handler.get_question(id)
     image_delete_from_server(question_data)
-    # Delete answer images
     answers = data_handler.get_answer_for_question(id)
     if answers:
         for answer in answers:
@@ -86,13 +84,21 @@ def image_delete_from_server(item):
             print("File doesn't exist")
 
 
-@app.route('/question/<id>')
+@app.route('/question/<id>', methods=['GET'])
 def display_question(id):
     question = data_handler.get_question(id)
     data_handler.increase_question_view_count(question)
     question = data_handler.convert_to_datetime(question)
     answers = data_handler.convert_to_datetime(data_handler.get_answer_for_question(id))
-    return render_template('question.html', question=question, answers=answers)
+    if request.method == 'GET':
+        return render_template('question.html', question=question, answers=answers)
+    return question, answers
+
+
+@app.route("/error")
+def display_error_message(id):
+    error_dict = {'id': id, "title": "Format Error!", "message": "Only .jpg and .png files accepted!"}
+    return error_dict
 
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
@@ -103,6 +109,9 @@ def edit_question(id):
     elif request.method == 'POST':
         file = request.files['file']
         if file.filename != "":
+            if file.filename not in ALLOWED_EXTENSIONS:
+                error = display_error_message(id)
+                return render_template('error.html', error=error, is_question=True)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -126,6 +135,10 @@ def add_answer(id):
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':  # refactor for hackers
+        file = request.files['file']
+        if file.filename not in ALLOWED_EXTENSIONS:
+            error = display_error_message(id)
+            return render_template('error.html', error=error, is_question=False)
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
@@ -166,9 +179,6 @@ def a_downvote(answer_id):
             return redirect('/question/' + q_id)
 
 
-# Below are functions for uploading an image
-
-
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -193,14 +203,6 @@ def upload_image():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return url_for('uploaded_file', filename=filename)
-    return ''' <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form method="post" action="/upload-image" enctype="multipart/form-data">
-          <input type="file" name="file">
-          <input type="submit" value="Upload">
-        </form>
-        '''
 
 
 if __name__ == "__main__":
