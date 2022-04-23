@@ -2,44 +2,46 @@
 {% block title %}List Questions{% endblock %}
 {% block body %}
     <div>
-    <img src="/uploads/logo.jpg" alt="logo" height="100">
+        <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100">
         <h1>All questions</h1>
-        <a href="/add-question">Add question</a>
-{#        <form>#}
-{#            <form method='get' action="/add-question">#}
-{#                <button type="submit">Add a question</button>#}
+                <a href="/add-question"><button type="submit" style="margin: 30px">Add a question</button></a>
+{#        <form method="get" action="/add-question">#}
+{#            <button type="submit" style="margin: 30px">Add a question</button>#}
 {#        </form>#}
+
+
         <table>
             <thead style="border: 2px">
             <tr>
-            <th style="width: 10%">ID
-                <a href="/list?order_by=id"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=id&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 10%">Added
-                <a href="/list?order_by=submission_time"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=submission_time&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 10%">Views
-                <a href="/list?order_by=view_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=view_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 10%"> Votes
-                <a href="/list?order_by=vote_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=vote_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 20%"> Title
-                <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 30%">Question
-                <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
-            <th style="width: 10%">Image
-                <a href="/list?order_by=message"><i class="fa-solid fa-circle-arrow-down"></i></a>
-                <a href="/list?order_by=message&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
-            </th>
+                <th style="width: 10%">ID
+                    <a href="/list?order_by=id"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=id&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 10%">Added
+                    <a href="/list?order_by=submission_time"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=submission_time&order_direction=asc"><i
+                            class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 10%">Views
+                    <a href="/list?order_by=view_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=view_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 10%"> Votes
+                    <a href="/list?order_by=vote_number"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=vote_number&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 20%"> Title
+                    <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 30%">Question
+                    <a href="/list?order_by=title"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=title&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
+                <th style="width: 10%">Image
+                    <a href="/list?order_by=message"><i class="fa-solid fa-circle-arrow-down"></i></a>
+                    <a href="/list?order_by=message&order_direction=asc"><i class="fa-solid fa-circle-arrow-up"></i></a>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -50,22 +52,35 @@
                     </td>
                     <td>{{ row.submission_time }}</td>
                     <td>{{ row.view_number }}</td>
-                    <td>{{ row.vote_number }}
-                        <table style="display: inline;">
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <form method="post" action="/question/{{ row.id }}/vote-up">
-                                    <button type="submit"><span>&#8679;</span></button>
-                                    </form>
-                                    <form method="post" action="/question/{{ row.id }}/vote-down">
-                                    <button type="submit"><span>&#8681;</span></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    {##}
+                    {##}
+                    {#                        <table style="display: inline; border=solid">#}
+                    {##}
+                    {#                            <tbody>#}
+                    {#                            <tr>#}
+                    {#                                <td>#}
+                    {#                                    <div>#}
+                    {#                                        #}
+                    <td style="display: inline-block">
+                        <form method="post" action="/question/{{ row.id }}/vote-up">
+                            <button class="arrow" type="submit" style="width: 15px; display: inline-block;
+                                                position: relative; top: 8px;"> &#8679
+                            </button>
+                        </form>
+                        {{ row.vote_number }}
+                        <form method="post" action="/question/{{ row.id }}/vote-down">
+                            <button class="arrow" type="submit" style="width: 15px; display: inline-block;
+                                            position: relative; bottom: 8px;">&#8681
+                            </button>
+                        </form>
+
+
                     </td>
+                    {#                                    </div>#}
+                    {#                                </td>#}
+                    {#                            </tr>#}
+                    {#                            </tbody>#}
+                    {#                        </table>#}
                     <td>
                         <a href="/question/{{ row.id }}"> {{ row.title }} </a>
                     </td>
@@ -73,9 +88,9 @@
                     </td>
                     <td>
                         {% if row.image %}
-                        <img src="{{ row.image }}" alt="uploaded image" width="25"> </td>
+                            <img src="{{ row.image }}" alt="uploaded image" width="25"> </td>
                         {% else %}
-                        None
+                            None
                         {% endif %}
                 </tr>
             {% endfor %}
