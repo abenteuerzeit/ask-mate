@@ -48,7 +48,7 @@ The management is very interested in the agile development methodologies that th
     - The order is passed as query string parameters, such as `/list?order_by=title&order_direction=desc`.
 
 6. Implement deleting a question.
-    - Deleting is implemented by the `/question/<question_id>/delete` endpoint.
+    - Deleting is implemented by the `/question/<question_id>/image_delete_from_server` endpoint.
     - There is a deletion link on the question page.
     - Deleting redirects to the list of questions.
 
@@ -66,7 +66,7 @@ The management is very interested in the agile development methodologies that th
     - After submitting, the page redirects to the "Display a question" page. The changed data is visible on the "Display a question" page.
 
 9. Implement deleting an answer.
-    - Deleting is implemented by `/answer/<answer_id>/delete` endpoint.
+    - Deleting is implemented by `/answer/<answer_id>/image_delete_from_server` endpoint.
     - There is a deletion link on the question page, next to an answer.
     - Deleting redirects to the question detail page.
 
