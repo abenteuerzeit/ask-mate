@@ -60,11 +60,6 @@ def get_answer_for_question(question_id):
 
 
 def increase_question_view_count(select_qdict):
-    # I don't know why it tries to get /question/None... This should not be here.
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "POST /question/4/edit HTTP/1.1" 302 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/4 HTTP/1.1" 200 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /static/css/main.css HTTP/1.1" 304 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/None HTTP/1.1" 200 -
     if select_qdict is not None:
         question_list = get_questions()
         for question_dictionary in question_list:
@@ -145,10 +140,8 @@ def write_over(file, header, content):
 
 
 def get_new_id(csvfile):
-    # TODO Fix Bug with empty question csv file. Max don't work on None.
     with open(csvfile, 'r') as file:
         return len(file.readlines())
-        # return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
 
 
 def delete_question(id):
@@ -171,14 +164,3 @@ def delete_answer(id):
         if answer_dictionary['id'] == id:
             del answer_list[index]
     write_over(A_FILE_PATH, A_HEADER, answer_list)
-
-
-if __name__ == '__main__':
-    """
-    id,submission_time,view_number,vote_number,title,message,image
-    1,1493368154,29,7,"How to make lists in Python? I am totally new to this, any hints?",None
-    2,1493068124,15,9,"Wordpress loading multiple jQuery Versions.", "I developed a plugin that uses the jquery booklet plugin (http://builtbywill.com/booklet/#/) this plugin binds a function to $ so I cann call $('.myBook').booklet(); I could easy managing the loading order with wp_enqueue_script so first I load jquery then I load booklet so everything is fine. BUT in my theme i also using jquery via webpack so the loading order is now following: jquery booklet app.js (bundled file with webpack including jquery)","images/image1.png"
-    3,1493015432,1364,57,"Drawing canvas with an image picked with Cordova Camera Plugin", "I'm getting an image from device and drawing a canvas with filters using Pixi JS. It works all well using computer to get an image. But when I'm on IOS it throws errors such as cross origin issue or that I'm trying to use an unknown format. This is the code I'm using to draw the image (that works on web/desktop but not cordova built ios app)",None
-    
-    """
-    pass
