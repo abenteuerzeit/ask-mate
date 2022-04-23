@@ -51,6 +51,13 @@ def delete_question(id):
     return redirect("/")
 
 
+@app.route('/answer/<id>/delete', methods=['POST'])
+def delete_answer(id):
+    question_id = request.form['question_id']
+    data_handler.delete_answer(id)
+    return redirect('/question/' + question_id)
+
+
 def delete(item):
     if item['image'] != '':
         try:
@@ -110,8 +117,7 @@ def add_answer(id):
     elif request.method == 'POST':
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
-        new_answer_id = data_handler.save_answer_data(answer_data)
-        print(new_answer_id)
+        data_handler.save_answer_data(answer_data)
         return redirect('/question/' + id)
 
 
