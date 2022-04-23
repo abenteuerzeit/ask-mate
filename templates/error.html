@@ -1,14 +1,17 @@
 {% extends "layout.html" %}
 {% block title %}Oops! {{ error.id }}{% endblock %}
 {% block body %}
-        <h1>Oops! </h1>
-        <h2>{{ error.title }}</h2>
-        <p>
-            {{ error.message }}
-        </p>
-        {% if is_question %}
+    <h1>Oops! </h1>
+    <h2>{{ error.title }}</h2>
+    <p>
+        {{ error.message }}
+    </p>
+    {% if is_edit %}
         <a href={{ "/question/" + error.id + "/edit" }}>Go Back</a>
-        {% else %}
-        <a href={{ "/question/" + error.id + "/new-answer"}}>Go Back</a>
-        {% endif %}
+    {% endif %}
+    {% if is_answer %}
+        <a href={{ "/question/" + error.id + "/new-answer" }}>Go Back</a>
+    {% else %}
+        <a href={{ "/" }}>Go Back</a>
+    {% endif %}
 {% endblock %}
