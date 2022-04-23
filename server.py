@@ -80,16 +80,15 @@ def edit_question(id):
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
         file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return question['image']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        src = url_for('uploaded_file', filename=filename)
-        if src == question['image']:
-            updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                            'image': question['image']}
+        if file.filename != "":
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            src = url_for('uploaded_file', filename=filename)
+            if src == question['image']:
+                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                                'image': question['image']}
+                data_handler.edit_question(updated_dict)
         else:
             # Delete old image
             if question['image'] != "":
@@ -97,8 +96,8 @@ def edit_question(id):
                 filename = url_path[len('/uploads/'):]
                 os.remove(UPLOAD_FOLDER + "/" + filename)
             updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                            'image': src}
-        data_handler.edit_question(updated_dict)
+                            'image': None}
+            data_handler.edit_question(updated_dict)
         return redirect('/question/' + id)
 
 
