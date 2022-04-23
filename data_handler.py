@@ -23,7 +23,7 @@ def get_questions():
 
 
 def convert_to_datetime(dictionary_data):
-    if type(dictionary_data) is list:  # do we need it?
+    if type(dictionary_data) is list:
         for dictionary in dictionary_data:
             dictionary['submission_time'] = datetime.fromtimestamp(int(dictionary['submission_time']))
         return dictionary_data
@@ -60,6 +60,7 @@ def get_answer_for_question(question_id):
 
 
 def increase_question_view_count(select_qdict):
+    # pass question id instead of the whole dictionary
     if select_qdict is not None:
         question_list = get_questions()
         for question_dictionary in question_list:
