@@ -23,7 +23,7 @@ def get_questions():
 
 
 def convert_to_datetime(dictionary_data):
-    if type(dictionary_data) is list:  # do we need it?
+    if type(dictionary_data) is list:
         for dictionary in dictionary_data:
             dictionary['submission_time'] = datetime.fromtimestamp(int(dictionary['submission_time']))
         return dictionary_data
@@ -60,11 +60,7 @@ def get_answer_for_question(question_id):
 
 
 def increase_question_view_count(select_qdict):
-    # I don't know why it tries to get /question/None... This should not be here.
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "POST /question/4/edit HTTP/1.1" 302 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/4 HTTP/1.1" 200 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /static/css/main.css HTTP/1.1" 304 -
-    # 127.0.0.1 - - [21/Apr/2022 22:12:56] "GET /question/None HTTP/1.1" 200 -
+    # pass question id instead of the whole dictionary
     if select_qdict is not None:
         question_list = get_questions()
         for question_dictionary in question_list:
@@ -145,10 +141,8 @@ def write_over(file, header, content):
 
 
 def get_new_id(csvfile):
-    # TODO Fix Bug with empty question csv file. Max don't work on None.
     with open(csvfile, 'r') as file:
         return len(file.readlines())
-        # return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
 
 
 def delete_question(id):
