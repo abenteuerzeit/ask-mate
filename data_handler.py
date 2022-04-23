@@ -145,17 +145,11 @@ def get_new_id(csvfile):
 
 
 def delete_question(id):
-    lines = []
-    with open(Q_FILE_PATH, 'r') as readfile:
-        reader = csv.reader(readfile)
-        for row in reader:
-            lines.append(row)
-            for field in row:
-                if field == id:
-                    lines.remove(row)
-    with open(Q_FILE_PATH, 'w') as writefile:
-        writer = csv.writer(writefile)
-        writer.writerows(lines)
+    question_list = get_questions()
+    for index, question_dictionary in enumerate(question_list):
+        if question_dictionary['id'] == id:
+            del question_list[index]
+    write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def delete_answer(id):
