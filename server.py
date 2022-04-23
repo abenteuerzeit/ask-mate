@@ -97,11 +97,11 @@ def edit_question(id):
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # src = url_for('uploaded_file', filename=filename)
-            # if src == question['image']:
-            updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
+                src = url_for('uploaded_file', filename=filename)
+                if src == question['image']:
+                updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
                             'image': question['image']}
-            data_handler.edit_question(updated_dict)
+                data_handler.edit_question(updated_dict)
         else:
             # Delete old image --- refactor --- change to function
             if question['image'] != "":
