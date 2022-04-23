@@ -1,6 +1,6 @@
+import csv
 import os
 from csv import DictWriter, DictReader
-import csv
 from datetime import datetime
 
 Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sample_data/question.csv'
@@ -151,7 +151,6 @@ def get_new_id(csvfile):
         # return int(max([q[0] for q in file.readlines() if q[0] != "i"])) + 1
 
 
-
 def delete_question(id):
     lines = []
     with open(Q_FILE_PATH, 'r') as readfile:
@@ -167,7 +166,6 @@ def delete_question(id):
 
 
 def save_image(url):
-
     return url
 
 
