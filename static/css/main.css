@@ -41,3 +41,31 @@ body, html {
     padding: 20px;
     text-align: center;
 }
+th {
+    border-radius: 5px;
+    border-style: dashed;
+    font-weight: bold;
+    width: 100%;
+}
+
+a:link {
+    color: white;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:visited {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:hover {
+    color: lightgreen;
+    background-color: transparent;
+    text-underline-offset: 2px;
+}
+a:active {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+}

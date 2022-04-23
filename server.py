@@ -88,6 +88,7 @@ def display_question(id):
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
+    #TODO add image when editing
     question = data_handler.get_question(id)
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
@@ -98,9 +99,8 @@ def edit_question(id):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 src = url_for('uploaded_file', filename=filename)
-                if src == question['image']:
                 updated_dict = {'id': id, 'title': request.form['title'], 'message': request.form['message'],
-                            'image': question['image']}
+                                'image': src}
                 data_handler.edit_question(updated_dict)
         else:
             # Delete old image --- refactor --- change to function
