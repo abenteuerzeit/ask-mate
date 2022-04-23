@@ -108,7 +108,8 @@ def edit_question(id):
     elif request.method == 'POST':
         file = request.files['file']
         if file.filename != "":
-            if file.filename not in ALLOWED_EXTENSIONS:
+            extension = "." + file.filename[-3:]
+            if extension in ALLOWED_EXTENSIONS:
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_question=True)
             if file and allowed_file(file.filename):
@@ -134,10 +135,12 @@ def add_answer(id):
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':  # refactor for hackers
-        file = request.files['file']
-        if file.filename not in ALLOWED_EXTENSIONS:
-            error = display_error_message(id)
-            return render_template('error.html', error=error, is_question=False)
+        # file = request.files['file']
+        # extension = file.filename[-3:]
+        # if file.filename != "":
+        #     if "." + extension in ALLOWED_EXTENSIONS:
+        #         error = display_error_message(id)
+        #         return render_template('error.html', error=error, is_question=False)
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
