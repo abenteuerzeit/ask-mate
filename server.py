@@ -44,8 +44,9 @@ def delete_question(id):
     delete(question_data)
     # Delete answer images
     answers = data_handler.get_answer_for_question(id)
-    for answer in answers:
-        delete(answer)
+    if answers:
+        for answer in answers:
+            delete(answer)
     data_handler.delete_question(id)
     return redirect("/")
 
