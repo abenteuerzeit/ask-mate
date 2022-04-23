@@ -49,7 +49,7 @@ def delete_question(id):
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
-            delete_answer(answer['id'])
+            data_handler.delete_answer(answer.get('id'))
     data_handler.delete_question(id)
     return redirect("/")
 

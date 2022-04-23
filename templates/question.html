@@ -35,7 +35,7 @@
                 <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
                      style="float:left;"><br>
             {% endif %}
-            <form method="post" action="/answer/{{ answer.id }}/image_delete_from_server">
+            <form method="post" action="/answer/{{ answer.id }}/delete">
                 <label for="question_id"></label>
                 <input name="question_id" id="question_id" value="{{ question.id }}" readonly
                        style="display: None;"><br>
@@ -46,7 +46,7 @@
     <a href="/question/{{ question.id }}/new-answer">
         <button style="alignment: center">Add a new answer</button>
     </a>
-    <a href="/question/{{ question.id }}/image_delete_from_server">
+    <a href="/question/{{ question.id }}/delete">
         <button style="alignment: center">Delete question</button>
     </a>
 {% endblock %}
