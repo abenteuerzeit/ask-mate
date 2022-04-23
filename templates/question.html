@@ -11,7 +11,10 @@
         <h2>{{ question.title }}</h2>
         <p><small>Added: {{ question.submission_time }}</small></p>
         {% if question.image %}
-        <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image" style="float:left;"><br>
+        <a href="{{ question.image }}" target="_blank">
+            <img src="{{ question.image if question.image }}"
+                 height="100" alt="Uploaded image" style="float:left; padding: 10px; margin: 10px">
+        </a><br>
         {% endif %}
         <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
         <form method="get" action="{{ question.id }}/edit">
