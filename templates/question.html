@@ -4,7 +4,7 @@
 
     <h1>Question</h1>
     <div class="display_question">
-        <a href="/list">
+        <a href="/">
             <button>Return to all questions</button>
         </a>
         <hr>
@@ -28,28 +28,46 @@
     <h3>Answers</h3>
 
     <table>
-        <tbody style="width: 100%;">
+    <thead>
+    <tr>
+        <th>
+            Votes
+        </th>
+        <th>
+            Data Added
+        </th>
+        <th>
+            Answer
+        </th>
+        <th>
+            Image
+        </th>
+        <th>
+            Action
+        </th>
+    </tr>
+    </thead>
+        <tbody>
         {% for answer in answers %}
             <tr style="flex-direction: row">
-                <td style="display: inline-block; width: 150px; flex-direction: row">
+                <td style="display: inline-block; width: 10px; flex-direction: row">
                     <form method="post" action="/answer/{{ answer.id }}/vote-up">
                         <button class="arrow" type="submit" style="width: 15px"> &#8679
                         </button>
                     </form>
-                <td style="display: inline-block; width: 150px; flex-direction: row">
-                <br><small>Votes: {{ answer.vote_number }} </small><br><br></td>
-                <td style="display: inline-block; width: 150px; flex-direction: row">
-
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                <br><small>{{ answer.vote_number }} </small><br><br></td>
+                <td style="display: inline-block; width: 10px; flex-direction: row">
                     <form method="post" action="/answer/{{ answer.id }}/vote-down">
                         <button class="arrow" type="submit" style="width: 15px">&#8681
                         </button>
                     </form>
                 </td>
-                <td style="width: 10%;">
-                    <small>Added on {{ answer.submission_time }} </small><br>
+                <td style="width: 50px;">
+                    <small>{{ answer.submission_time }}</small><br>
                 </td>
                 </td>
-                <td style="width: 40%;">
+                <td style="width: 150px;">
                     <p>{{ answer.message }}</p>
                     <br>
                 </td>
