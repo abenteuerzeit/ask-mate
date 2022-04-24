@@ -3,11 +3,12 @@
 {% block body %}
 
     <h1>Question</h1>
-    <div class="display_question" style="border-radius: 25px;">
-        <a href="/">
+    <a href="/">
             <button>Return to all questions</button>
         </a>
-        <h2>{{ question.title }}</h2>
+    <div class="display_question" style="border-radius: 25px; height: auto;">
+
+        <h2 style="margin: 20px; padding: 20px;">{{ question.title }}</h2>
         <p><small>Added: {{ question.submission_time }}</small></p>
         {% if question.image %}
             <a href="{{ question.image }}" target="_blank">
@@ -15,15 +16,17 @@
                      height="100" alt="Uploaded image" style="float:left; padding: 10px; margin: 10px">
             </a><br>
         {% endif %}
-        {% if error %}
-            <iframe src="/error.html" title="Oops! "></iframe>
-        {% endif %}
         <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
+        <br>
+    <br>
+    <br>
+    <br>
+
+        <br></div>
+    <div>
         <form method="get" action="{{ question.id }}/edit">
             <button type="submit">Edit Question</button>
-        </form>
-        <hr>
-    </div>
+        </form><br></div>
     <h3>Answers</h3>
 
     <table style="border: 0; background-color: snow; color: black;">
