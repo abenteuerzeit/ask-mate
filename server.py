@@ -32,7 +32,7 @@ def add_question():
         file = request.files['file']
         if file.filename != "" and not allowed_file(file.filename):
             error = display_error_message(id)
-            return render_template('error.html', error=error, is_question=False)
+            return render_template('error.html', error=error)
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
                 'image': upload_image()}
@@ -114,7 +114,7 @@ def edit_question(id):
         if file.filename != "":
             if not allowed_file(file.filename):
                 error = display_error_message(id)
-                return render_template('error.html', error=error, is_question=True)
+                return render_template('error.html', error=error, is_edit=True)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -141,7 +141,7 @@ def add_answer(id):
         file = request.files['file']
         if file.filename != "" and not allowed_file(file.filename):
             error = display_error_message(id)
-            return render_template('error.html', error=error, is_question=False)
+            return render_template('error.html', error=error, is_answer=True)
         answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
