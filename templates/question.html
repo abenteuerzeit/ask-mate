@@ -5,15 +5,16 @@
     <h1>Question</h1>
     <div class="display_question" style="border-radius: 25px;">
         <a href="/">
+
             <button>Return to all questions</button>
         </a>
         <h2>{{ question.title }}</h2>
         <p><small>Added: {{ question.submission_time }}</small></p>
         {% if question.image %}
-            <a href="{{ question.image }}" target="_blank">
-                <img src="{{ question.image if question.image }}"
-                     height="100" alt="Uploaded image" style="float:left; padding: 10px; margin: 10px">
-            </a><br>
+        <a href="{{ question.image }}" target="_blank">
+            <img src="{{ question.image if question.image }}"
+                 height="100" alt="Uploaded image" style="float:left; padding: 10px; margin: 10px">
+        </a><br>
         {% endif %}
         {% if error %}
             <iframe src="/error.html" title="Oops! "></iframe>
@@ -97,51 +98,15 @@
         </tbody>
     </table>
 
-    {#    <div style="display: inline-flex; width: 100%;">#}
-    {#        {% for answer in answers %}#}
-    {#            <div style="margin: 10px; display: inline-block">#}
-    {#                <form method="post" action="/answer/{{ answer.id }}/vote-up">#}
-    {#                    <button class="arrow" type="submit"#}
-    {#                            style="width: 15px; display: inline-block; position: relative; right: 50px; flex-direction: row">#}
-    {#                        &#8679#}
-    {#                    </button>#}
-    {#                </form>#}
-    {#            </div>#}
-    {#                            <div style="margin: 10px;">#}
-    {##}
-    {#                <form method="post" action="/answer/{{ answer.id }}/vote-down">#}
-    {#                    <button class="arrow" type="submit"#}
-    {#                            style="width: 15px; display: inline-block; position: relative; right: 8px; flex-direction: row">#}
-    {#                        &#8681#}
-    {#                    </button>#}
-    {#                </form></div>#}
-    {#                <div style="margin: 10px;">#}
-    {#                            Votes: {{ answer.vote_number }}#}
-    {#                </div>#}
-    {#            </div>#}
-    {#            <div style="margin: 10px">#}
-    {#                <small>Added on {{ answer.submission_time }} </small><br>#}
-    {#            </div>#}
-    {#            <div style="margin: 10px">#}
-    {#                <p>{{ answer.message }}</p>#}
-    {#            </div>#}
-    {#            {% if answer.image %}#}
-    {#                <div style="margin: 10px">#}
-    {#                    <a href="{{ answer.image }}" target="_blank">#}
-    {#                        <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"#}
-    {#                             style="float:left;"></a><br>#}
-    {#                </div>#}
-    {#            {% endif %}#}
-    {#            <div style="margin: 10px">#}
-    {#                <form method="post" action="/answer/{{ answer.id }}/delete">#}
-    {#                    <label for="question_id"></label>#}
-    {#                    <input name="question_id" id="question_id" value="{{ question.id }}" readonly#}
-    {#                           style="display: None;"><br>#}
-    {#                    <input type="submit" value="Delete" style="width: 60px;">#}
-    {#                </form>#}
-    {#            </div>#}
-    {#        {% endfor %}#}
-    {#    </div>#}
+
+            <form method="post" action="/answer/{{ answer.id }}/delete">
+                <label for="question_id"></label>
+                <input name="question_id" id="question_id" value="{{ question.id }}" readonly
+                       style="display: None;"><br>
+                <input type="submit" value="Delete">
+            </form>
+        {% endfor %}
+    </ol>
 
     <a href="/question/{{ question.id }}/new-answer">
         <button style="alignment: center">Add a new answer</button>
