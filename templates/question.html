@@ -31,13 +31,10 @@
     <thead>
     <tr>
         <th>
-            Votes
+            Answer
         </th>
         <th>
             Data Added
-        </th>
-        <th>
-            Answer
         </th>
         <th>
             Image
@@ -45,31 +42,23 @@
         <th>
             Action
         </th>
+        <th>
+             Votes
+        </th>
+        <th style="display: None">
+
+        </th>
     </tr>
     </thead>
-        <tbody>
+        <tbody style="width: 100%;">
         {% for answer in answers %}
             <tr style="flex-direction: row">
-                <td style="display: inline-block; width: 10px; flex-direction: row">
-                    <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                        <button class="arrow" type="submit" style="width: 15px"> &#8679
-                        </button>
-                    </form>
-                <td style="display: inline-block; width: 10px; flex-direction: row">
-                <br><small>{{ answer.vote_number }} </small><br><br></td>
-                <td style="display: inline-block; width: 10px; flex-direction: row">
-                    <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                        <button class="arrow" type="submit" style="width: 15px">&#8681
-                        </button>
-                    </form>
-                </td>
-                <td style="width: 50px;">
-                    <small>{{ answer.submission_time }}</small><br>
-                </td>
-                </td>
                 <td style="width: 150px;">
                     <p>{{ answer.message }}</p>
                     <br>
+                </td>
+                <td style="width: 50px;">
+                    <small>{{ answer.submission_time }}</small><br>
                 </td>
                 <td style="width: 15%;">
                     {% if answer.image %}
@@ -84,6 +73,21 @@
                         <input name="question_id" id="question_id" value="{{ question.id }}" readonly
                                style="display: None;"><br>
                         <input type="submit" value="Delete" style="width: 60px;">
+                    </form>
+                </td>
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                    <form method="post" action="/answer/{{ answer.id }}/vote-up">
+                        <button class="arrow" type="submit" style="width: 15px"> &#8679
+                        </button>
+                    </form>
+                </td>
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                <br><small>{{ answer.vote_number }} </small><br><br>
+            </td>
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                    <form method="post" action="/answer/{{ answer.id }}/vote-down">
+                        <button class="arrow" type="submit" style="width: 15px">&#8681
+                        </button>
                     </form>
                 </td>
             </tr>
