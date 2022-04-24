@@ -64,9 +64,9 @@ a:link {
 }
 
 a:visited {
-    color: darkred;
+    color: #540e93;
     background-color: transparent;
-    text-decoration: none;
+    text-decoration: underline overline;
 }
 
 a:hover {
@@ -90,6 +90,15 @@ tbody {
     background-color: snow;
     color: black;
     text-align: center;
+}
+
+.display_answer {
+    background-color: white;
+    color: black;
+    text-align: center;
+    margin-left: 200px;
+    margin-right: 200px;
+    padding: 5px;
 }
 
 img {
