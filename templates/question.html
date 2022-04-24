@@ -26,6 +26,7 @@
         <hr>
     </div>
     <h3>Answers</h3>
+
     <ol style="text-align: left;">
         {% for answer in answers %}
             <li> Added on {{ answer.submission_time }} <br>
@@ -43,6 +44,7 @@
                 <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
                      style="float:left;"><br>
             {% endif %}
+
             <form method="post" action="/answer/{{ answer.id }}/delete">
                 <label for="question_id"></label>
                 <input name="question_id" id="question_id" value="{{ question.id }}" readonly
@@ -51,6 +53,7 @@
             </form>
         {% endfor %}
     </ol>
+
     <a href="/question/{{ question.id }}/new-answer">
         <button style="alignment: center">Add a new answer</button>
     </a>
