@@ -3,11 +3,11 @@
 {% block body %}
 
     <h1>Question</h1>
-    <div class="display_question">
-        <a href="/list">
+    <div class="display_question" style="border-radius: 25px;">
+        <a href="/">
+
             <button>Return to all questions</button>
         </a>
-        <hr>
         <h2>{{ question.title }}</h2>
         <p><small>Added: {{ question.submission_time }}</small></p>
         {% if question.image %}
@@ -27,23 +27,77 @@
     </div>
     <h3>Answers</h3>
 
-    <ol style="text-align: left;">
+    <table style="border: 0; background-color: snow; color: black;">
+        <thead style="border: 0;">
+        <tr>
+            <th>
+                Answer
+            </th>
+            <th>
+                Data Added
+            </th>
+            <th>
+                Image
+            </th>
+            <th>
+                Action
+            </th>
+            <th>
+                Votes
+            </th>
+            <th>
+                Vote
+            </th>
+        </tr>
+        </thead>
+        <tbody style="width: 100%; color: darkgreen; background-color: transparent;">
         {% for answer in answers %}
-            <li> Added on {{ answer.submission_time }} <br>
-                <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                    <button type="submit"><span>&#8679;</span></button>
-                </form>
-                <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                    <button type="submit"><span>&#8681;</span></button>
-                </form>
-                Votes: {{ answer.vote_number }}.<br>
-                <p>{{ answer.message }}</p>
-                <br>
-            </li>
-            {% if answer.image %}
-                <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
-                     style="float:left;"><br>
-            {% endif %}
+            <tr style="flex-direction: row">
+                <td style="width: 150px;">
+                    <p>{{ answer.message }}</p>
+                    <br>
+                </td>
+                <td style="width: 50px;">
+                    <small>{{ answer.submission_time }}</small><br>
+                </td>
+                <td style="width: 15%;">
+                    {% if answer.image %}
+                        <a href="{{ answer.image }}" target="_blank">
+                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
+                                 style="float:left;"></a><br>
+                    {% endif %}
+                </td>
+                <td style="width: 10%;">
+                    <form method="post" action="/answer/{{ answer.id }}/delete">
+                        <label for="question_id"></label>
+                        <input name="question_id" id="question_id" value="{{ question.id }}" readonly
+                               style="display: None;"><br>
+                        <input type="submit" value="Delete" style="width: 60px;">
+                    </form>
+                </td>
+
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                    <form method="post" action="/answer/{{ answer.id }}/vote-up">
+                        <button class="arrow" type="submit" style="width: 15px"> &#8679
+                        </button>
+                    </form>
+                </td>
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                    <br><small>{{ answer.vote_number }} </small><br><br>
+                </td>
+
+                <td style="display: inline-block; width: 10px; flex-direction: row">
+                    <form method="post" action="/answer/{{ answer.id }}/vote-down">
+                        <button class="arrow" type="submit" style="width: 15px">&#8681
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 
             <form method="post" action="/answer/{{ answer.id }}/delete">
                 <label for="question_id"></label>
