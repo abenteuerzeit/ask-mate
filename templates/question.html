@@ -3,32 +3,32 @@
 {% block body %}
 
     <h1>Question</h1>
-    <div class="display_question" style="border-radius: 25px;">
-        <a href="/">
+    <a href="/">
+        <button>Return to all questions</button>
+    </a>
 
-            <button>Return to all questions</button>
-        </a>
-        <h2>{{ question.title }}</h2>
-        <p><small>Added: {{ question.submission_time }}</small></p>
-        {% if question.image %}
+    <h2>{{ question.title }}</h2>
+    <p><small>Added: {{ question.submission_time }}</small></p>
+    {% if question.image %}
         <a href="{{ question.image }}" target="_blank">
             <img src="{{ question.image if question.image }}"
-                 height="100" alt="Uploaded image" style="float:left; padding: 10px; margin: 10px">
+                 height="100" alt="Uploaded image">
         </a><br>
-        {% endif %}
-        {% if error %}
-            <iframe src="/error.html" title="Oops! "></iframe>
-        {% endif %}
-        <p style="margin-top: 10px; padding: 5px; text-align: left;">{{ question.message }}</p>
-        <form method="get" action="{{ question.id }}/edit">
-            <button type="submit">Edit Question</button>
-        </form>
-        <hr>
-    </div>
+    {% endif %}
+    <p>{{ question.message }}</p>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <br>
+    <form method="get" action="{{ question.id }}/edit">
+        <button type="submit">Edit Question</button>
+    </form><br>
     <h3>Answers</h3>
 
-    <table style="border: 0; background-color: snow; color: black;">
-        <thead style="border: 0;">
+    <table>
+        <thead>
         <tr>
             <th>
                 Answer
@@ -50,45 +50,45 @@
             </th>
         </tr>
         </thead>
-        <tbody style="width: 100%; color: darkgreen; background-color: transparent;">
+        <tbody>
         {% for answer in answers %}
-            <tr style="flex-direction: row">
-                <td style="width: 150px;">
+            <tr>
+                <td>
                     <p>{{ answer.message }}</p>
                     <br>
                 </td>
-                <td style="width: 50px;">
+                <td>
                     <small>{{ answer.submission_time }}</small><br>
                 </td>
-                <td style="width: 15%;">
+                <td>
                     {% if answer.image %}
                         <a href="{{ answer.image }}" target="_blank">
                             <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
-                                 style="float:left;"></a><br>
+                            ></a><br>
                     {% endif %}
                 </td>
-                <td style="width: 10%;">
+                <td>
                     <form method="post" action="/answer/{{ answer.id }}/delete">
                         <label for="question_id"></label>
                         <input name="question_id" id="question_id" value="{{ question.id }}" readonly
-                               style="display: None;"><br>
-                        <input type="submit" value="Delete" style="width: 60px;">
+                        ><br>
+                        <input type="submit" value="Delete">
                     </form>
                 </td>
 
-                <td style="display: inline-block; width: 10px; flex-direction: row">
+                <td>
                     <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                        <button class="arrow" type="submit" style="width: 15px"> &#8679
+                        <button type="submit"> &#8679
                         </button>
                     </form>
                 </td>
-                <td style="display: inline-block; width: 10px; flex-direction: row">
+                <td>
                     <br><small>{{ answer.vote_number }} </small><br><br>
                 </td>
 
-                <td style="display: inline-block; width: 10px; flex-direction: row">
+                <td>
                     <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                        <button class="arrow" type="submit" style="width: 15px">&#8681
+                        <button type="submit">&#8681
                         </button>
                     </form>
                 </td>
@@ -97,21 +97,10 @@
         {% endfor %}
         </tbody>
     </table>
-
-
-            <form method="post" action="/answer/{{ answer.id }}/delete">
-                <label for="question_id"></label>
-                <input name="question_id" id="question_id" value="{{ question.id }}" readonly
-                       style="display: None;"><br>
-                <input type="submit" value="Delete">
-            </form>
-        {% endfor %}
-    </ol>
-
     <a href="/question/{{ question.id }}/new-answer">
-        <button style="alignment: center">Add a new answer</button>
+        <button>Add a new answer</button>
     </a>
     <a href="/question/{{ question.id }}/delete">
-        <button style="alignment: center">Delete question</button>
+        <button>Delete question</button>
     </a>
 {% endblock %}

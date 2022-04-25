@@ -110,7 +110,7 @@ def edit_question(id):
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        file = request.files['file']
+        file = request.files.get('file')
         if file.filename != "":
             if not allowed_file(file.filename):
                 error = display_error_message(id)
