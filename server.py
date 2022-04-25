@@ -36,7 +36,6 @@ def add_question():
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
                 'image': upload_image()}
-        # TODO for other endpoint form processing data
         new_question = data_handler.save_new_question_data(data)
         new_question_id = new_question['id']
         return redirect('/question/' + new_question_id)
@@ -122,13 +121,13 @@ def edit_question(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 src = url_for('uploaded_file', filename=filename)
                 data_handler.edit_question({'id': id,
-                                            'title': request.form['title'],
-                                            'message': request.form['message'],
+                                            'title': request.form.get('title'),
+                                            'message': request.form.get('message'),
                                             'image': src})
         else:
             data_handler.edit_question({'id': id,
-                                        'title': request.form['title'],
-                                        'message': request.form['message'],
+                                        'title': request.form.get('title'),
+                                        'message': request.form.get('message'),
                                         'image': question['image']})
         return redirect('/question/' + id)
 
@@ -139,12 +138,12 @@ def add_answer(id):
         answers = data_handler.get_answer_for_question(id)
         answers = data_handler.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
-    elif request.method == 'POST':  # refactor for hackers
+    elif request.method == 'POST':
         file = request.files['file']
         if file.filename != "" and not allowed_file(file.filename):
             error = display_error_message(id)
             return render_template('error.html', error=error, is_answer=True)
-        answer_data = {'message': request.form['message'], 'question_id': request.form['question_id'],
+        answer_data = {'message': request.form.get('message'), 'question_id': id,
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
         return redirect('/question/' + id)

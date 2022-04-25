@@ -1,14 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}Add Answer{% endblock %}
 {% block body %}
-    <a href="/question/{{ question.id }}">
-        <button value="Go back">Go back</button>
-    </a><br>
+    <a href="/question/{{ question.id }}">Go back</a><br>
     <h1>Add a new answer</h1>
-    <form method="post" action="{{ '/question/'+ question.id }}/new-answer" enctype="multipart/form-data">
-        <!--"{{ '/question/' + question.id + '/new-answer' }}" moze tez tak byc-->
-        <label for="question_id"></label>
-        <input name="question_id" id="question_id" value="{{ question.id }}" readonly><br>
+    <form method="post" action="{{ '/question/' + question.id }}/new-answer" enctype="multipart/form-data">
+        <!--"{{ '/question/' + question.id + '/new-answer' }}"-->
         <label for="message">Message</label><br>
         <textarea name="message" id="message" required></textarea><br>
         <label for="file">Upload image</label><br>
