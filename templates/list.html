@@ -5,9 +5,9 @@
 <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100">
 <div class="item">
     <h1>All questions</h1>
+    {% if questions %}
     <a href="/add-question">Add a question</a>
     <hr>
-    {% if questions %}
     <small> Questions ordered by {{ order_by }}: {{ order_direction }}
         <label for="order_by"> Sort question list by </label>
         <select style="display: inline;" name="order_by" id="order_by" form="sort">
