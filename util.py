@@ -1,4 +1,4 @@
-def make_new_file_without_tag_attributes(file, attributes_list):
+def remove_html_tag_attributes(file, attributes_list):
     # Remove selected attributes from an HTML tag
     # A new file is generated
     updated_list = [' ' + attribute.lower() + '="' for attribute in attributes_list]
@@ -29,4 +29,4 @@ def make_new_file_without_tag_attributes(file, attributes_list):
 
 if __name__ == "__main__":
     file = "./templates/edit-question.html"
-    make_new_file_without_tag_attributes(file, ["class", "style"])
+    remove_html_tag_attributes(file, ["class", "style"])
