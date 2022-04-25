@@ -4,29 +4,27 @@
 
     <h1>Question</h1>
     <a href="/">
-            <button>Return to all questions</button>
-        </a>
-    <div>
+        <button>Return to all questions</button>
+    </a>
 
-        <h2>{{ question.title }}</h2>
-        <p><small>Added: {{ question.submission_time }}</small></p>
-        {% if question.image %}
-            <a href="{{ question.image }}" target="_blank">
-                <img src="{{ question.image if question.image }}"
-                     height="100" alt="Uploaded image">
-            </a><br>
-        {% endif %}
-        <p>{{ question.message }}</p>
-        <br>
+    <h2>{{ question.title }}</h2>
+    <p><small>Added: {{ question.submission_time }}</small></p>
+    {% if question.image %}
+        <a href="{{ question.image }}" target="_blank">
+            <img src="{{ question.image if question.image }}"
+                 height="100" alt="Uploaded image">
+        </a><br>
+    {% endif %}
+    <p>{{ question.message }}</p>
+    <br>
     <br>
     <br>
     <br>
 
-        <br></div>
-    <div>
-        <form method="get" action="{{ question.id }}/edit">
-            <button type="submit">Edit Question</button>
-        </form><br></div>
+    <br>
+    <form method="get" action="{{ question.id }}/edit">
+        <button type="submit">Edit Question</button>
+    </form><br>
     <h3>Answers</h3>
 
     <table>
@@ -66,14 +64,14 @@
                     {% if answer.image %}
                         <a href="{{ answer.image }}" target="_blank">
                             <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
-                                ></a><br>
+                            ></a><br>
                     {% endif %}
                 </td>
                 <td>
                     <form method="post" action="/answer/{{ answer.id }}/delete">
                         <label for="question_id"></label>
                         <input name="question_id" id="question_id" value="{{ question.id }}" readonly
-                              ><br>
+                        ><br>
                         <input type="submit" value="Delete">
                     </form>
                 </td>
@@ -99,52 +97,6 @@
         {% endfor %}
         </tbody>
     </table>
-
-    {#    <div>#}
-    {#        {% for answer in answers %}#}
-    {#            <div>#}
-    {#                <form method="post" action="/answer/{{ answer.id }}/vote-up">#}
-    {#                    <button type="submit"#}
-    {#                           >#}
-    {#                        &#8679#}
-    {#                    </button>#}
-    {#                </form>#}
-    {#            </div>#}
-    {#                            <div>#}
-    {##}
-    {#                <form method="post" action="/answer/{{ answer.id }}/vote-down">#}
-    {#                    <button type="submit"#}
-    {#                           >#}
-    {#                        &#8681#}
-    {#                    </button>#}
-    {#                </form></div>#}
-    {#                <div>#}
-    {#                            Votes: {{ answer.vote_number }}#}
-    {#                </div>#}
-    {#            </div>#}
-    {#            <div>#}
-    {#                <small>Added on {{ answer.submission_time }} </small><br>#}
-    {#            </div>#}
-    {#            <div>#}
-    {#                <p>{{ answer.message }}</p>#}
-    {#            </div>#}
-    {#            {% if answer.image %}#}
-    {#                <div>#}
-    {#                    <a href="{{ answer.image }}" target="_blank">#}
-    {#                        <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"#}
-    {#                            ></a><br>#}
-    {#                </div>#}
-    {#            {% endif %}#}
-    {#            <div>#}
-    {#                <form method="post" action="/answer/{{ answer.id }}/delete">#}
-    {#                    <label for="question_id"></label>#}
-    {#                    <input name="question_id" id="question_id" value="{{ question.id }}" readonly#}
-    {#                          ><br>#}
-    {#                    <input type="submit" value="Delete">#}
-    {#                </form>#}
-    {#            </div>#}
-    {#        {% endfor %}#}
-    {#    </div>#}
 
     <a href="/question/{{ question.id }}/new-answer">
         <button>Add a new answer</button>
