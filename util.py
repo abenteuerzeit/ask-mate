@@ -5,9 +5,9 @@ def remove_html_tag_attributes(file, attributes_list):
     with open(file) as html_file:
         new_lines = []
         for line in html_file.readlines():
-            line = line.lower()
+            line = line
             for attribute in updated_list:
-                if attribute in line:
+                if attribute in line.lower():
                     start = line.find(attribute)
                     if line.find(';'):
                         stop = line.find(';') + 1
