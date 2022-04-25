@@ -7,7 +7,7 @@ def remove_html_tag_attributes(file, attributes_list):
         for line in html_file.readlines():
             line = line
             for attribute in updated_list:
-                if attribute in line.lower():
+                while attribute in line.lower():
                     start = line.find(attribute)
                     if line.find(';'):
                         stop = line.find(';') + 1
@@ -26,5 +26,5 @@ def remove_html_tag_attributes(file, attributes_list):
 
 
 if __name__ == "__main__":
-    file = "./templates/edit-question.html"
-    remove_html_tag_attributes(file, ["class", "style"])
+    file = "./templates/list.html"
+    remove_html_tag_attributes(file, ["style"])
