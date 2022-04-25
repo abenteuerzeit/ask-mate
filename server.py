@@ -149,34 +149,31 @@ def add_answer(id):
         return redirect('/question/' + id)
 
 
-@app.route('/question/<question_id>/vote-up', methods=['POST'])
+@app.route('/question/<question_id>/vote-up')
 def q_upvote(question_id):
     question_dict = data_handler.get_question(question_id)
     data_handler.increase_question_vote(question_dict)
     return redirect('/list')
 
 
-@app.route('/answer/<answer_id>/vote-up', methods=['POST'])
+@app.route('/answer/<answer_id>/vote-up')
 def a_upvote(answer_id):
-    answers = data_handler.get_answers()
-    # data_handler.get_answer_for_question(id)
-    for answer in answers:
+    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
         if str(answer_id) == answer['id']:
             data_handler.increase_answer_vote(answer)
             return redirect('/question/' + answer['question_id'])
 
 
-@app.route('/question/<question_id>/vote-down', methods=['POST'])
+@app.route('/question/<question_id>/vote-down')
 def q_downvote(question_id):
     question_dict = data_handler.get_question(question_id)
     data_handler.decrease_question_vote(question_dict)
     return redirect('/list')
 
 
-@app.route('/answer/<answer_id>/vote-down', methods=['POST'])
+@app.route('/answer/<answer_id>/vote-down')
 def a_downvote(answer_id):
-    answers = data_handler.get_answers()
-    for answer in answers:
+    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
         if str(answer_id) == answer['id']:
             data_handler.decrease_answer_vote(answer)
             q_id = answer['question_id']

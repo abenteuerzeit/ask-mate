@@ -2,9 +2,7 @@
 {% block title %}Edit Question{% endblock %}
 {% block body %}
     <h1>Edit question</h1>
-    <a href="/question/{{ question.id }}">
-        <button value="Go back">Go back</button>
-    </a><br>
+    <a href="/question/{{ question.id }}">Go back</a><br>
     <form method="post" action="/question/{{ question.id }}/edit" enctype="multipart/form-data">
         <label for="title">Question title:</label><br>
         <input type="text" name="title" id="title" value="{{ question.title if question.title }}"><br>

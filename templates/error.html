@@ -3,22 +3,14 @@
 {% block body %}
     <h1>Oops! </h1>
     <h2>{{ error.title }}</h2>
-    <p>
-        {{ error.message }}
-    </p>
+    <p>{{ error.message }}</p>
     {% if is_edit %}
-        <a href={{ "/question/" + error.id + "/edit" }}>
-            <button value="Go back">Go Back</button>
-        </a>
+        <a href={{ "/question/" + error.id + "/edit" }}>Go Back</a>
     {% endif %}
     {% if is_answer %}
-        <a href={{ "/question/" + error.id + "/new-answer" }}>
-            <button value="Go back">Go Back</button>
-        </a>
+        <a href={{ "/question/" + error.id + "/new-answer" }}>Go Back</a>
     {% else %}
-        <a href={{ "/add-question" }}>
-            <button value="Go back">Go Back</button>
-        </a>
+        <a href={{ "/add-question" }}>Go Back</a>
     {% endif %}
 {% endblock %}
 
