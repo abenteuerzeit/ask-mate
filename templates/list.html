@@ -4,66 +4,49 @@
     <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100">
     <h1>All questions</h1>
     <a href="/add-question">Add a question</a>
-    <table>
-        <thead>
-        <tr>
-            <th>ID
-                <a href="/list?order_by=id">&#8681</a>
-                <a href="/list?order_by=id&order_direction=asc">&#8679</a>
-            </th>
-            <th>Added
-                <a href="/list?order_by=submission_time">&#8681</a>
-                <a href="/list?order_by=submission_time&order_direction=asc">&#8679</a>
-            </th>
-            <th>Views
-                <a href="/list?order_by=view_number">&#8681</a>
-                <a href="/list?order_by=view_number&order_direction=asc">&#8679</a>
-            </th>
-            <th> Votes
-                <a href="/list?order_by=vote_number">&#8681</a>
-                <a href="/list?order_by=vote_number&order_direction=asc">&#8679</a>
-            </th>
-            <th> Title
-                <a href="/list?order_by=title">&#8681</a>
-                <a href="/list?order_by=title&order_direction=asc">&#8679</a>
-            </th>
-            <th>Question
-                <a href="/list?order_by=message">&#8681</a>
-                <a href="/list?order_by=message&order_direction=asc">&#8679</a>
-            </th>
-            <th>Image
-                <a href="/list?order_by=message">&#8681</a>
-                <a href="/list?order_by=message&order_direction=asc">&#8679</a>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for row in questions %}
-            <tr>
-                <td>
-                    {{ row.id }}
-                </td>
-                <td>{{ row.submission_time }}</td>
-                <td>{{ row.view_number }}</td>
-                <td>
-                    {{ row.vote_number }}<br>
-                    <a href="/question/{{ row.id }}/vote-up">&#8679</a>
-                    <a href="/question/{{ row.id }}/vote-down">&#8681</a>
-                </td>
-                <td>
-                    <a href="/question/{{ row.id }}"> {{ row.title }} </a>
-                </td>
-                <td> {{ row.message|truncate(100) }} <br>
-                </td>
-                <td>
-                    {% if row.image %}
-                        <img src="{{ row.image }}" alt="uploaded image" width="25"> </td>
-                    {% else %}
-                        None
-                    {% endif %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <hr>
     <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
+    <div class="questions">
+        <div class="question">
+            Sort question list by
+            <select name="order_by" id="order_by" form="sort">
+                <option value="">--Please choose an option--</option>
+                <option value="title">Title &#8681</option>
+                <option value="view_number">Views &#8681</option>
+            </select>
+        </div>
+        <div class="question">
+            <form action="/list" method="get" id="sort">
+                <input type="submit"></form>
+        </div>
+    </div>
+
+    {% if questions %}
+        {% for row in questions %}
+            <div class="questions">
+                <div class="question">
+                    <h3>
+                        <a href="/question/{{ row.id }}">{{ row.title }}</a><br>
+                    </h3>
+                    <a href="/list?order_by=title&order_direction=asc">&#8679</a>
+                </div>
+                <div class="question">
+                    <p>
+                        {{ row.message|truncate(100) }}<br>
+                        <small>Id: {{ row.id }}, Added: {{ row.submission_time }}</small><br>
+                        <small>Views: {{ row.view_number }}</small>
+                        <a href="/list?order_by=view_number&order_direction=asc">&#8679</a>.<br>
+                        <small>Votes: {{ row.vote_number }}</small>
+                        <a href="/question/{{ row.id }}/vote-up">&#8679</a>
+                        <a href="/question/{{ row.id }}/vote-down">&#8681</a>
+                    </p>
+                    {% if row.image %}
+                        <img src="{{ row.image }}" alt="uploaded image" width="25" style="float: left">
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No questions added yet. <a href="/add-question">Add a question now!</a></p>
+    {% endif %}
 {% endblock %}
