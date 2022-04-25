@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Question {{ question.id }}{% endblock %}
+{% block body %}
+    <div class="item">
+    <h1>Question</h1>
+        <a href="/">Go back</a>
+        <a href="{{ question.id }}/edit">Edit</a>
+        <a href="/question/{{ question.id }}/delete">Delete</a>
+    <div class="question">
+        <h2>{{ question.title }}</h2>
+        {% if question.image %}
+            <div class="item">
+                <a href="{{ question.image }}" target="_blank">
+                    <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
+                </a></div>
+        {% endif %}
+        <div class="question"><p>{{ question.message }}</p></div>
+        <div class="question"><p><small>Added: {{ question.submission_time }}</small></p></div>
+    </div>
+    <hr>
+    {% if answers %}
+        <h3>Answers </h3>
+        {% for answer in answers %}
+            <div class="answers">
+                <div class="answer"><p>{{ answer.message }}</p>
+                    <small>{{ answer.submission_time }}</small><br>
+                    <div class="answer">
+                        <small>{{ answer.vote_number }}<br>
+                            <a href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
+                            <a href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
+                        </small></div>
+                </div>
+                {% if answer.image %}
+                    <div class="answer">
+                        <a href="{{ answer.image }}" target="_blank">
+                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
+                        </a></div>
+                {% endif %}
+                <div class="answer">
+                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
+    </div>
+{% endblock %}
