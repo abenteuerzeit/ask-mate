@@ -16,7 +16,6 @@ def remove_html_tag_attributes(file, attributes_list):
                         stop = new_line.find('"') + 1
                     line = line.replace(new_line[:stop], "")
                     line = line.replace(attribute, "")
-                    new_lines.append(line)
             new_lines.append(line)
 
         file_name = file[:file.find('.html')]
