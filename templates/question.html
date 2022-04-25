@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
-
     <h1>Question</h1>
     <a href="/">
         <button>Return to all questions</button>
     </a>
-
     <h2>{{ question.title }}</h2>
     <p><small>Added: {{ question.submission_time }}</small></p>
     {% if question.image %}
@@ -16,17 +14,10 @@
         </a><br>
     {% endif %}
     <p>{{ question.message }}</p>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <br>
     <form method="get" action="{{ question.id }}/edit">
         <button type="submit">Edit Question</button>
     </form><br>
     <h3>Answers</h3>
-
     <table>
         <thead>
         <tr>
@@ -63,44 +54,34 @@
                 <td>
                     {% if answer.image %}
                         <a href="{{ answer.image }}" target="_blank">
-                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image"
-                            ></a><br>
+                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
+                        </a><br>
                     {% endif %}
                 </td>
                 <td>
-                    <form method="post" action="/answer/{{ answer.id }}/delete">
-                        <label for="question_id"></label>
-                        <input name="question_id" id="question_id" value="{{ question.id }}" readonly
-                        ><br>
-                        <input type="submit" value="Delete">
-                    </form>
+                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a>
                 </td>
-
                 <td>
                     <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                        <button type="submit"> &#8679
-                        </button>
+                        <button type="submit"> &#8679</button>
                     </form>
                 </td>
                 <td>
                     <br><small>{{ answer.vote_number }} </small><br><br>
                 </td>
-
                 <td>
                     <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                        <button type="submit">&#8681
-                        </button>
+                        <button type="submit">&#8681</button>
                     </form>
                 </td>
-
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <a href="/question/{{ question.id }}/new-answer">
-        <button>Add a new answer</button>
+        Add a new answer
     </a>
     <a href="/question/{{ question.id }}/delete">
-        <button>Delete question</button>
+        Delete question
     </a>
 {% endblock %}
