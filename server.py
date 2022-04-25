@@ -1,4 +1,5 @@
 import os
+import psycopg2
 
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
