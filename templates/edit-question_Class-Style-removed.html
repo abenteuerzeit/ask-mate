@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}edit question{% endblock %}
+{% block body %}
+    <h1>edit question</h1>
+    <a href="/question/{{ question.id }}">
+        <button value="go back">go back</button>
+        <button value="go back">go back</button>
+    </a><br>
+    <form method="post" action="/question/{{ question.id }}/edit" enctype="multipart/form-data">
+        <label for="title">question title:</label><br>
+        <input type="text" name="title" id="title" value="{{ question.title if question.title }}"><br>
+        <label for="message">message</label><br>
+        <textarea name="message" id="message">{{ question.message if question.message }}</textarea><br>
+        {% if question.image %}
+            <h4>edit image</h4>
+            <img src="{{ question.image if question.image }}" height="100px" alt="uploaded image"><br>
+            <a href="/question/{{ question.id }}/delete-image">delete image</a><br>
+        {% else %}
+            <h3>upload a jpg or png image</h3>
+            <label for="file">upload image</label><br>
+            <input type="file" name="file"><br>
+            <input type="file" name="file"><br>
+        {% endif %}
+        <button type="submit">submit</button>
+        <button type="submit">submit</button>
+        <br>
+    </form>
+{% endblock %}
