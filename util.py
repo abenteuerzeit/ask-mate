@@ -22,7 +22,6 @@ def remove_html_tag_attributes(file, attributes_list):
         file_name = file[:file.find('.html')]
         capitalize = [attribute.upper()[0] + attribute.lower()[1:] for attribute in attributes_list]
         renamed_file = file_name + f"_{'-'.join(capitalize)}" + "-removed" + ".html"
-        print(renamed_file)
         save_new_file = open(renamed_file, 'w')
         save_new_file.writelines(new_lines)
 
