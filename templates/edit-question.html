@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Edit Question{% endblock %}
 {% block body %}
+    <div class="item">
     <h1>Edit question</h1>
     <a href="/question/{{ question.id }}">Go back</a><br>
     <form method="post" action="/question/{{ question.id }}/edit" enctype="multipart/form-data">
@@ -19,4 +20,5 @@
         {% endif %}
         <input type="submit">
     </form>
+    </div>
 {% endblock %}
