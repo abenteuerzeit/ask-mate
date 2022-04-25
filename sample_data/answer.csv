@@ -1,0 +1,6 @@
+id,submission_time,vote_number,question_id,message,image
+1,1650709702,3568,1,Mix two other ones together.,
+3,1650798080,38,2,My name is Jane.,
+3,1650798080,666,2,I'm Adrian,/uploads/Bez_tytuu.jpg
+4,1650892285,0,,f,
+5,1650897128,0,1,"To replace or remove substring from string, you can use the replace() function of Python that takes two arguments. The first argument is the substring that you want to remove from the given string in Python. The second argument is the string that you have to replace with the substring. See the method given below to learn the use of the function",/uploads/0EA60B0A-A23B-4975-BAB3-4D162CBB913FL0001.jpg
