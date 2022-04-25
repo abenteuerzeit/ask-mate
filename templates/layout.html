@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        body {
+            background-color: darkolivegreen;
+        }
+        .container {
+            margin: 10px;
+            padding: 10px;
+            color: whitesmoke;
+        }
+        .item {
+            margin: 10px;
+            padding: 10px;
+        }
+        .questions {
+            padding: 10px;
+            margin: 35px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            border: lightgreen 1px solid;
+            border-radius: 20px;
+        }
+        .question {
+            padding: 10px;
+            margin: 10px;
+        }
+        .answers {
+            display: flex;
+            flex-direction: row;
+        }
+        .answer {
+            padding: 15px;
+            margin: 5px;
+        }
+        a {
+            color: indigo;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+{% block body %}{% endblock %}
+</div>
+</body>
+</html>
