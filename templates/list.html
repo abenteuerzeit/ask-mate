@@ -48,21 +48,9 @@
                 <td>{{ row.submission_time }}</td>
                 <td>{{ row.view_number }}</td>
                 <td>
-                    <form method="post" action="/question/{{ row.id }}/vote-up">
-                        <button class="arrow" type="submit" width: 15px; display: inline-block;
-                                position: relative; top: 8px;
-                        "> &#8679
-                        </button>
-                    </form>
-                    {{ row.vote_number }}
-                    <form method="post" action="/question/{{ row.id }}/vote-down">
-                        <button class="arrow" type="submit" width: 15px; display: inline-block;
-                                position: relative; bottom: 8px;
-                        ">&#8681
-                        </button>
-                    </form>
-
-
+                    {{ row.vote_number }}<br>
+                    <a href="/question/{{ row.id }}/vote-up">&#8679</a>
+                    <a href="/question/{{ row.id }}/vote-down">&#8681</a>
                 </td>
                 <td>
                     <a href="/question/{{ row.id }}"> {{ row.title }} </a>

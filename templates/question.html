@@ -36,9 +36,6 @@
             <th>
                 Votes
             </th>
-            <th>
-                Vote
-            </th>
         </tr>
         </thead>
         <tbody>
@@ -61,27 +58,16 @@
                 <td>
                     <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a>
                 </td>
+
                 <td>
-                    <form method="post" action="/answer/{{ answer.id }}/vote-up">
-                        <button type="submit"> &#8679</button>
-                    </form>
-                </td>
-                <td>
-                    <br><small>{{ answer.vote_number }} </small><br><br>
-                </td>
-                <td>
-                    <form method="post" action="/answer/{{ answer.id }}/vote-down">
-                        <button type="submit">&#8681</button>
-                    </form>
+                    <br><small>{{ answer.vote_number }} </small><br>
+                    <a href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
+                    <a href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    <a href="/question/{{ question.id }}/new-answer">
-        Add a new answer
-    </a>
-    <a href="/question/{{ question.id }}/delete">
-        Delete question
-    </a>
+    <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
+    <a href="/question/{{ question.id }}/delete">Delete question</a>
 {% endblock %}
