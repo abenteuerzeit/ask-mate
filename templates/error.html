@@ -7,12 +7,18 @@
         {{ error.message }}
     </p>
     {% if is_edit %}
-        <a href={{ "/question/" + error.id + "/edit" }}> <button value="Go back" style="margin: 20px;">Go Back</button></a>
+        <a href={{ "/question/" + error.id + "/edit" }}>
+            <button value="Go back">Go Back</button>
+        </a>
     {% endif %}
     {% if is_answer %}
-        <a href={{ "/question/" + error.id + "/new-answer" }}> <button value="Go back" style="margin: 20px;">Go Back</button></a>
+        <a href={{ "/question/" + error.id + "/new-answer" }}>
+            <button value="Go back">Go Back</button>
+        </a>
     {% else %}
-        <a href={{ "/add-question" }}> <button value="Go back" style="margin: 20px;">Go Back</button></a>
+        <a href={{ "/add-question" }}>
+            <button value="Go back">Go Back</button>
+        </a>
     {% endif %}
 {% endblock %}
 
