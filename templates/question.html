@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
+    <div class="item">
     <h1>Question</h1>
-    <a href="/">Return to all questions</a>
+        <a href="/">Go back</a>
+        <a href="{{ question.id }}/edit">Edit</a>
+        <a href="/question/{{ question.id }}/delete">Delete</a>
     <div class="question">
         <h2>{{ question.title }}</h2>
         {% if question.image %}
@@ -13,7 +16,6 @@
         {% endif %}
         <div class="question"><p>{{ question.message }}</p></div>
         <div class="question"><p><small>Added: {{ question.submission_time }}</small></p></div>
-        <a href="{{ question.id }}/edit">Edit</a><br>
     </div>
     <hr>
     {% if answers %}
@@ -40,5 +42,5 @@
         {% endfor %}
     {% endif %}
     <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
-    <a href="/question/{{ question.id }}/delete">Delete question</a>
+    </div>
 {% endblock %}

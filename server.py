@@ -65,8 +65,6 @@ def delete_answer(id):
     return redirect('/question/' + question_id)
 
 
-
-
 @app.route('/question/<id>/delete-image', methods=["GET"])
 def edit_delete_image(id):
     question = data_handler.get_question(id)
@@ -112,7 +110,7 @@ def edit_question(id):
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
         file = request.files.get('file')
-        if file.filename != "":
+        if file is not None:
             if not allowed_file(file.filename):
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_edit=True)
