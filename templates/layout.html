@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <title>{% block title %}{% endblock %}</title>
+    <style>
+        .questions {
+            display: flex;
+            flex-direction: row;
+        }
+        .question {
+            padding: 15px;
+            margin: 5px;
+        }
+        .answers {
+            display: flex;
+            flex-direction: row;
+        }
+        .answer {
+            padding: 15px;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
 {% block body %}{% endblock %}
