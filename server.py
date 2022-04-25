@@ -55,15 +55,17 @@ def delete_question(id):
     return redirect("/")
 
 
-@app.route('/answer/<id>/delete', methods=['POST'])
+@app.route('/answer/<id>/delete')
 def delete_answer(id):
-    question_id = request.form['question_id']
+    question_id = request.args.get('question_id')
     answer_list = data_handler.get_answers()
     for answer in answer_list:
         if answer['id'] == str(id):
             image_delete_from_server(answer)
     data_handler.delete_answer(id)
     return redirect('/question/' + question_id)
+
+
 
 
 @app.route('/question/<id>/delete-image', methods=["GET"])
