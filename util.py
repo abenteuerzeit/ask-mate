@@ -26,5 +26,7 @@ def remove_html_tag_attributes(file, attributes_list):
 
 
 if __name__ == "__main__":
-    file = "./templates/list.html"
-    remove_html_tag_attributes(file, ["style"])
+    files = ['add-answer.html', 'add-question.html', 'edit-question.html', 'error.html', 'layout.html', 'question.html']
+    for file in files:
+        filepath = f"./templates/{file}"
+        remove_html_tag_attributes(filepath, ["style", "class"])
