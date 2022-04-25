@@ -2,70 +2,46 @@
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
     <h1>Question</h1>
-    <a href="/">
-        <button>Return to all questions</button>
-    </a>
+    <a href="/">Return to all questions</a>
     <h2>{{ question.title }}</h2>
-    <p><small>Added: {{ question.submission_time }}</small></p>
+    <a href="{{ question.id }}/edit">Edit</a><br>
     {% if question.image %}
         <a href="{{ question.image }}" target="_blank">
-            <img src="{{ question.image if question.image }}"
-                 height="100" alt="Uploaded image">
-        </a><br>
+            <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
+        </a>
     {% endif %}
-    <p>{{ question.message }}</p>
-    <form method="get" action="{{ question.id }}/edit">
-        <button type="submit">Edit Question</button>
-    </form><br>
-    <h3>Answers</h3>
+    <p>{{ question.message }}</p><br>
+    <p><small>Added: {{ question.submission_time }}</small></p>
+    <hr>
+    {% if answers %}
     <table>
         <thead>
         <tr>
             <th>
-                Answer
-            </th>
-            <th>
-                Data Added
-            </th>
-            <th>
-                Image
-            </th>
-            <th>
-                Action
-            </th>
-            <th>
-                Votes
+                Answers:
             </th>
         </tr>
         </thead>
-        <tbody>
         {% for answer in answers %}
+            <tbody>
             <tr>
                 <td>
                     <p>{{ answer.message }}</p>
-                    <br>
-                </td>
-                <td>
-                    <small>{{ answer.submission_time }}</small><br>
-                </td>
-                <td>
                     {% if answer.image %}
                         <a href="{{ answer.image }}" target="_blank">
                             <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
                         </a><br>
                     {% endif %}
-                </td>
-                <td>
-                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a>
-                </td>
-
-                <td>
-                    <br><small>{{ answer.vote_number }} </small><br>
-                    <a href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
-                    <a href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
+                    <small>{{ answer.submission_time }}</small><br>
+                    <small>{{ answer.vote_number }}<br>
+                        <a href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
+                        <a href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
+                    </small><p>
+                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a></p>
                 </td>
             </tr>
         {% endfor %}
+        {% endif %}
         </tbody>
     </table>
     <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
