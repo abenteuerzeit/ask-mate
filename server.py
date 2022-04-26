@@ -32,7 +32,7 @@ def add_question():
     if request.method == 'POST':
         file = request.files['file']
         if file.filename != "" and not allowed_file(file.filename):
-            error = display_error_message(id)
+            error = display_error_message(id=None)
             return render_template('error.html', error=error)
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
@@ -110,8 +110,8 @@ def edit_question(id):
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        file = request.files.get('file')
-        if file is not None:
+        file = request.files['file']
+        if file.filename != "":
             if not allowed_file(file.filename):
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_edit=True)
