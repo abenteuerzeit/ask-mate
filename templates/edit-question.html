@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Edit Question{% endblock %}
 {% block body %}
+    <div class="forms">
     <div class="item">
     <h1>Edit question</h1>
     <a href="/question/{{ question.id }}">Go back</a><br>
@@ -12,13 +13,15 @@
         {% if question.image %}
             <h4>Edit Image</h4>
             <img src="{{ question.image if question.image }}" height="100px" alt="Uploaded Image"><br>
-            <a href="/question/{{ question.id }}/delete-image">Delete Image</a><br>
+            <a href="/question/{{ question.id }}/delete-image">Delete Image</a><br> or
+            <label for="file" style="display: inline">Upload a new image</label><br>
         {% else %}
             <h3>Upload a JPG or PNG image</h3>
             <label for="file">Upload Image</label><br>
-            <input type="file" name="file"><br>
         {% endif %}
+        <input type="file" name="file"><br>
         <input type="submit">
     </form>
+    </div>
     </div>
 {% endblock %}
