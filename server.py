@@ -1,4 +1,5 @@
 import os
+import fnmatch
 
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
@@ -199,7 +200,10 @@ def upload_image():
             flash('No selected file')
             return None
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            file_extension = file.filename.rsplit('.', 1)[1].lower()
+            count = len(fnmatch.filter(os.listdir('./sample_data/images'), '*.*'))
+            new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
+            filename = secure_filename(new_name)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return url_for('uploaded_file', filename=filename)
 
