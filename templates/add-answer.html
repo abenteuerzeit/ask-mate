@@ -1,17 +1,20 @@
 {% extends "layout.html" %}
 {% block title %}Add Answer{% endblock %}
 {% block body %}
+    <div class="forms">
     <div class="item">
     <a href="/question/{{ question.id }}">Go back</a><br>
-    <h1>Add a new answer</h1>
+        <h1>Add a new answer</h1></div>
+        <div class="item">
     <form method="post" action="{{ '/question/' + question.id }}/new-answer" enctype="multipart/form-data">
         <!--"{{ '/question/' + question.id + '/new-answer' }}"-->
+        <div class="item">
         <label for="message">Message</label><br>
-        <textarea name="message" id="message" required></textarea><br>
-        <label for="file">Upload image</label><br>
-        <input type="file" name="file"><br>
-        <button type="submit">Submit answer</button>
-        <br>
-    </form>
-    </div>
+            <textarea name="message" id="message" required></textarea><br></div>
+        <div class="item"><label for="file">Upload image</label><br>
+            <input type="file" name="file"><br></div>
+        <div class="item"><input type="submit">Submit answer
+    </form></div>
+
+    </div></div>
 {% endblock %}
