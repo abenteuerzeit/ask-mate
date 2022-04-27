@@ -5,6 +5,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for, sen
 from werkzeug.utils import secure_filename
 
 import data_handler
+import db_data_handler
 
 UPLOAD_FOLDER = './sample_data/images'
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
@@ -19,9 +20,10 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 def list_questions():
     order_by = request.args.get('order_by', 'id')
     order_direction = request.args.get('order_direction', 'desc')
-    questions = data_handler.get_questions()
-    questions = data_handler.convert_to_datetime(questions)
-    questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
+    # questions = data_handler.get_questions()
+    questions = db_data_handler.get_questions()
+    # questions = data_handler.convert_to_datetime(questions)
+    # questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
     return render_template("list.html", questions=questions, order_by=order_by, order_direction=order_direction)
 
 
@@ -145,6 +147,23 @@ def add_answer(id):
                        'image': upload_image()}
         data_handler.save_answer_data(answer_data)
         return redirect('/question/' + id)
+
+
+@app.route('/question/<id>/new-comment', methods=['GET', 'POST'])
+def add_comment(id):
+    if request.method == 'GET':
+        comments = data_handler.get_comment_for_question(id)
+        comments = data_handler.convert_to_datetime(comments)
+        return render_template('new-comment.html', question=data_handler.get_question(id), comments=comments)
+    elif request.method == 'POST':
+        file = request.files['file']
+        if file.filename != "" and not allowed_file(file.filename):
+            error = display_error_message(id)
+            return render_template('error.html', error=error, is_comment=True)
+        comment_data = {'message': request.form.get('message'), 'answer_id': id,
+                        'image': upload_image()}
+        data_handler.save_new_comment(comment_data)
+        return redirect('question' + id)
 
 
 @app.route('/question/<question_id>/vote-up')

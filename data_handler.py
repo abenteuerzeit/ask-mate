@@ -4,8 +4,10 @@ from datetime import datetime
 
 Q_FILE_PATH = os.getenv('Q_FILE_PATH') if 'Q_FILE_PATH' in os.environ else './sample_data/question.csv'
 A_FILE_PATH = os.getenv('A_FILE_PATH') if 'A_FILE_PATH' in os.environ else './sample_data/answer.csv'
+C_FILE_PATH = os.getenv('C_FILE_PATH') if 'C_FILE_PATH' in os.environ else './sample_data/comment.csv'
 Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
 A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
+C_HEADER = ['id', 'question_id', 'answer_id', 'message', 'submission_time', 'edited_count']
 NOW = int(datetime.now().timestamp())
 
 
@@ -58,6 +60,26 @@ def get_answer_for_question(question_id):
     return answers
 
 
+def get_comments():
+    comments = []
+    with open(C_FILE_PATH) as csvfile:
+        reader = DictReader(csvfile)
+        for comment in reader:
+            comment['submission_time'] = int(comment['submission_time'])
+            comment['edited_count'] = int(comment['edited_count'])
+            comment['message'] = str(comment['message'])
+            comments.append(comment)
+    return comments
+
+
+def get_comment_for_question(answer_id):
+    comments = []
+    for comment in get_comments():
+        if comment['answer_id'] == answer_id:
+            comments.append(comment)
+    return comments
+
+
 def increase_question_view_count(select_qdict):
     # pass question id instead of the whole dictionary
     if select_qdict is not None:
@@ -108,6 +130,19 @@ def save_new_question_data(user_input):
     question_list.append(new_question)
     write_over(Q_FILE_PATH, Q_HEADER, question_list)
     return new_question
+
+
+def save_new_comment(user_input):
+    comment_list = get_comments()
+    new_comment = {'id': str(get_new_id(C_FILE_PATH)),
+                   'question_id': str(get_new_id(Q_FILE_PATH)),
+                   'answer_id': str(get_new_id(A_FILE_PATH)),
+                   'message': user_input['message'],
+                   'submission_time': NOW,
+                   'edited_count': '0'}
+    comment_list.append(new_comment)
+    write_over(C_FILE_PATH, C_HEADER, comment_list)
+    return new_comment
 
 
 def edit_question(updated_dict):
