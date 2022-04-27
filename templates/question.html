@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
-    <div class="item">
+    <div class="forms">
+    <div class="item" style="color: whitesmoke">
     <h1>Question</h1>
         <a href="/">Go back</a>
         <a href="{{ question.id }}/edit">Edit</a>
@@ -12,12 +13,12 @@
             <div class="item">
                 <a href="{{ question.image }}" target="_blank">
                     <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
-                </a></div>
+                </a>
+            </div>
         {% endif %}
         <div class="question"><p>{{ question.message }}</p></div>
         <div class="question"><p><small>Added: {{ question.submission_time }}</small></p></div>
     </div>
-    <hr>
     {% if answers %}
         <h3>Answers </h3>
         {% for answer in answers %}
@@ -44,5 +45,6 @@
         {% endfor %}
     {% endif %}
     <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
+    </div>
     </div>
 {% endblock %}

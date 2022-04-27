@@ -1,5 +1,5 @@
 import os
-import psycopg2
+import fnmatch
 
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
@@ -34,7 +34,7 @@ def add_question():
     if request.method == 'POST':
         file = request.files['file']
         if file.filename != "" and not allowed_file(file.filename):
-            error = display_error_message(id)
+            error = display_error_message(id=None)
             return render_template('error.html', error=error)
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
@@ -112,14 +112,13 @@ def edit_question(id):
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        file = request.files.get('file')
-        if file is not None:
+        file = request.files['file']
+        if file.filename != "":
             if not allowed_file(file.filename):
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_edit=True)
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                filename = save_image(file)
                 src = url_for('uploaded_file', filename=filename)
                 data_handler.edit_question({'id': id,
                                             'title': request.form.get('title'),
@@ -208,6 +207,15 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def save_image(file):
+    file_extension = file.filename.rsplit('.', 1)[1].lower()
+    count = len(fnmatch.filter(os.listdir('./sample_data/images'), '*.*'))
+    new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
+    filename = secure_filename(new_name)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return filename
+
+
 @app.route('/upload-image', methods=['GET', 'POST'])
 def upload_image():
     if request.method == 'POST':
@@ -219,8 +227,7 @@ def upload_image():
             flash('No selected file')
             return None
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = save_image(file)
             return url_for('uploaded_file', filename=filename)
 
 
