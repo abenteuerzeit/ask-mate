@@ -116,8 +116,7 @@ def edit_question(id):
                 error = display_error_message(id)
                 return render_template('error.html', error=error, is_edit=True)
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                filename = save_image(file)
                 src = url_for('uploaded_file', filename=filename)
                 data_handler.edit_question({'id': id,
                                             'title': request.form.get('title'),
@@ -189,6 +188,15 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def save_image(file):
+    file_extension = file.filename.rsplit('.', 1)[1].lower()
+    count = len(fnmatch.filter(os.listdir('./sample_data/images'), '*.*'))
+    new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
+    filename = secure_filename(new_name)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return filename
+
+
 @app.route('/upload-image', methods=['GET', 'POST'])
 def upload_image():
     if request.method == 'POST':
@@ -200,11 +208,7 @@ def upload_image():
             flash('No selected file')
             return None
         if file and allowed_file(file.filename):
-            file_extension = file.filename.rsplit('.', 1)[1].lower()
-            count = len(fnmatch.filter(os.listdir('./sample_data/images'), '*.*'))
-            new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
-            filename = secure_filename(new_name)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = save_image(file)
             return url_for('uploaded_file', filename=filename)
 
 
