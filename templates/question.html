@@ -12,12 +12,12 @@
             <div class="item">
                 <a href="{{ question.image }}" target="_blank">
                     <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
-                </a></div>
+                </a>
+            </div>
         {% endif %}
         <div class="question"><p>{{ question.message }}</p></div>
         <div class="question"><p><small>Added: {{ question.submission_time }}</small></p></div>
     </div>
-    <hr>
     {% if answers %}
         <h3>Answers </h3>
         {% for answer in answers %}
