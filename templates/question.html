@@ -37,7 +37,9 @@
                         </a></div>
                 {% endif %}
                 <div class="answer">
-                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete </a></div>
+                    <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete</a><br>
+                    <a href="/question/{{ question.id }}/new-comment">Add a new comment</a><br></div>
+
             </div>
         {% endfor %}
     {% endif %}
