@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
+    <div class="forms">
     <div class="item" style="color: whitesmoke">
     <h1>Question</h1>
         <a href="/">Go back</a>
@@ -42,5 +43,6 @@
         {% endfor %}
     {% endif %}
     <a href="/question/{{ question.id }}/new-answer">Add a new answer</a><br>
+    </div>
     </div>
 {% endblock %}
