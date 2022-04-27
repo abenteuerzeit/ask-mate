@@ -28,17 +28,17 @@
                 <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
         </div>
         <div class="question">
-            {% if row.image %}
-            <a href="{{ row.image }}">
-                <img src="{{ row.image }}" alt="uploaded image" height="150" style="float: left;"></a><br>
-            {% endif %}
             <h3><a class="questionLink" href="/question/{{ row.id }}">{{ row.title }}</a>
                 <a class="questionLink" href="/list?order_by=title&order_direction=asc">&#8679</a>
             </h3>
             <p><small>Views: {{ row.view_number }}</small></p>
+             {% if row.image %}
+            <a href="{{ row.image }}">
+                <img src="{{ row.image }}" alt="uploaded image" style="float: right;
+                margin: auto; padding: 5px; height: 150px;"></a>
+            {% endif %}
             <p> {{ row.message }} <a class="questionLink" href="/list?order_by=view_number&order_direction=asc">&#8679</a></p>
-            <p>
-                <small>Added: {{ row.submission_time }}</small><br></p>
+            <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
         </div>
     </div>
     {% endfor %}
