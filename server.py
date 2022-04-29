@@ -20,11 +20,11 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 def list_questions():
     order_by = request.args.get('order_by', 'id')
     order_direction = request.args.get('order_direction', 'desc')
-    # questions = data_handler.get_questions()
-    questions = db_data_handler.get_questions()
-    # questions = data_handler.convert_to_datetime(questions)
-    # questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    return render_template("list.html", questions=questions, order_by=order_by, order_direction=order_direction)
+    # csv_questions = data_handler.get_questions()
+    db_questions = db_data_handler.get_questions()
+    # questions = data_handler.convert_to_datetime(db_questions)
+    db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
+    return render_template("list.html", questions=db_questions, order_by=order_by, order_direction=order_direction)
 
 
 @app.route("/add-question", methods=["GET", "POST"])
