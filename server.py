@@ -94,8 +94,8 @@ def image_delete_from_server(item):
 def display_question(id):
     question = data_handler.get_question(id)
     data_handler.increase_question_view_count(question)
-    question = util.convert_to_datetime(question)
-    answers = util.convert_to_datetime(data_handler.get_answer_for_question(id))
+    # question = util.convert_to_datetime(question)
+    answers = data_handler.get_answer_for_question(id)
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers)
     return question, answers
@@ -137,7 +137,7 @@ def edit_question(id):
 def add_answer(id):
     if request.method == 'GET':
         answers = data_handler.get_answer_for_question(id)
-        answers = util.convert_to_datetime(answers)
+        # answers = util.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
         file = request.files['file']
@@ -154,7 +154,7 @@ def add_answer(id):
 def add_comment(id):
     if request.method == 'GET':
         comments = data_handler.get_comment_for_question(id)
-        comments = util.convert_to_datetime(comments)
+        # comments = util.convert_to_datetime(comments)
         return render_template('new-comment.html', question=data_handler.get_question(id), comments=comments)
     elif request.method == 'POST':
         file = request.files['file']
