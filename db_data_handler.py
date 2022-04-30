@@ -80,7 +80,12 @@ def increase_answer_vote(cursor, selected_dictionary):
 
 @connection.connection_handler
 def decrease_question_vote(cursor, selected_dictionary):
-    return []
+    query = f"""
+        UPDATE question
+        SET vote_number = vote_number - 1
+        WHERE question.id = {selected_dictionary}
+    """
+    cursor.execute(query)
 
 
 @connection.connection_handler
