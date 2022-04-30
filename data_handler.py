@@ -8,7 +8,20 @@ C_FILE_PATH = os.getenv('C_FILE_PATH') if 'C_FILE_PATH' in os.environ else './sa
 Q_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
 A_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
 C_HEADER = ['id', 'question_id', 'answer_id', 'message', 'submission_time', 'edited_count']
-NOW = int(datetime.now().timestamp())
+NOW = datetime.fromtimestamp(int(datetime.now().timestamp()))
+
+
+# QUESTIONS
+
+
+def save_new_question_data(user_input):
+    question_list = get_questions()
+    new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
+                    'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
+                    'message': user_input['message'], 'image': user_input['image']}
+    question_list.append(new_question)
+    write_over(Q_FILE_PATH, Q_HEADER, question_list)
+    return new_question
 
 
 def get_questions():
@@ -23,21 +36,33 @@ def get_questions():
     return questions
 
 
-def convert_to_datetime(dictionary_data):
-    if type(dictionary_data) is list:
-        for dictionary in dictionary_data:
-            dictionary['submission_time'] = datetime.fromtimestamp(int(dictionary['submission_time']))
-        return dictionary_data
-    if type(dictionary_data) is dict:
-        dictionary_data['submission_time'] = datetime.fromtimestamp(int(dictionary_data['submission_time']))
-        return dictionary_data
-
-
 def get_question(id):
     for question in get_questions():
         if question['id'] == id:
             return question
     return None
+
+
+def edit_question(updated_dict):
+    question_list = get_questions()
+    original_question = get_question(updated_dict['id'])
+    for heading in Q_HEADER:
+        if updated_dict.get(heading):
+            original_question[heading] = updated_dict[heading]
+        if updated_dict['image'] is None:
+            original_question['image'] = updated_dict['image']
+    for index, q in enumerate(question_list):
+        if q['id'] == updated_dict['id']:
+            question_list[index] = original_question
+    write_over(Q_FILE_PATH, Q_HEADER, question_list)
+
+
+def delete_question(id):
+    question_list = get_questions()
+    for index, question_dictionary in enumerate(question_list):
+        if question_dictionary['id'] == id:
+            del question_list[index]
+    write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def get_answers():
@@ -122,16 +147,6 @@ def decrease_answer_vote(selected_dictionary):
             write_over(A_FILE_PATH, A_HEADER, answers)
 
 
-def save_new_question_data(user_input):
-    question_list = get_questions()
-    new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
-                    'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
-                    'message': user_input['message'], 'image': user_input['image']}
-    question_list.append(new_question)
-    write_over(Q_FILE_PATH, Q_HEADER, question_list)
-    return new_question
-
-
 def save_new_comment(user_input):
     comment_list = get_comments()
     new_comment = {'id': str(get_new_id(C_FILE_PATH)),
@@ -143,20 +158,6 @@ def save_new_comment(user_input):
     comment_list.append(new_comment)
     write_over(C_FILE_PATH, C_HEADER, comment_list)
     return new_comment
-
-
-def edit_question(updated_dict):
-    question_list = get_questions()
-    original_question = get_question(updated_dict['id'])
-    for heading in Q_HEADER:
-        if updated_dict.get(heading):
-            original_question[heading] = updated_dict[heading]
-        if updated_dict['image'] is None:
-            original_question['image'] = updated_dict['image']
-    for index, q in enumerate(question_list):
-        if q['id'] == updated_dict['id']:
-            question_list[index] = original_question
-    write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def save_answer_data(user_input):
@@ -179,14 +180,6 @@ def write_over(file, header, content):
 def get_new_id(csvfile):
     with open(csvfile, 'r') as file:
         return len(file.readlines())
-
-
-def delete_question(id):
-    question_list = get_questions()
-    for index, question_dictionary in enumerate(question_list):
-        if question_dictionary['id'] == id:
-            del question_list[index]
-    write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def delete_answer(id):
