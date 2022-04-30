@@ -179,6 +179,6 @@ def delete_question(cursor, id):
 def delete_answer(cursor, id):
     query = f"""
     DELETE FROM answer
-    WHERE id = {id}
+    WHERE answer.id = {id}
     """
     cursor.execute(query)
