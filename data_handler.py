@@ -23,14 +23,12 @@ def save_new_question_data(user_input):
     return new_question
 
 
-def increase_question_view_count(select_qdict):
-    # pass question id instead of the whole dictionary
-    if select_qdict is not None:
-        question_list = get_questions()
-        for question_dictionary in question_list:
-            if question_dictionary.get('id') == str(select_qdict['id']):
-                question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
-                util.write_over(Q_FILE_PATH, Q_HEADER, question_list)
+def increase_question_view_count(question_id):
+    question_list = get_questions()
+    for question_dictionary in question_list:
+        if question_dictionary.get('id') == question_id:
+            question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
+            util.write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def get_questions():
@@ -175,3 +173,8 @@ def decrease_answer_vote(selected_dictionary):
         if a_dict.get('id') == str(selected_dictionary['id']):
             a_dict['vote_number'] = a_dict.get('vote_number') - 1
             util.write_over(A_FILE_PATH, A_HEADER, answers)
+
+
+if __name__ == "__main__":
+    increase_question_view_count('1')
+    pass
