@@ -149,7 +149,6 @@ def edit_question(cursor, updated_dict):
         WHERE question.id = {updated_dict['id']}
     """
     cursor.execute(query)
-    return []
 
 
 @connection.connection_handler
@@ -159,8 +158,11 @@ def save_answer_data(cursor, user_input):
 
 @connection.connection_handler
 def delete_question(cursor, id):
-
-    return []
+    query = f"""
+    DELETE FROM question
+    WHERE question.id = {id}
+    """
+    cursor.execute(query)
 
 
 @connection.connection_handler
