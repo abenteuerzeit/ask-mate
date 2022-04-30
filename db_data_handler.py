@@ -121,12 +121,9 @@ def get_question_id(cursor, answer_id):
 
 @connection.connection_handler
 def save_new_question_data(cursor, user_input):
-    title = user_input['title']
-    message = user_input['message']
-    image = user_input['image']
     query = f"""
         INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-        VALUES('{NOW}', 0, 0, '{title}', '{message}', '{image}')
+        VALUES('{NOW}', 0, 0, '{user_input['title']}', '{user_input['message']}', '{user_input['image']}')
     """
     cursor.execute(query)
     query = f"""
@@ -144,14 +141,12 @@ def save_new_comment(cursor, user_input):
 
 @connection.connection_handler
 def edit_question(cursor, updated_dict):
-    question_id = updated_dict['id']
-    title = updated_dict['title']
-    message = updated_dict['message']
-    image = updated_dict['image']
     query = f"""
         UPDATE question
-        SET title = '{title}', message = '{message}', image = '{image}'
-        WHERE question.id = {question_id}
+        SET title = '{updated_dict['title']}',
+            message = '{updated_dict['message']}',
+            image = '{updated_dict['image']}'
+        WHERE question.id = {updated_dict['id']}
     """
     cursor.execute(query)
     return []
@@ -163,17 +158,8 @@ def save_answer_data(cursor, user_input):
 
 
 @connection.connection_handler
-def write_over(cursor, file, header, content):
-    return []
-
-
-@connection.connection_handler
-def get_new_id(cursor, csvfile):
-    return []
-
-
-@connection.connection_handler
 def delete_question(cursor, id):
+
     return []
 
 
