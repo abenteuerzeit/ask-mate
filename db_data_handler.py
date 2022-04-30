@@ -153,7 +153,18 @@ def edit_question(cursor, updated_dict):
 
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
-    return []
+    query = f"""
+        INSERT INTO answer (submission_time, vote_number, question_id, message, image)
+        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', '{'image': user_input['image']}')
+    
+    """
+    cursor.execute(query)
+    query = f"""
+            SELECT max(id) AS id
+            from answer
+        """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
 @connection.connection_handler
@@ -167,4 +178,8 @@ def delete_question(cursor, id):
 
 @connection.connection_handler
 def delete_answer(cursor, id):
-    return []
+    query = f"""
+    DELETE FROM answer
+    WHERE id = {id}
+    """
+    cursor.execute(query)
