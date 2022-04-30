@@ -34,7 +34,13 @@ def get_answers(cursor):
 
 @connection.connection_handler
 def get_answer_for_question(cursor, question_id):
-    return []
+    query = f"""
+        SELECT *
+        from answer
+        WHERE question_id = {question_id}
+    """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
 @connection.connection_handler
