@@ -51,8 +51,8 @@ def add_question():
         return redirect('/question/' + str(new_question['id']))
 
 
-# def is_valid(file):
-    # return 'file' not in request.files or file.filename != "" or allowed_file(file.filename)
+def is_valid(file):
+    return 'file' not in request.files or file.filename != "" or allowed_file(file.filename)
 
 
 @app.route("/question/<id>/delete")
@@ -167,15 +167,12 @@ def decrease_answer_vote(answer_id):
 # ------------------- IMAGE ---------------------- #
 def image_delete_from_server(item):
     if item['image'] != '':
-        try:
-            url_path = item['image']
-            if bool(url_path) is not None:
-                filename = url_path[len('/uploads/'):]
-                filepath = UPLOAD_FOLDER + "/" + filename
-                if os.path.exists(filepath):
-                    os.remove(filepath)
-        except ValueError:
-            print("File doesn't exist")
+        url_path = item['image']
+        if url_path is not None:
+            filename = url_path[len('/uploads/'):]
+            filepath = UPLOAD_FOLDER + "/" + filename
+            if os.path.exists(filepath):
+                os.remove(filepath)
 
 
 def allowed_file(filename):

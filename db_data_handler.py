@@ -123,7 +123,14 @@ def get_question_id(cursor, answer_id):
 def save_new_question_data(cursor, user_input):
     query = f"""
         INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-        VALUES('{NOW}', 0, 0, '{user_input['title']}', '{user_input['message']}', '{user_input['image']}')
+        VALUES('{NOW}', 0, 0, '{user_input['title']}', '{user_input['message']}', 
+        '{'NULL' if user_input['image'] == "" else user_input['image']}')
+    """
+    cursor.execute(query)
+    query = f"""
+        UPDATE question
+        SET image = NULL
+        WHERE image = 'NULL' or image = '' or image = 'None'
     """
     cursor.execute(query)
     query = f"""
@@ -149,14 +156,27 @@ def edit_question(cursor, updated_dict):
         WHERE question.id = {updated_dict['id']}
     """
     cursor.execute(query)
+    query = f"""
+            UPDATE question
+            SET image = NULL
+            WHERE image = 'NULL' or image = '' or image = 'None'
+        """
+    cursor.execute(query)
 
 
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
     query = f"""
         INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', '{user_input['image']}')
+        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', 
+        '{user_input['image']}')
     """
+    cursor.execute(query)
+    query = f"""
+            UPDATE answer
+            SET image = NULL
+            WHERE image = 'NULL' or image = '' or image = 'None'
+        """
     cursor.execute(query)
     query = f"""
             SELECT max(id) AS id
@@ -182,14 +202,3 @@ def delete_answer(cursor, id):
     WHERE answer.id = {id}
     """
     cursor.execute(query)
-
-
-@connection.connection_handler
-def insert_null_image(cursor, id):
-    query = f"""
-    UPDATE question
-    SET image = NULL
-    WHERE id = {id}
-    """
-    cursor.execute(query)
-
