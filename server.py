@@ -1,5 +1,5 @@
-import os
 import fnmatch
+import os
 
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
@@ -40,9 +40,6 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-        # if is_valid(request.files.get('file')):
-        #     error = display_error_message(id=None)
-        #     return render_template('error.html', error=error)
         image = upload_image()
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
@@ -74,22 +71,14 @@ def edit_question(id):
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
         file = request.files.get('file')
-        # if file is not None:
-        #     if not allowed_file(file.filename):
-        #         error = display_error_message(id)
-        #         return render_template('error.html', error=error, is_edit=True)
         if file and allowed_file(file.filename):
             filename = save_image(file)
             filepath = url_for('uploaded_file', filename=filename)
-            db_data_handler.edit_question({ 'id': id,
-                                            'title': request.form.get('title'),
-                                            'message': request.form.get('message'),
-                                            'image': filepath})
-        else:
-            db_data_handler.edit_question({ 'id': id,
-                                            'title': request.form.get('title'),
-                                            'message': request.form.get('message'),
-                                            'image': question['image']})
+            question['image'] = filepath
+        db_data_handler.edit_question({'id': id,
+                                       'title': request.form.get('title'),
+                                       'message': request.form.get('message'),
+                                       'image': question['image']})
         return redirect('/question/' + id)
 
 
@@ -102,12 +91,8 @@ def add_answer(id):
         question['id'] = str(question.get('id'))
         return render_template('add-answer.html', question=question, answers=answers)
     elif request.method == 'POST':
-        # file = request.files['file']
-        # if file.filename != "" and not allowed_file(file.filename):
-        #     error = display_error_message(id)
-        #     return render_template('error.html', error=error, is_answer=True)
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': id,
-                       'image': upload_image()})
+                                          'image': upload_image()})
         return redirect('/question/' + id)
 
 
@@ -194,7 +179,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-# @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
