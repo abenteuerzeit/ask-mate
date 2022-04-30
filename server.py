@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 
 import data_handler
 import db_data_handler
-import util
+# import util
 
 UPLOAD_FOLDER = './sample_data/images'
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
@@ -21,9 +21,7 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 def list_questions():
     order_by = request.args.get('order_by', 'id')
     order_direction = request.args.get('order_direction', 'desc')
-    # csv_questions = data_handler.get_questions()
     db_questions = db_data_handler.get_questions()
-    # questions = util.convert_to_datetime(db_questions)
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
     return render_template("list.html", questions=db_questions, order_by=order_by, order_direction=order_direction)
 
@@ -94,7 +92,6 @@ def image_delete_from_server(item):
 def display_question(id):
     question = data_handler.get_question(id)
     data_handler.increase_question_view_count(question)
-    # question = util.convert_to_datetime(question)
     answers = data_handler.get_answer_for_question(id)
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers)
@@ -137,7 +134,6 @@ def edit_question(id):
 def add_answer(id):
     if request.method == 'GET':
         answers = data_handler.get_answer_for_question(id)
-        # answers = util.convert_to_datetime(answers)
         return render_template('add-answer.html', question=data_handler.get_question(id), answers=answers)
     elif request.method == 'POST':
         file = request.files['file']
@@ -154,7 +150,6 @@ def add_answer(id):
 def add_comment(id):
     if request.method == 'GET':
         comments = data_handler.get_comment_for_question(id)
-        # comments = util.convert_to_datetime(comments)
         return render_template('new-comment.html', question=data_handler.get_question(id), comments=comments)
     elif request.method == 'POST':
         file = request.files['file']
