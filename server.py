@@ -92,8 +92,8 @@ def image_delete_from_server(item):
 def display_question(id):
     # csv_question = data_handler.get_question(id)
     question = db_data_handler.get_question(id)
-    data_handler.increase_question_view_count(question)
-    answers = data_handler.get_answer_for_question(id)
+    db_data_handler.increase_question_view_count(question['id'])
+    answers = db_data_handler.get_answer_for_question(id)
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers)
     return question, answers
@@ -164,34 +164,27 @@ def add_comment(id):
 
 
 @app.route('/question/<question_id>/vote-up')
-def q_upvote(question_id):
-    question_dict = data_handler.get_question(question_id)
-    data_handler.increase_question_vote(question_dict)
+def increase_question_vote(question_id):
+    db_data_handler.increase_question_vote(question_id)
+    return redirect('/list')
+
+
+@app.route('/question/<question_id>/vote-down')
+def decrease_question_vote(question_id):
+    db_data_handler.decrease_question_vote(question_id)
     return redirect('/list')
 
 
 @app.route('/answer/<answer_id>/vote-up')
-def a_upvote(answer_id):
-    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
-        if str(answer_id) == answer['id']:
-            data_handler.increase_answer_vote(answer)
-            return redirect('/question/' + answer['question_id'])
-
-
-@app.route('/question/<question_id>/vote-down')
-def q_downvote(question_id):
-    question_dict = data_handler.get_question(question_id)
-    data_handler.decrease_question_vote(question_dict)
-    return redirect('/list')
+def increase_answer_vote(answer_id):
+    answer = db_data_handler.increase_answer_vote(answer_id)
+    return redirect('/question/' + str(answer['question_id']))
 
 
 @app.route('/answer/<answer_id>/vote-down')
-def a_downvote(answer_id):
-    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
-        if str(answer_id) == answer['id']:
-            data_handler.decrease_answer_vote(answer)
-            q_id = answer['question_id']
-            return redirect('/question/' + q_id)
+def decrease_answer_vote(answer_id):
+    answer = db_data_handler.decrease_answer_vote(answer_id)
+    return redirect('/question/' + str(answer['question_id']))
 
 
 @app.route('/uploads/<filename>')
