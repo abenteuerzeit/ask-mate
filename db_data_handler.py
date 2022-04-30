@@ -65,7 +65,12 @@ def increase_question_view_count(cursor, select_qdict):
 
 @connection.connection_handler
 def increase_question_vote(cursor, selected_dictionary):
-    return []
+    query = f"""
+        UPDATE question
+        SET vote_number = vote_number + 1
+        WHERE question.id = {selected_dictionary}
+    """
+    cursor.execute(query)
 
 
 @connection.connection_handler

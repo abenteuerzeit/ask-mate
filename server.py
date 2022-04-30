@@ -165,8 +165,7 @@ def add_comment(id):
 
 @app.route('/question/<question_id>/vote-up')
 def q_upvote(question_id):
-    question_dict = data_handler.get_question(question_id)
-    data_handler.increase_question_vote(question_dict)
+    db_data_handler.increase_question_vote(question_id)
     return redirect('/list')
 
 
