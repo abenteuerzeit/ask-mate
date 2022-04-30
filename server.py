@@ -164,8 +164,14 @@ def add_comment(id):
 
 
 @app.route('/question/<question_id>/vote-up')
-def q_upvote(question_id):
+def increase_question_vote(question_id):
     db_data_handler.increase_question_vote(question_id)
+    return redirect('/list')
+
+
+@app.route('/question/<question_id>/vote-down')
+def decrease_question_vote(question_id):
+    db_data_handler.decrease_question_vote(question_id)
     return redirect('/list')
 
 
@@ -176,12 +182,6 @@ def a_upvote(answer_id):
             data_handler.increase_answer_vote(answer)
             return redirect('/question/' + answer['question_id'])
 
-
-@app.route('/question/<question_id>/vote-down')
-def q_downvote(question_id):
-    question_dict = data_handler.get_question(question_id)
-    data_handler.decrease_question_vote(question_dict)
-    return redirect('/list')
 
 
 @app.route('/answer/<answer_id>/vote-down')
