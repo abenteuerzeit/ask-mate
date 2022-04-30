@@ -1,5 +1,6 @@
 import connection
 
+
 @connection.connection_handler
 def get_questions(cursor):  #fetchall()
     query = """
@@ -12,7 +13,13 @@ def get_questions(cursor):  #fetchall()
 
 @connection.connection_handler
 def get_question(cursor, id):  #fetchone()
-    return []
+    query = f"""
+        SELECT *
+        FROM question
+        WHERE id = {id}
+    """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
 @connection.connection_handler

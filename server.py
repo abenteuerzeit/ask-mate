@@ -90,7 +90,8 @@ def image_delete_from_server(item):
 
 @app.route('/question/<id>', methods=['GET'])
 def display_question(id):
-    question = data_handler.get_question(id)
+    # csv_question = data_handler.get_question(id)
+    question = db_data_handler.get_question(id)
     data_handler.increase_question_view_count(question)
     answers = data_handler.get_answer_for_question(id)
     if request.method == 'GET':
