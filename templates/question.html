@@ -9,7 +9,7 @@
         <a href="/question/{{ question.id }}/delete">Delete</a>
     <div class="question">
         <h2>{{ question.title }}</h2>
-        {% if question.image is defined %}
+        {% if question.image %}
             <div class="item">
                 <a href="{{ question.image }}" target="_blank">
                     <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
