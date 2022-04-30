@@ -4,6 +4,7 @@ import fnmatch
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
+import data_handler
 import db_data_handler
 
 UPLOAD_FOLDER = './sample_data/images'
@@ -14,13 +15,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 
-@app.route("/error")
-def display_error_message(id):
-    error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
-    return error_dict
-
-
-# ------------------- QUESTIONS ---------------------- #
 @app.route("/")
 @app.route("/list")
 def list_questions():
@@ -46,20 +40,24 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-        file = request.files['file']
-        if file.filename != "" and not allowed_file(file.filename):
-            error = display_error_message(id=None)
-            return render_template('error.html', error=error)
+        # if is_valid(request.files.get('file')):
+        #     error = display_error_message(id=None)
+        #     return render_template('error.html', error=error)
+        image = upload_image()
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': upload_image()})
+            'image': image})
         return redirect('/question/' + str(new_question['id']))
+
+
+# def is_valid(file):
+    # return 'file' not in request.files or file.filename != "" or allowed_file(file.filename)
 
 
 @app.route("/question/<id>/delete")
 def delete_question(id):
-    # image_delete_from_server(db_data_handler.get_question(id))
+    image_delete_from_server(db_data_handler.get_question(id))
     answers = db_data_handler.get_answer_for_question(id)
     if answers:
         for answer in answers:
@@ -76,17 +74,17 @@ def edit_question(id):
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
         file = request.files.get('file')
-        if file is not None:
-            if not allowed_file(file.filename):
-                error = display_error_message(id)
-                return render_template('error.html', error=error, is_edit=True)
-            if file and allowed_file(file.filename):
-                filename = save_image(file)
-                src = url_for('uploaded_file', filename=filename)
-                db_data_handler.edit_question({ 'id': id,
-                                                'title': request.form.get('title'),
-                                                'message': request.form.get('message'),
-                                                'image': src})
+        # if file is not None:
+        #     if not allowed_file(file.filename):
+        #         error = display_error_message(id)
+        #         return render_template('error.html', error=error, is_edit=True)
+        if file and allowed_file(file.filename):
+            filename = save_image(file)
+            filepath = url_for('uploaded_file', filename=filename)
+            db_data_handler.edit_question({ 'id': id,
+                                            'title': request.form.get('title'),
+                                            'message': request.form.get('message'),
+                                            'image': filepath})
         else:
             db_data_handler.edit_question({ 'id': id,
                                             'title': request.form.get('title'),
@@ -104,24 +102,24 @@ def add_answer(id):
         question['id'] = str(question.get('id'))
         return render_template('add-answer.html', question=question, answers=answers)
     elif request.method == 'POST':
-        file = request.files['file']
-        if file.filename != "" and not allowed_file(file.filename):
-            error = display_error_message(id)
-            return render_template('error.html', error=error, is_answer=True)
+        # file = request.files['file']
+        # if file.filename != "" and not allowed_file(file.filename):
+        #     error = display_error_message(id)
+        #     return render_template('error.html', error=error, is_answer=True)
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': id,
                        'image': upload_image()})
         return redirect('/question/' + id)
 
 
-    @app.route('/answer/<id>/delete')
-    def delete_answer(id):
-        question_id = request.args.get('question_id')
-        answer_list = db_data_handler.get_answers()
-        for answer in answer_list:
-            if answer['id'] == str(id):
-                image_delete_from_server(answer)
-        db_data_handler.delete_answer(id)
-        return redirect('/question/' + question_id)
+@app.route('/answer/<id>/delete')
+def delete_answer(id):
+    question_id = request.args.get('question_id')
+    answer_list = db_data_handler.get_answers()
+    for answer in answer_list:
+        if answer['id'] == str(id):
+            image_delete_from_server(answer)
+    db_data_handler.delete_answer(id)
+    return redirect('/question/' + question_id)
 
 
 # ------------------- COMMENTS ---------------------- #
@@ -171,10 +169,11 @@ def image_delete_from_server(item):
     if item['image'] != '':
         try:
             url_path = item['image']
-            filename = url_path[len('/uploads/'):]
-            filepath = UPLOAD_FOLDER + "/" + filename
-            if os.path.exists(filepath):
-                os.remove(filepath)
+            if bool(url_path) is not None:
+                filename = url_path[len('/uploads/'):]
+                filepath = UPLOAD_FOLDER + "/" + filename
+                if os.path.exists(filepath):
+                    os.remove(filepath)
         except ValueError:
             print("File doesn't exist")
 
@@ -198,12 +197,12 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@app.route('/upload-image', methods=['GET', 'POST'])
+# @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
-            return ''
+            return 'NULL'
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
@@ -217,9 +216,15 @@ def upload_image():
 def edit_delete_image(id):
     question = db_data_handler.get_question(id)
     image_delete_from_server(question)
-    question['image'] = None
+    question['image'] = ''
     db_data_handler.edit_question(question)
     return redirect('/question/' + id + '/edit')
+
+
+@app.route("/error")
+def display_error_message(id):
+    error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
+    return error_dict
 
 
 if __name__ == "__main__":
