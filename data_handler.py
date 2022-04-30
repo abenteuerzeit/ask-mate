@@ -15,7 +15,7 @@ NOW = datetime.fromtimestamp(int(datetime.now().timestamp()))
 # -------------------------- QUESTIONS -------------------------- #
 def save_new_question_data(user_input):
     question_list = get_questions()
-    new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
+    new_question = {'id': str(util.get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
                     'view_number': '0', 'vote_number': '0', 'title': user_input['title'],
                     'message': user_input['message'], 'image': user_input['image']}
     question_list.append(new_question)
@@ -38,7 +38,6 @@ def get_questions():
     with open(Q_FILE_PATH) as csvfile:
         reader = DictReader(csvfile)
         for question in reader:
-            question['submission_time'] = int(question['submission_time'])
             question['view_number'] = int(question['view_number'])
             question['vote_number'] = int(question['vote_number'])
             questions.append(question)
@@ -80,7 +79,6 @@ def get_answers():
     with open(A_FILE_PATH) as csvfile:
         reader = DictReader(csvfile)
         for answer in reader:
-            answer['submission_time'] = int(answer['submission_time'])
             answer['vote_number'] = int(answer['vote_number'])
             answer['message'] = str(answer['message'])
             answers.append(answer)
@@ -132,7 +130,6 @@ def get_comments():
     with open(C_FILE_PATH) as csvfile:
         reader = DictReader(csvfile)
         for comment in reader:
-            comment['submission_time'] = int(comment['submission_time'])
             comment['edited_count'] = int(comment['edited_count'])
             comment['message'] = str(comment['message'])
             comments.append(comment)
