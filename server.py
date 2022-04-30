@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 
 import data_handler
 import db_data_handler
-# import util
 
 UPLOAD_FOLDER = './sample_data/images'
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
@@ -38,9 +37,8 @@ def add_question():
         data = {'title': request.form.get('title', default="not provided"),
                 'message': request.form.get('message', default="not provided"),
                 'image': upload_image()}
-        new_question = data_handler.save_new_question_data(data)
-        new_question_id = new_question['id']
-        return redirect('/question/' + new_question_id)
+        new_question = db_data_handler.save_new_question_data(data)
+        return redirect('/question/' + str(new_question['id']))
 
 
 @app.route("/question/<id>/delete")
@@ -90,7 +88,6 @@ def image_delete_from_server(item):
 
 @app.route('/question/<id>', methods=['GET'])
 def display_question(id):
-    # csv_question = data_handler.get_question(id)
     question = db_data_handler.get_question(id)
     db_data_handler.increase_question_view_count(question['id'])
     answers = db_data_handler.get_answer_for_question(id)
@@ -107,24 +104,24 @@ def display_error_message(id):
 
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
-    question = data_handler.get_question(id)
+    question = db_data_handler.get_question(id)
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        file = request.files['file']
-        if file.filename != "":
-            if not allowed_file(file.filename):
-                error = display_error_message(id)
-                return render_template('error.html', error=error, is_edit=True)
-            if file and allowed_file(file.filename):
-                filename = save_image(file)
-                src = url_for('uploaded_file', filename=filename)
-                data_handler.edit_question({'id': id,
-                                            'title': request.form.get('title'),
-                                            'message': request.form.get('message'),
-                                            'image': src})
-        else:
-            data_handler.edit_question({'id': id,
+        # file = request.files['file']
+        # if file.filename != "":
+        #     if not allowed_file(file.filename):
+        #         error = display_error_message(id)
+        #         return render_template('error.html', error=error, is_edit=True)
+        #     if file and allowed_file(file.filename):
+        #         filename = save_image(file)
+        #         src = url_for('uploaded_file', filename=filename)
+        #         db_data_handler.edit_question({'id': id,
+        #                                     'title': request.form.get('title'),
+        #                                     'message': request.form.get('message'),
+        #                                     'image': src})
+        # else:
+        db_data_handler.edit_question({'id': id,
                                         'title': request.form.get('title'),
                                         'message': request.form.get('message'),
                                         'image': question['image']})
@@ -211,11 +208,11 @@ def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
-            return None
+            return ''
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
-            return None
+            return ''
         if file and allowed_file(file.filename):
             filename = save_image(file)
             return url_for('uploaded_file', filename=filename)
