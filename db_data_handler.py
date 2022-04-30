@@ -81,13 +81,7 @@ def increase_answer_vote(cursor, selected_dictionary):
             WHERE answer.id = {selected_dictionary}
         """
     cursor.execute(query)
-    query = f"""
-        SELECT question_id
-        from answer
-        WHERE id = {selected_dictionary}
-        """
-    cursor.execute(query)
-    return cursor.fetchone()
+    return get_question_id(cursor, selected_dictionary)
 
 
 @connection.connection_handler
