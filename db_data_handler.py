@@ -24,7 +24,12 @@ def get_question(cursor, id):  #fetchone()
 
 @connection.connection_handler
 def get_answers(cursor):
-    return []
+    query = f"""
+        SELECT *
+        from answer
+    """
+    cursor.execute(query)
+    return cursor.fetchall
 
 
 @connection.connection_handler
