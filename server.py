@@ -48,10 +48,6 @@ def add_question():
         return redirect('/question/' + str(new_question['id']))
 
 
-def is_valid(file):
-    return 'file' not in request.files or file.filename != "" or allowed_file(file.filename)
-
-
 @app.route("/question/<id>/delete")
 def delete_question(id):
     image_delete_from_server(db_data_handler.get_question(id))
@@ -202,6 +198,7 @@ def edit_delete_image(id):
     return redirect('/question/' + id + '/edit')
 
 
+# ------------------- ERRORS ---------------------- #
 @app.route("/error")
 def display_error_message(id):
     error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
