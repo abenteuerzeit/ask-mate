@@ -29,7 +29,7 @@ def get_answers(cursor):
         from answer
     """
     cursor.execute(query)
-    return cursor.fetchall
+    return cursor.fetchall()
 
 
 @connection.connection_handler
@@ -40,7 +40,7 @@ def get_answer_for_question(cursor, question_id):
         WHERE question_id = {question_id}
     """
     cursor.execute(query)
-    return cursor.fetchone()
+    return cursor.fetchall()
 
 
 @connection.connection_handler
