@@ -75,7 +75,19 @@ def increase_question_vote(cursor, selected_dictionary):
 
 @connection.connection_handler
 def increase_answer_vote(cursor, selected_dictionary):
-    return []
+    query = f"""
+            UPDATE answer
+            SET vote_number = vote_number + 1
+            WHERE answer.id = {selected_dictionary}
+        """
+    cursor.execute(query)
+    query = f"""
+        SELECT question_id
+        from answer
+        WHERE id = {selected_dictionary}
+        """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
 @connection.connection_handler
@@ -86,11 +98,28 @@ def decrease_question_vote(cursor, selected_dictionary):
         WHERE question.id = {selected_dictionary}
     """
     cursor.execute(query)
+    return get_question_id(cursor, selected_dictionary)
 
 
 @connection.connection_handler
 def decrease_answer_vote(cursor, selected_dictionary):
-    return []
+    query = f"""
+                UPDATE answer
+                SET vote_number = vote_number - 1
+                WHERE answer.id = {selected_dictionary}
+            """
+    cursor.execute(query)
+    return get_question_id(cursor, selected_dictionary)
+
+
+def get_question_id(cursor, answer_id):
+    query = f"""
+            SELECT question_id
+            from answer
+            WHERE id = {answer_id}
+            """
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
 @connection.connection_handler
