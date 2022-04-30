@@ -92,7 +92,7 @@ def image_delete_from_server(item):
 def display_question(id):
     # csv_question = data_handler.get_question(id)
     question = db_data_handler.get_question(id)
-    data_handler.increase_question_view_count(question)
+    db_data_handler.increase_question_view_count(question['id'])
     answers = db_data_handler.get_answer_for_question(id)
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers)

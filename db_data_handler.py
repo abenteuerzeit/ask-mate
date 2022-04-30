@@ -55,7 +55,12 @@ def get_comment_for_question(cursor, answer_id):
 
 @connection.connection_handler
 def increase_question_view_count(cursor, select_qdict):
-    return []
+    query = f"""
+        UPDATE question
+        SET view_number = view_number + 1
+        WHERE question.id = {select_qdict}
+    """
+    cursor.execute(query)
 
 
 @connection.connection_handler
