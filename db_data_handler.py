@@ -182,3 +182,14 @@ def delete_answer(cursor, id):
     WHERE answer.id = {id}
     """
     cursor.execute(query)
+
+
+@connection.connection_handler
+def insert_null_image(cursor, id):
+    query = f"""
+    UPDATE question
+    SET image = NULL
+    WHERE id = {id}
+    """
+    cursor.execute(query)
+
