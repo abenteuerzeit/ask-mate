@@ -176,5 +176,4 @@ def decrease_answer_vote(selected_dictionary):
 
 
 if __name__ == "__main__":
-    increase_question_view_count('1')
     pass
