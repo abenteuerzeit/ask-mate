@@ -155,8 +155,7 @@ def edit_question(cursor, updated_dict):
 def save_answer_data(cursor, user_input):
     query = f"""
         INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', '{'image': user_input['image']}')
-    
+        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', '{user_input['image']}')
     """
     cursor.execute(query)
     query = f"""
@@ -180,6 +179,6 @@ def delete_question(cursor, id):
 def delete_answer(cursor, id):
     query = f"""
     DELETE FROM answer
-    WHERE id = {id}
+    WHERE answer.id = {id}
     """
     cursor.execute(query)
