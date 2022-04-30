@@ -176,21 +176,15 @@ def decrease_question_vote(question_id):
 
 
 @app.route('/answer/<answer_id>/vote-up')
-def a_upvote(answer_id):
-    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
-        if str(answer_id) == answer['id']:
-            data_handler.increase_answer_vote(answer)
-            return redirect('/question/' + answer['question_id'])
-
+def increase_answer_vote(answer_id):
+    answer = db_data_handler.increase_answer_vote(answer_id)
+    return redirect('/question/' + str(answer['question_id']))
 
 
 @app.route('/answer/<answer_id>/vote-down')
-def a_downvote(answer_id):
-    for answer in data_handler.get_answer_for_question(request.args.get('question_id')):
-        if str(answer_id) == answer['id']:
-            data_handler.decrease_answer_vote(answer)
-            q_id = answer['question_id']
-            return redirect('/question/' + q_id)
+def decrease_answer_vote(answer_id):
+    answer = db_data_handler.decrease_answer_vote(answer_id)
+    return redirect('/question/' + str(answer['question_id']))
 
 
 @app.route('/uploads/<filename>')
