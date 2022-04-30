@@ -43,14 +43,13 @@ def add_question():
 
 @app.route("/question/<id>/delete")
 def delete_question(id):
-    question_data = data_handler.get_question(id)
-    image_delete_from_server(question_data)
-    answers = data_handler.get_answer_for_question(id)
+    # image_delete_from_server(db_data_handler.get_question(id))
+    answers = db_data_handler.get_answer_for_question(id)
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
-            data_handler.delete_answer(answer.get('id'))
-    data_handler.delete_question(id)
+            db_data_handler.delete_answer(answer.get('id'))
+    db_data_handler.delete_question(id)
     return redirect("/")
 
 
