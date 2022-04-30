@@ -154,8 +154,6 @@ def edit_question(cursor, updated_dict):
         WHERE question.id = {question_id}
     """
     cursor.execute(query)
-
-
     return []
 
 

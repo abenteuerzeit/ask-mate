@@ -108,23 +108,23 @@ def edit_question(id):
     if request.method == 'GET':
         return render_template('edit-question.html', question=question)
     elif request.method == 'POST':
-        # file = request.files['file']
-        # if file.filename != "":
-        #     if not allowed_file(file.filename):
-        #         error = display_error_message(id)
-        #         return render_template('error.html', error=error, is_edit=True)
-        #     if file and allowed_file(file.filename):
-        #         filename = save_image(file)
-        #         src = url_for('uploaded_file', filename=filename)
-        #         db_data_handler.edit_question({'id': id,
-        #                                     'title': request.form.get('title'),
-        #                                     'message': request.form.get('message'),
-        #                                     'image': src})
-        # else:
-        db_data_handler.edit_question({'id': id,
-                                        'title': request.form.get('title'),
-                                        'message': request.form.get('message'),
-                                        'image': question['image']})
+        file = request.files.get('file')
+        if file is not None:
+            if not allowed_file(file.filename):
+                error = display_error_message(id)
+                return render_template('error.html', error=error, is_edit=True)
+            if file and allowed_file(file.filename):
+                filename = save_image(file)
+                src = url_for('uploaded_file', filename=filename)
+                db_data_handler.edit_question({ 'id': id,
+                                                'title': request.form.get('title'),
+                                                'message': request.form.get('message'),
+                                                'image': src})
+        else:
+            db_data_handler.edit_question({ 'id': id,
+                                            'title': request.form.get('title'),
+                                            'message': request.form.get('message'),
+                                            'image': question['image']})
         return redirect('/question/' + id)
 
 
