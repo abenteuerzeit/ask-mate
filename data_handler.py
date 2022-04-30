@@ -13,7 +13,6 @@ NOW = datetime.fromtimestamp(int(datetime.now().timestamp()))
 
 
 # -------------------------- QUESTIONS -------------------------- #
-
 def save_new_question_data(user_input):
     question_list = get_questions()
     new_question = {'id': str(get_new_id(Q_FILE_PATH)), 'submission_time': NOW,
@@ -22,6 +21,16 @@ def save_new_question_data(user_input):
     question_list.append(new_question)
     util.write_over(Q_FILE_PATH, Q_HEADER, question_list)
     return new_question
+
+
+def increase_question_view_count(select_qdict):
+    # pass question id instead of the whole dictionary
+    if select_qdict is not None:
+        question_list = get_questions()
+        for question_dictionary in question_list:
+            if question_dictionary.get('id') == str(select_qdict['id']):
+                question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
+                util.write_over(Q_FILE_PATH, Q_HEADER, question_list)
 
 
 def get_questions():
@@ -66,8 +75,6 @@ def delete_question(id):
 
 
 # -------------------------- ANSWERS -------------------------- #
-
-
 def get_answers():
     answers = []
     with open(A_FILE_PATH) as csvfile:
@@ -107,7 +114,6 @@ def delete_answer(id):
 
 
 # -------------------------- COMMENTS -------------------------- #
-
 def save_new_comment(user_input):
     comment_list = get_comments()
     new_comment = {'id': str(util.get_new_id(C_FILE_PATH)),
@@ -142,18 +148,6 @@ def get_comment_for_question(answer_id):
 
 
 # -------------------------- VOTES -------------------------- #
-
-
-def increase_question_view_count(select_qdict):
-    # pass question id instead of the whole dictionary
-    if select_qdict is not None:
-        question_list = get_questions()
-        for question_dictionary in question_list:
-            if question_dictionary.get('id') == str(select_qdict['id']):
-                question_dictionary['view_number'] = question_dictionary.get('view_number') + 1
-                util.write_over(Q_FILE_PATH, Q_HEADER, question_list)
-
-
 def increase_question_vote(selected_dictionary):
     question_list = get_questions()
     for q_dict in question_list:
