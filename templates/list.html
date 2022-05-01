@@ -31,11 +31,15 @@
                 <div class="questions">
                     <div>
                         <h2>Results</h2>
-                        <p>Search phrase: <em>{{ request.args.get('q') }}</em> </p>
+                        <p>Searched phrase: <em>{{ request.args.get('q') }}</em></p>
+                        <p>The following results list questions that contain the phrase "{{ request.args.get('q') }}" in
+                            either a question's title or message, or in an answer's message to a question.</p>
                         {% for result in results %}
                             <div class="question" style="color: black">
-                                <h3>{{ result.title }}</h3>
-                                <p> {{ result.message }}</p>
+                                <ul>
+                                    <li><a class="questionLink" href="question/{{ result.id }}"> {{ result.title }}</a>
+                                    </li>
+                                </ul>
                             </div>
                         {% endfor %}
                     </div>
@@ -43,10 +47,10 @@
             {% endif %}
             {% if request.args and not results %}
                 <div class="questions">
-                <div class="question" style="color: black">
-                <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
-                <p>Try a different phrase or check your spelling. </p>
-                </div>
+                    <div class="question" style="color: black">
+                        <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
+                        <p>Try a different phrase or check your spelling. </p>
+                    </div>
                 </div>
             {% endif %}
             {% for row in questions %}
