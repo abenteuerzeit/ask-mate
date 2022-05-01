@@ -1,37 +1,38 @@
-import connection
 from datetime import datetime
+
+import connection
 
 NOW = datetime.fromtimestamp(int(datetime.now().timestamp()))
 
 
 @connection.connection_handler
-def get_questions(cursor):  #fetchall()
+def get_questions(cursor):  # fetchall()
     query = """
         SELECT id, submission_time, view_number, vote_number, title, message, image
         FROM question
         ORDER BY submission_time"""
-    cursor.execute(query)  #wykonaj czytanie po linii
+    cursor.execute(query)  # wykonaj czytanie po linii
     return cursor.fetchall()
 
 
 @connection.connection_handler
 def search(cursor, search_phrase):
     query = f"""
-    SELECT question.id, title, question.message, answer.message
+    SELECT question.id, title, question.message as question_message, answer.message as answer_message
     FROM question
-    INNER JOIN answer
+    LEFT JOIN answer
     ON question.id = answer.question_id
-    WHERE title LIKE '%{search_phrase}%'
-    or question.message LIKE '%{search_phrase}%'
-    or answer.message LIKE '%{search_phrase}%'
-    
+    WHERE  
+        lower(title) LIKE lower('%{search_phrase}%')
+        OR lower(question.message) LIKE lower('%{search_phrase}%')
+        OR lower(answer.message) LIKE lower('%{search_phrase}%')
     """
     cursor.execute(query)
     return cursor.fetchall()
 
 
 @connection.connection_handler
-def get_question(cursor, id):  #fetchone()
+def get_question(cursor, id):  # fetchone()
     query = f"""
         SELECT *
         FROM question
