@@ -17,9 +17,14 @@ def get_questions(cursor):  #fetchall()
 @connection.connection_handler
 def search(cursor, search_phrase):
     query = f"""
-    SELECT title, message
+    SELECT question.id, title, question.message, answer.message
     FROM question
-    WHERE title LIKE '%{search_phrase}%' or message LIKE '%{search_phrase}%'
+    INNER JOIN answer
+    ON question.id = answer.question_id
+    WHERE title LIKE '%{search_phrase}%'
+    or question.message LIKE '%{search_phrase}%'
+    or answer.message LIKE '%{search_phrase}%'
+    
     """
     cursor.execute(query)
     return cursor.fetchall()
