@@ -17,20 +17,20 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 @app.route("/")
 @app.route("/list")
+@app.route('/search')
 def list_questions():
     order_by = request.args.get('order_by', 'id')
     order_direction = request.args.get('order_direction', 'desc')
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    return render_template("list.html", questions=db_questions,
-                           order_by=order_by, order_direction=order_direction)
-
-
-@app.route('/search')
-def search_questions():
     search_phrase = request.args.get('q')
     results = db_data_handler.search(search_phrase)
-    return render_template("list.html", results=results)
+    return render_template("list.html", questions=db_questions,
+                           order_by=order_by, order_direction=order_direction,
+                           results=results)
+
+# def search_questions():
+#     return render_template("list.html", )
 
 
 @app.route('/question/<id>', methods=['GET'])
