@@ -29,9 +29,6 @@ def list_questions():
                            order_by=order_by, order_direction=order_direction,
                            results=results)
 
-# def search_questions():
-#     return render_template("list.html", )
-
 
 @app.route('/question/<id>', methods=['GET'])
 def display_question(id):
