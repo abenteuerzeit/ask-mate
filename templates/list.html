@@ -57,7 +57,7 @@
                                             {% endif %}
                                         {% endfor %}
                                         {% if result.answer_message %}
-                                            {% if request.args.get('q').lower() in result.answer_message %}
+                                            {% if request.args.get('q').lower() in result.answer_message.lower() %}
                                             <hr>
                                             <p> Answer messages </p>
                                             <p style="margin-left: 50px;"> ---
