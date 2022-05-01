@@ -57,9 +57,10 @@
                                             {% endif %}
                                         {% endfor %}
                                         {% if result.answer_message %}
+                                            {% if request.args.get('q').lower() in result.answer_message %}
                                             <hr>
                                             <p> Answer messages </p>
-                                            ---
+                                            <p style="margin-left: 50px;"> ---
                                             {% for word in result.answer_message.split() %}
                                                 {% if request.args.get('q').lower() in word.lower() %}
                                                     <strong style="background-color: yellow">
@@ -68,7 +69,8 @@
                                                 {% else %}
                                                     {{ word }}
                                                 {% endif %}
-                                            {% endfor %}
+                                            {% endfor %}</p>
+                                            {%  endif %}
                                         {% endif %}</li>
                                 </ul>
                             </div>
