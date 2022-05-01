@@ -77,7 +77,7 @@
                         {% endfor %}
                     </div>
                 </div>
-            {% elif request.args and not results %}
+            {% elif request.args.get('q') %}
                 <div class="questions">
                     <div class="question" style="color: black">
                         <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
