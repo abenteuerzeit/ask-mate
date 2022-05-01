@@ -22,13 +22,15 @@ def list_questions():
     order_direction = request.args.get('order_direction', 'desc')
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    return render_template("list.html", questions=db_questions, order_by=order_by, order_direction=order_direction)
+    return render_template("list.html", questions=db_questions,
+                           order_by=order_by, order_direction=order_direction)
 
 
 @app.route('/search')
 def search_questions():
     search_phrase = request.args.get('q')
-    return "You searched for: " + search_phrase
+    results = db_data_handler.search(search_phrase)
+    return render_template("list.html", results=results)
 
 
 @app.route('/question/<id>', methods=['GET'])
