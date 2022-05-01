@@ -16,6 +16,12 @@
             <form style="display: inline;" action="/list" method="get" id="sort"><input type="submit"></form><br>
             <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
         </div>
+        <div>
+            <form action="/search?q=<keyword>" method="GET">
+                <label for="submit"><input type="text" name="search" placeholder="Enter keywords"></label>
+                <input type="submit" name="submit" value="Search">
+            </form>
+        </div>
 </div>
 <div class="item">
         <main>
