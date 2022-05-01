@@ -15,6 +15,17 @@ def get_questions(cursor):  #fetchall()
 
 
 @connection.connection_handler
+def search(cursor, search_phrase):
+    query = f"""
+    SELECT title, message
+    FROM question
+    WHERE title LIKE '%{search_phrase}%' or message LIKE '%{search_phrase}%'
+    """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
 def get_question(cursor, id):  #fetchone()
     query = f"""
         SELECT *
