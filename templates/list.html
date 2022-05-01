@@ -17,9 +17,9 @@
             <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
         </div>
         <div>
-            <form action="/search?q=<keyword>" method="GET">
-                <label for="submit"><input type="text" name="search" placeholder="Enter keywords"></label>
-                <input type="submit" name="submit" value="Search">
+            <form action="/search"  method="GET">
+                <label for="submit"><input type="text" name="q" placeholder="What are you looking for? "></label>
+                <input type="submit" value="Search">
             </form>
         </div>
 </div>

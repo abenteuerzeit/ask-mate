@@ -25,6 +25,12 @@ def list_questions():
     return render_template("list.html", questions=db_questions, order_by=order_by, order_direction=order_direction)
 
 
+@app.route('/search')
+def search_questions():
+    search_phrase = request.args.get('q')
+    return "You searched for: " + search_phrase
+
+
 @app.route('/question/<id>', methods=['GET'])
 def display_question(id):
     question = db_data_handler.get_question(id)
