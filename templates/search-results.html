@@ -1,0 +1,58 @@
+{% if results %}
+<div class="questions">
+    <div>
+        <h2>All Search Results</h2>
+        <p>Searched phrase: <em>{{ request.args.get('q') }}</em></p>
+        <p>The following results list questions that contain the phrase "{{ request.args.get('q') }}" in
+            either a question's title or message, or in an answer's message to a question.</p>
+        {% for result in results %}
+            <div class="question" style="color: black">
+                <ul>
+                    <li><a class="questionLink" href="question/{{ result.id }}">
+                        <h4>{% for word in result.title.split() %}
+                            {% if request.args.get('q').lower() in word.lower() %}
+                                <strong style="background-color: greenyellow">
+                                    {{ word }}
+                                </strong>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                        {% endfor %}</h4></a>
+                        {% for word in result.question_message.split() %}
+                            {% if request.args.get('q').lower() in word.lower() %}
+                                <strong style="background-color: greenyellow">
+                                    {{ word }}
+                                </strong>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                        {% endfor %}
+                        {% if result.answer_message %}
+                            {% if request.args.get('q').lower() in result.answer_message.lower() %}
+                                <hr>
+                                <p> Answer messages </p>
+                                <p style="margin-left: 50px;"> ---
+                                    {% for word in result.answer_message.split() %}
+                                        {% if request.args.get('q').lower() in word.lower() %}
+                                            <strong style="background-color: greenyellow">
+                                                {{ word }}
+                                            </strong>
+                                        {% else %}
+                                            {{ word }}
+                                        {% endif %}
+                                    {% endfor %}</p>
+                            {% endif %}
+                        {% endif %}</li>
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% elif request.args.get('q') %}
+<div class="questions">
+    <div class="question" style="color: black">
+        <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
+        <p>Try a different phrase or check your spelling. </p>
+    </div>
+</div>
+{% endif %}
