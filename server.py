@@ -27,7 +27,9 @@ def list_questions():
     results = db_data_handler.search(search_phrase)
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=results)
+                           results=results,
+                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags()
+                           )
 
 
 @app.route('/question/<id>', methods=['GET'])

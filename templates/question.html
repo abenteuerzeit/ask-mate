@@ -7,10 +7,10 @@
             <a class="questionLink" href="/">Go back</a><br>
             <div class="question">
                 <h2>{{ question.title }}</h2>
-            <p>
-            <a class="questionLink" href="{{ question.id }}/edit">Edit</a>
-                <a class="questionLink" href="/question/{{ question.id }}/delete">Delete</a>
-            </p>
+                <p>
+                    <a class="questionLink" href="{{ question.id }}/edit">Edit</a>
+                    <a class="questionLink" href="/question/{{ question.id }}/delete">Delete</a>
+                </p>
                 {% if question.image %}
                     <div class="item">
                         <a href="{{ question.image }}" target="_blank">
@@ -26,34 +26,49 @@
                             <em>#{{ tag.name }} </em>
                         {% endif %}{% endfor %}{% endfor %}
                     </p>
-                    <p> <a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
+                    <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
                 </div>
             </div>
             <div><p><a class="questionLink" href="/question/{{ question.id }}/new-answer">Add a new answer</a></p></div>
-            {% if answers %}
-                <h3>Answers </h3>
-                {% for answer in answers %}
-                    <div class="answers">
-                        <div class="answer"><p>{{ answer.message }}</p>
-                            <small>{{ answer.submission_time }}</small><br>
-                            <div class="answer">
-                                <small>{{ answer.vote_number }}<br>
-                                    <a href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
-                                    <a href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
-                                </small></div>
-                        </div>
-                        {% if answer.image %}
-                            <div class="answer">
-                                <a href="{{ answer.image }}" target="_blank">
-                                    <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
-                                </a></div>
-                        {% endif %}
-                        <div class="answer">
-                            <a href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">Delete</a><br>
-                            <a href="/question/{{ question.id }}/new-comment">Add a new comment</a><br></div>
-                    </div>
-                {% endfor %}
-            {% endif %}
         </div>
     </div>
+    {% if answers %}
+        <div class="question">
+        <h2 style="color: whitesmoke; text-align: center;">Answers </h2>
+        {% for answer in answers %}
+            <div class="questions">
+                <div class="question"><small>
+                    <a class="questionLink"
+                       href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
+                    {{ answer.vote_number }}
+                    <a class="questionLink" href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
+                </small><br>
+                </div>
+
+                <div class="question">
+                    <p>{{ answer.message }}</p>
+                    <small>{{ answer.submission_time }}</small><br>
+                    <p><small>
+                        <a class="questionLink" style="padding-right: 10px" href="/question/{{ question.id }}/new-comment">
+                            Comment
+                        </a>
+                        <a class="questionLink" style="padding-right: 10px"
+                           href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
+                            Delete
+                        </a>
+                    </small>
+                    </p>
+
+                </div>
+
+                {% if answer.image %}
+                    <div class="question">
+                        <a class="questionLink" href="{{ answer.image }}" target="_blank">
+                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
+                        </a><br>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
