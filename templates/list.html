@@ -1,11 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}List Questions{% endblock %}
 {% block body %}
-    {#    MACROs for DRY code   #}
-
-    {% macro input(name, value='', type='text', size=20) -%}
-        <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}">
-    {%- endmacro %}
 
     {#    MAIN PAGE     #}
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">

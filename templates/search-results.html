@@ -1,3 +1,14 @@
+ {% macro fancy_search(text) -%}
+    {% for word in text.split() %}
+        {% if request.args.get('q').lower() in word.lower() %}
+            <strong style="background-color: greenyellow">{{ word }}</strong>
+        {% else %}
+            {{ word }}
+        {% endif %}
+    {% endfor %}
+{%- endmacro %}
+
+
 {% if results %}
 <div class="questions">
     <div>
@@ -9,40 +20,16 @@
             <div class="question" style="color: black">
                 <ul>
                     <li><a class="questionLink" href="question/{{ result.id }}">
-                        <h4>{% for word in result.title.split() %}
-                            {% if request.args.get('q').lower() in word.lower() %}
-                                <strong style="background-color: greenyellow">
-                                    {{ word }}
-                                </strong>
-                            {% else %}
-                                {{ word }}
-                            {% endif %}
-                        {% endfor %}</h4></a>
-                        {% for word in result.question_message.split() %}
-                            {% if request.args.get('q').lower() in word.lower() %}
-                                <strong style="background-color: greenyellow">
-                                    {{ word }}
-                                </strong>
-                            {% else %}
-                                {{ word }}
-                            {% endif %}
-                        {% endfor %}
+                        <h4>{{ fancy_search( result.title ) }}</h4></a>
+                        <p>{{ fancy_search( result.question_message ) }}</p>
                         {% if result.answer_message %}
                             {% if request.args.get('q').lower() in result.answer_message.lower() %}
                                 <hr>
                                 <p> Answer messages </p>
-                                <p style="margin-left: 50px;"> ---
-                                    {% for word in result.answer_message.split() %}
-                                        {% if request.args.get('q').lower() in word.lower() %}
-                                            <strong style="background-color: greenyellow">
-                                                {{ word }}
-                                            </strong>
-                                        {% else %}
-                                            {{ word }}
-                                        {% endif %}
-                                    {% endfor %}</p>
+                                <p style="margin-left: 50px;"> ---{{ fancy_search(result.answer_message) }}</p>
                             {% endif %}
-                        {% endif %}</li>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
         {% endfor %}
