@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}New Tag{% endblock %}
+{% block body %}
+
+    {% macro mark_checked(tag) -%}
+        {% for q in question_tags %}{% if q.tag_id == tag.id %}checked{% endif %}{% endfor %}
+    {%- endmacro %}
+
+    <a href="/question/{{ question.id }}">Go back</a><br>
+
+    <div class="forms">
+        <div class="item" style="color: whitesmoke">
+            <h3>Select a tag </h3>
+            <form method="post" action="/question/{{ question.id }}/new-tag">
+                {% for tag in tags %}
+                    <input type="checkbox" id="{{ tag.id }}" value="{{ tag.id }}" {{ mark_checked(tag) }}>
+                    <label for="{{ tag.id }}">{{ tag.name }} </label><br>
+                {% endfor %}
+                <h3>or create a new one </h3>
+                <input type="text" name="name" , id="name" placeholder="Create a new tag"><br>
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+{% endblock %}

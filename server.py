@@ -27,7 +27,9 @@ def list_questions():
     results = db_data_handler.search(search_phrase)
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=results)
+                           results=results,
+                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags()
+                           )
 
 
 @app.route('/question/<id>', methods=['GET'])
@@ -36,7 +38,8 @@ def display_question(id):
     db_data_handler.increase_question_view_count(question['id'])
     answers = db_data_handler.get_answer_for_question(id)
     if request.method == 'GET':
-        return render_template('question.html', question=question, answers=answers)
+        return render_template('question.html', question=question, answers=answers,
+                               tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tag_ids(id))
     return question, answers
 
 
@@ -82,6 +85,23 @@ def edit_question(id):
                                        'image': question['image']})
         return redirect('/question/' + id)
 
+
+@app.route('/question/<id>/new-tag', methods=['GET', 'POST'])
+def create_new_tag(id):
+    question = db_data_handler.get_question(id)
+    if request.method == 'GET':
+        question_tags = db_data_handler.get_question_tag_ids(id)
+        return render_template('add-tag.html', question=question,
+                               tags=db_data_handler.get_tags(),
+                               question_tags=question_tags)
+    elif request.method == 'POST':
+        data = request.form
+        for item in data:
+            db_data_handler.assign_tag_to_question()
+        tag = request.form.get('name')
+        db_data_handler.create_new_tag(tag)
+        db_data_handler.get_question_tag_ids()
+        return redirect(f'/question/{id}')
 
 # ------------------- ANSWERS ---------------------- #
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
@@ -208,6 +228,8 @@ def edit_delete_image(id):
 def display_error_message(id):
     error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
     return error_dict
+
+
 
 
 if __name__ == "__main__":
