@@ -1,116 +1,66 @@
 {% extends "layout.html" %}
 {% block title %}List Questions{% endblock %}
 {% block body %}
+    {#    MACROs for DRY code   #}
+
+    {% macro input(name, value='', type='text', size=20) -%}
+        <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}">
+    {%- endmacro %}
+
+    {#    MAIN PAGE     #}
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
         <div style="margin: 25px; padding: 10px;"><img class="logo" src="/uploads/logo.jpg" alt="logo" height="100"
                                                        style="float: left"></div>
         <div style="margin: 25px; padding: 10px;"><h1>All questions</h1></div>
+
+
         {% if questions %}
-            <div style="margin: 25px; padding: 10px;"><a href="/add-question">Add a question</a></div>
-            <div style="margin: 25px; padding: 10px;">
-                <label for="order_by"> Sort question list by </label>
-                <select style="display: inline;" name="order_by" id="order_by" form="sort">
-                    <option value="">--Please choose an option--</option>
-                    <option value="title">Title &#8681</option>
-                    <option value="view_number">Views &#8681</option>
-                </select>
-                <form style="display: inline;" action="/list" method="get" id="sort"><input type="submit"></form>
-                <br>
-                <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
-            </div>
-            <div>
-                <form action="/search" method="GET">
-                    <label for="submit"><input type="text" name="q" placeholder="What are you looking for? "></label>
-                    <input type="submit" value="Search">
-                </form>
-            </div>
-            </div>
-            <div class="item">
-            <main>
-            {% if results %}
-                <div class="questions">
-                    <div>
-                        <h2>All Search Results</h2>
-                        <p>Searched phrase: <em>{{ request.args.get('q') }}</em></p>
-                        <p>The following results list questions that contain the phrase "{{ request.args.get('q') }}" in
-                            either a question's title or message, or in an answer's message to a question.</p>
-                        {% for result in results %}
-                            <div class="question" style="color: black">
-                                <ul>
-                                    <li><a class="questionLink" href="question/{{ result.id }}">
-                                        <h4>{% for word in result.title.split() %}
-                                            {% if request.args.get('q').lower() in word.lower() %}
-                                                <strong style="background-color: greenyellow">
-                                                    {{ word }}
-                                                </strong>
-                                            {% else %}
-                                                {{ word }}
-                                            {% endif %}
-                                        {% endfor %}</h4></a>
-                                        {% for word in result.question_message.split() %}
-                                            {% if request.args.get('q').lower() in word.lower() %}
-                                                <strong style="background-color: greenyellow">
-                                                    {{ word }}
-                                                </strong>
-                                            {% else %}
-                                                {{ word }}
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% if result.answer_message %}
-                                            {% if request.args.get('q').lower() in result.answer_message.lower() %}
-                                            <hr>
-                                            <p> Answer messages </p>
-                                            <p style="margin-left: 50px;"> ---
-                                            {% for word in result.answer_message.split() %}
-                                                {% if request.args.get('q').lower() in word.lower() %}
-                                                    <strong style="background-color: greenyellow">
-                                                        {{ word }}
-                                                    </strong>
-                                                {% else %}
-                                                    {{ word }}
-                                                {% endif %}
-                                            {% endfor %}</p>
-                                            {%  endif %}
-                                        {% endif %}</li>
-                                </ul>
-                            </div>
-                        {% endfor %}
-                    </div>
+                <div style="margin: 25px; padding: 10px;"><a href="/add-question">Add a question</a></div>
+                <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
+                    <select style="display: inline;" name="order_by" id="order_by" form="sort">
+                        <option value="">--Please choose an option--</option>
+                        <option value="title">Title &#8681</option>
+                        <option value="view_number">Views &#8681</option></select>
+                    <form style="display: inline;" action="/list" method="get" id="sort"><input type="submit"></form>
+                    <br><small> Questions ordered by {{ order_by }}: {{ order_direction }}</small></div>
+                    <div><form action="/search" method="GET">
+                        <label for="submit"><input type="text" name="q" placeholder="Enter a search phrase "></label>
+                        <input type="submit" value="Search"></form></div>
                 </div>
-            {% elif request.args.get('q') %}
-                <div class="questions">
-                    <div class="question" style="color: black">
-                        <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
-                        <p>Try a different phrase or check your spelling. </p>
+                <div class="item"><main>
+
+                {% include 'search-results.html' %}
+
+                {% for row in questions %}
+                    <div class="questions">
+                        <div class="question">
+                            <p style="text-align: center">
+                                <a class="questionLink" href="/question/{{ row.id }}/vote-up">&#8679</a><br>
+                                <small>{{ row.vote_number }}</small><br>
+                                <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
+                        </div>
+                        <div class="question">
+                            <h3><a class="questionLink" href="/question/{{ row.id }}">{{ row.title }}</a>
+                                <a class="questionLink" href="/list?order_by=title&order_direction=asc">&#8679</a>
+                            </h3>
+                            <p><small>Views: {{ row.view_number }}</small></p>
+                            {% if row.image %}
+                                <a href="{{ row.image }}">
+                                    <img src="{{ row.image }}" alt="uploaded image" style="float: right;
+                    margin: auto; padding: 5px; height: 150px;"></a>
+                            {% endif %}
+                            <p> {{ row.message }} <a class="questionLink"
+                                                     href="/list?order_by=view_number&order_direction=asc">&#8679</a></p>
+                            <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
-            {% for row in questions %}
-                <div class="questions">
-                    <div class="question">
-                        <p style="text-align: center">
-                            <a class="questionLink" href="/question/{{ row.id }}/vote-up">&#8679</a><br>
-                            <small>{{ row.vote_number }}</small><br>
-                            <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
-                    </div>
-                    <div class="question">
-                        <h3><a class="questionLink" href="/question/{{ row.id }}">{{ row.title }}</a>
-                            <a class="questionLink" href="/list?order_by=title&order_direction=asc">&#8679</a>
-                        </h3>
-                        <p><small>Views: {{ row.view_number }}</small></p>
-                        {% if row.image %}
-                            <a href="{{ row.image }}">
-                                <img src="{{ row.image }}" alt="uploaded image" style="float: right;
-                margin: auto; padding: 5px; height: 150px;"></a>
-                        {% endif %}
-                        <p> {{ row.message }} <a class="questionLink"
-                                                 href="/list?order_by=view_number&order_direction=asc">&#8679</a></p>
-                        <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %} <p>No questions added yet. <a href="/add-question">Add a question now!</a></p>
-        {% endif %}
+                {% endfor %}
         </main>
+
+        {% else %}
+            <p>No questions added yet. <a href="/add-question">Add a question now!</a></p>
+                    </main>
+
+        {% endif %}
         </div>
 {% endblock %}
