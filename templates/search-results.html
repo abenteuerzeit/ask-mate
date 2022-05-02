@@ -1,6 +1,8 @@
- {% macro fancy_search(text) -%}
+
+{% macro fancy_search(text) -%}
+    {% set search_phrase = request.args.get('q') %}
     {% for word in text.split() %}
-        {% if request.args.get('q').lower() in word.lower() %}
+        {% if search_phrase.lower() in word.lower() %}
             <strong style="background-color: greenyellow">{{ word }}</strong>
         {% else %}
             {{ word }}
@@ -10,11 +12,12 @@
 
 
 {% if results %}
+{% set search_phrase = request.args.get('q') %}
 <div class="questions">
     <div>
         <h2>All Search Results</h2>
-        <p>Searched phrase: <em>{{ request.args.get('q') }}</em></p>
-        <p>The following results list questions that contain the phrase "{{ request.args.get('q') }}" in
+        <p>Searched phrase: <em>{{ search_phrase }}</em></p>
+        <p>The following results list questions that contain the phrase "{{ search_phrase }}" in
             either a question's title or message, or in an answer's message to a question.</p>
         {% for result in results %}
             <div class="question" style="color: black">
@@ -23,7 +26,7 @@
                         <h4>{{ fancy_search( result.title ) }}</h4></a>
                         <p>{{ fancy_search( result.question_message ) }}</p>
                         {% if result.answer_message %}
-                            {% if request.args.get('q').lower() in result.answer_message.lower() %}
+                            {% if search_phrase.lower() in result.answer_message.lower() %}
                                 <hr>
                                 <p> Answer messages </p>
                                 <p style="margin-left: 50px;"> ---{{ fancy_search(result.answer_message) }}</p>
@@ -35,10 +38,10 @@
         {% endfor %}
     </div>
 </div>
-{% elif request.args.get('q') %}
+{% elif search_phrase %}
 <div class="questions">
     <div class="question" style="color: black">
-        <h2>No results found for <em>{{ request.args.get('q') }}</em>.</h2>
+        <h2>No results found for <em>{{ search_phrase }}</em>.</h2>
         <p>Try a different phrase or check your spelling. </p>
     </div>
 </div>
