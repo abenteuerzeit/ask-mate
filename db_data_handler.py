@@ -233,6 +233,16 @@ def get_question_tag_ids(cursor, question_id):
 
 
 @connection.connection_handler
+def get_question_tags(cursor):
+    query = f"""
+    SELECT *
+    FROM question_tag
+    """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
 def get_tags(cursor):
     query = f"""
     SELECT *
