@@ -219,3 +219,42 @@ def delete_answer(cursor, id):
     WHERE answer.id = {id}
     """
     cursor.execute(query)
+
+
+@connection.connection_handler
+def get_question_tag_ids(cursor, question_id):
+    query = f"""
+    SELECT tag_id
+    FROM question_tag
+    WHERE question_id = {question_id}
+    """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_tags(cursor):
+    query = f"""
+    SELECT *
+    FROM tag
+    """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def assign_tag_to_question(question_id, tag_id):
+    query = f"""
+    INSERT INTO question_tag (question_id, tag_id) 
+    VALUES ({question_id}, {tag_id})
+    """
+    cursor.execute(query)
+
+
+@connection.connection_handler
+def create_new_tag(cursor, name):
+    query = f"""
+    INSERT INTO tag (name)
+    VALUES ('{name}')
+    """
+    cursor.execute(query)
