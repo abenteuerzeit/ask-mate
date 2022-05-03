@@ -166,7 +166,7 @@ def save_new_question_data(cursor, user_input):
                            'message': user_input.get('message'),
                            'image': image})
     cursor.execute(set_image_to_null('question'))
-    query = f"""
+    query = """
         SELECT max(id) AS id
         from question
     """
@@ -205,7 +205,7 @@ def save_answer_data(cursor, user_input):
     cursor.execute(query, {'time': NOW, 'title': user_input.get('title'), 'question_id': user_input.get('question_id'),
                            'message': user_input.get('message'), 'image': user_input.get('image')})
     cursor.execute(set_image_to_null('answer'))
-    query = f"""
+    query = """
             SELECT max(id) AS id
             from answer
         """
@@ -273,7 +273,7 @@ def assign_tag_to_question(cursor, question_id, tag_id):
 
 @connection.connection_handler
 def create_new_tag(cursor, name):
-    query = f"""
+    query = """
     INSERT INTO tag (name)
     VALUES (%s)
     """
