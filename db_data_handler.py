@@ -10,41 +10,44 @@ def get_questions(cursor):  # fetchall()
     query = """
         SELECT id, submission_time, view_number, vote_number, title, message, image
         FROM question
-        ORDER BY submission_time"""
+        ORDER BY submission_time
+        """
     cursor.execute(query)  # wykonaj czytanie po linii
     return cursor.fetchall()
 
 
 @connection.connection_handler
 def search(cursor, search_phrase):
-    query = f"""
-    SELECT question.id, title, question.message as question_message, answer.message as answer_message
-    FROM question
-    LEFT JOIN answer
-    ON question.id = answer.question_id
-    WHERE  
-        lower(title) LIKE lower('%{search_phrase}%')
-        OR lower(question.message) LIKE lower('%{search_phrase}%')
-        OR lower(answer.message) LIKE lower('%{search_phrase}%')
-    """
-    cursor.execute(query)
-    return cursor.fetchall()
+    if search_phrase is not None:
+        search_phrase = '%' + search_phrase + '%'
+        query = """
+        SELECT question.id, title, question.message as question_message, answer.message as answer_message
+        FROM question
+        LEFT JOIN answer
+        ON question.id = answer.question_id
+        WHERE  
+            LOWER(title) LIKE LOWER(%(search_phrase)s)
+            OR LOWER(question.message) like LOWER(%(search_phrase)s)
+            OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+        """
+        cursor.execute(query, {'search_phrase': search_phrase})
+        return cursor.fetchall()
 
 
 @connection.connection_handler
 def get_question(cursor, id):  # fetchone()
-    query = f"""
+    query = """
         SELECT *
         FROM question
-        WHERE id = {id}
+        WHERE id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (id,))
     return cursor.fetchone()
 
 
 @connection.connection_handler
 def get_answers(cursor):
-    query = f"""
+    query = """
         SELECT *
         from answer
     """
@@ -54,12 +57,12 @@ def get_answers(cursor):
 
 @connection.connection_handler
 def get_answer_for_question(cursor, question_id):
-    query = f"""
+    query = """
         SELECT *
         from answer
-        WHERE question_id = {question_id}
+        WHERE question_id =  %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (question_id,))
     return cursor.fetchall()
 
 
@@ -75,81 +78,94 @@ def get_comment_for_question(cursor, answer_id):
 
 @connection.connection_handler
 def increase_question_view_count(cursor, select_qdict):
-    query = f"""
+    query = """
         UPDATE question
         SET view_number = view_number + 1
-        WHERE question.id = {select_qdict}
+        WHERE question.id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (select_qdict,))
 
 
 @connection.connection_handler
 def increase_question_vote(cursor, selected_dictionary):
-    query = f"""
+    query = """
         UPDATE question
         SET vote_number = vote_number + 1
-        WHERE question.id = {selected_dictionary}
+        WHERE question.id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (selected_dictionary,))
 
 
 @connection.connection_handler
 def increase_answer_vote(cursor, selected_dictionary):
-    query = f"""
+    query = """
         UPDATE answer
         SET vote_number = vote_number + 1
-        WHERE answer.id = {selected_dictionary}
+        WHERE answer.id = %s
         """
-    cursor.execute(query)
+    cursor.execute(query, (selected_dictionary,))
     return get_question_id(cursor, selected_dictionary)
 
 
 @connection.connection_handler
 def decrease_question_vote(cursor, selected_dictionary):
-    query = f"""
+    query = """
         UPDATE question
         SET vote_number = vote_number - 1
-        WHERE question.id = {selected_dictionary}
+        WHERE question.id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (selected_dictionary,))
     return get_question_id(cursor, selected_dictionary)
 
 
 @connection.connection_handler
 def decrease_answer_vote(cursor, selected_dictionary):
-    query = f"""
+    query = """
         UPDATE answer
         SET vote_number = vote_number - 1
-        WHERE answer.id = {selected_dictionary}
+        WHERE answer.id = %s
             """
-    cursor.execute(query)
+    cursor.execute(query, (selected_dictionary,))
     return get_question_id(cursor, selected_dictionary)
 
 
 def get_question_id(cursor, answer_id):
-    query = f"""
+    query = """
             SELECT question_id
             from answer
-            WHERE id = {answer_id}
+            WHERE id = %s
             """
-    cursor.execute(query)
+    cursor.execute(query, (answer_id,))
     return cursor.fetchone()
+
+
+def set_image_to_null(table):
+    if table == 'question':
+        return """
+                    UPDATE question
+                    SET image = NULL
+                    WHERE image = 'NULL' or image = '' or image = 'None'
+                """
+    elif table == 'answer':
+        return """
+                    UPDATE answer
+                    SET image = NULL
+                    WHERE image = 'NULL' or image = '' or image = 'None'
+                """
 
 
 @connection.connection_handler
 def save_new_question_data(cursor, user_input):
-    query = f"""
-        INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-        VALUES('{NOW}', 0, 0, '{user_input['title']}', '{user_input['message']}', 
-        '{'NULL' if user_input['image'] == "" else user_input['image']}')
-    """
-    cursor.execute(query)
-    query = f"""
-        UPDATE question
-        SET image = NULL
-        WHERE image = 'NULL' or image = '' or image = 'None'
-    """
-    cursor.execute(query)
+    image = 'NULL' if user_input.get('image') == "" else user_input.get('image')
+    query = """
+            INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
+            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s)
+            """
+    cursor.execute(query, {'time': NOW,
+                           'title': user_input.get('title'),
+                           'message': user_input.get('message'),
+                           'image': image})
+    cursor.execute(set_image_to_null('question'))
     query = f"""
         SELECT max(id) AS id
         from question
@@ -165,36 +181,30 @@ def save_new_comment(cursor, user_input):
 
 @connection.connection_handler
 def edit_question(cursor, updated_dict):
-    query = f"""
+    question_id = int(updated_dict.get('id'))
+    query = """
         UPDATE question
-        SET title = '{updated_dict['title']}',
-            message = '{updated_dict['message']}',
-            image = '{updated_dict['image']}'
-        WHERE question.id = {updated_dict['id']}
+        SET title = %(title)s,
+            message = %(message)s,
+            image = %(image)s
+        WHERE question.id = %(question_id)s
     """
-    cursor.execute(query)
-    query = f"""
-            UPDATE question
-            SET image = NULL
-            WHERE image = 'NULL' or image = '' or image = 'None'
-        """
-    cursor.execute(query)
+    cursor.execute(query, {'title': updated_dict.get('title'),
+                           'message': updated_dict.get('message'),
+                           'image': updated_dict.get('image'),
+                           'question_id': question_id})
+    cursor.execute(set_image_to_null('question'))
 
 
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
-    query = f"""
+    query = """
         INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-        VALUES ('{NOW}', 0, '{user_input['question_id']}', '{user_input['message']}', 
-        '{user_input['image']}')
+        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s)
     """
-    cursor.execute(query)
-    query = f"""
-            UPDATE answer
-            SET image = NULL
-            WHERE image = 'NULL' or image = '' or image = 'None'
-        """
-    cursor.execute(query)
+    cursor.execute(query, {'time': NOW, 'title': user_input.get('title'), 'question_id': user_input.get('question_id'),
+                           'message': user_input.get('message'), 'image': user_input.get('image')})
+    cursor.execute(set_image_to_null('answer'))
     query = f"""
             SELECT max(id) AS id
             from answer
@@ -205,36 +215,36 @@ def save_answer_data(cursor, user_input):
 
 @connection.connection_handler
 def delete_question(cursor, id):
-    query = f"""
+    query = """
     DELETE FROM question
-    WHERE question.id = {id}
+    WHERE question.id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (id,))
 
 
 @connection.connection_handler
 def delete_answer(cursor, id):
-    query = f"""
+    query = """
     DELETE FROM answer
-    WHERE answer.id = {id}
+    WHERE answer.id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (id,))
 
 
 @connection.connection_handler
 def get_question_tag_ids(cursor, question_id):
-    query = f"""
+    query = """
     SELECT tag_id
     FROM question_tag
-    WHERE question_id = {question_id}
+    WHERE question_id = %s
     """
-    cursor.execute(query)
+    cursor.execute(query, (question_id,))
     return cursor.fetchall()
 
 
 @connection.connection_handler
 def get_question_tags(cursor):
-    query = f"""
+    query = """
     SELECT *
     FROM question_tag
     """
@@ -244,7 +254,7 @@ def get_question_tags(cursor):
 
 @connection.connection_handler
 def get_tags(cursor):
-    query = f"""
+    query = """
     SELECT *
     FROM tag
     """
@@ -253,18 +263,18 @@ def get_tags(cursor):
 
 
 @connection.connection_handler
-def assign_tag_to_question(question_id, tag_id):
-    query = f"""
+def assign_tag_to_question(cursor, question_id, tag_id):
+    query = """
     INSERT INTO question_tag (question_id, tag_id) 
-    VALUES ({question_id}, {tag_id})
+    VALUES (%(question_id)s, %(tag_id)s)
     """
-    cursor.execute(query)
+    cursor.execute(query, {'question_id': question_id, 'tag_id': tag_id})
 
 
 @connection.connection_handler
 def create_new_tag(cursor, name):
     query = f"""
     INSERT INTO tag (name)
-    VALUES ('{name}')
+    VALUES (%s)
     """
-    cursor.execute(query)
+    cursor.execute(query, (name,))

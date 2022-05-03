@@ -103,6 +103,7 @@ def create_new_tag(id):
         db_data_handler.get_question_tag_ids()
         return redirect(f'/question/{id}')
 
+
 # ------------------- ANSWERS ---------------------- #
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
 def add_answer(id):
@@ -122,7 +123,7 @@ def delete_answer(id):
     question_id = request.args.get('question_id')
     answer_list = db_data_handler.get_answers()
     for answer in answer_list:
-        if answer['id'] == str(id):
+        if str(answer['id']) == id:
             image_delete_from_server(answer)
     db_data_handler.delete_answer(id)
     return redirect('/question/' + question_id)
@@ -228,8 +229,6 @@ def edit_delete_image(id):
 def display_error_message(id):
     error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
     return error_dict
-
-
 
 
 if __name__ == "__main__":
