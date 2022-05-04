@@ -23,8 +23,12 @@
                 <div class="question"><h3>Tags</h3>
                     <p>
                         {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
-                            <em>#{{ tag.name }} </em>
-                            <a class="questionLink" href="{{ question.id }}/tag/{{tag.id}}/delete">x</a>
+                            <em>#{{ tag.name }}
+                                <a class="questionLink" style="text-decoration: none"
+                                   href="{{ question.id }}/tag/{{ tag.id }}/delete">
+                                    <sup style="color: red">&#x2717;</sup>
+                                </a>
+                            </em>
                         {% endif %}{% endfor %}{% endfor %}
                     </p>
                     <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
@@ -50,7 +54,8 @@
                     <p>{{ answer.message }}</p>
                     <small>{{ answer.submission_time }}</small><br>
                     <p><small>
-                        <a class="questionLink" style="padding-right: 10px" href="/question/{{ question.id }}/new-comment">
+                        <a class="questionLink" style="padding-right: 10px"
+                           href="/question/{{ question.id }}/new-comment">
                             Comment
                         </a>
                         <a class="questionLink" style="padding-right: 10px"
