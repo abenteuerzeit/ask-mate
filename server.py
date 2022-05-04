@@ -62,6 +62,9 @@ def add_question():
 def delete_question(id):
     image_delete_from_server(db_data_handler.get_question(id))
     answers = db_data_handler.get_answer_for_question(id)
+    tags = db_data_handler.get_question_tag_ids(id)
+    for tag in tags:
+        db_data_handler.delete_tag_from_question(id, tag.get('tag_id'))
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
