@@ -98,6 +98,11 @@ def add_tag_to_question(id):
                                question_tags=question_tags)
     elif request.method == 'POST':
         tag_id = request.form.get('tag')
+        name = request.form.get('add_tag')
+        if name:
+            db_data_handler.create_new_tag(name)
+            tag_id = db_data_handler.get_tag_id(name)
+            tag_id = tag_id.get('id')
         db_data_handler.assign_tag_to_question(id, tag_id)
         db_data_handler.get_question_tag_ids(id)
         return redirect(f'/question/{id}')
