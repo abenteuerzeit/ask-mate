@@ -24,6 +24,7 @@
                     <p>
                         {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
                             <em>#{{ tag.name }} </em>
+                            <a class="questionLink" href="{{ question.id }}/tag/{{tag.id}}/delete">x</a>
                         {% endif %}{% endfor %}{% endfor %}
                     </p>
                     <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>

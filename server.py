@@ -106,6 +106,12 @@ def create_new_tag(id):
         return redirect(f'/question/{id}')
 
 
+@app.route('/question/<question_id>/tag/<tag_id>/delete')
+def delete_tag_from_question(question_id, tag_id):
+    db_data_handler.delete_tag_from_question(question_id, tag_id)
+    return redirect(f'/question/{question_id}')
+
+
 # ------------------- ANSWERS ---------------------- #
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
 def add_answer(id):
