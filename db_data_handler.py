@@ -21,14 +21,19 @@ def search(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
         query = """
-        SELECT question.id, title, question.message as question_message, answer.message as answer_message
+        SELECT  question.id, title, question.message as question_message,
+                answer.message as answer_message, 
+                tag.name as tag
         FROM question
         LEFT JOIN answer
         ON question.id = answer.question_id
+        LEFT JOIN question_tag qt on question.id = qt.question_id
+        LEFT JOIN tag on qt.tag_id = tag.id
         WHERE  
             LOWER(title) LIKE LOWER(%(search_phrase)s)
             OR LOWER(question.message) like LOWER(%(search_phrase)s)
             OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+            OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
         """
         cursor.execute(query, {'search_phrase': search_phrase})
         return cursor.fetchall()
@@ -263,6 +268,17 @@ def get_tags(cursor):
 
 
 @connection.connection_handler
+def get_tag_id(cursor, name):
+    query = """
+    SELECT id
+    FROM tag
+    WHERE name = %s
+    """
+    cursor.execute(query, (name,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
 def assign_tag_to_question(cursor, question_id, tag_id):
     query = """
     INSERT INTO question_tag (question_id, tag_id) 
@@ -278,3 +294,12 @@ def create_new_tag(cursor, name):
     VALUES (%s)
     """
     cursor.execute(query, (name,))
+
+
+@connection.connection_handler
+def delete_tag_from_question(cursor, question_id, tag_id):
+    query = """
+    DELETE FROM question_tag
+    WHERE question_id = %(question_id)s AND tag_id = %(tag_id)s
+    """
+    cursor.execute(query, {'question_id': question_id, 'tag_id': tag_id})
