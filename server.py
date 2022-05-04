@@ -68,7 +68,11 @@ def delete_question(id):
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
+            comments = db_data_handler.get_comment_for_answer(answer.get('id'))
+            for comment in comments:
+                db_data_handler.delete_comment(comment.get('id'))
             db_data_handler.delete_answer(answer.get('id'))
+    db_data_handler.delete_question_comment(id)
     db_data_handler.delete_question(id)
     return redirect("/")
 
