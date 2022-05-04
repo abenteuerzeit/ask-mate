@@ -82,6 +82,35 @@ def get_comment_for_question(cursor, answer_id):
 
 
 @connection.connection_handler
+def get_comment_for_answer(cursor, answer_id):
+    query = """
+        SELECT id, question_id, answer_id, message, submission_time, edited_count
+        FROM comment
+        WHERE answer_id=%s
+    """
+    cursor.execute(query, (answer_id, ))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def delete_comment(cursor, id):
+    query = """
+        DELETE FROM comment
+        WHERE id=%s
+    """
+    cursor.execute(query, (id,))
+
+
+@connection.connection_handler
+def delete_question_comment(cursor, question_id):
+    query = """
+        DELETE FROM comment
+        WHERE question_id=%s
+    """
+    cursor.execute(query, (question_id, ))
+
+
+@connection.connection_handler
 def increase_question_view_count(cursor, select_qdict):
     query = """
         UPDATE question
