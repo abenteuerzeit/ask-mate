@@ -76,8 +76,10 @@ def delete_question(id):
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
     question = db_data_handler.get_question(id)
+    tag_ids = db_data_handler.get_question_tag_ids(id)
+    tags = db_data_handler.get_tags()
     if request.method == 'GET':
-        return render_template('edit-question.html', question=question)
+        return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
     elif request.method == 'POST':
         file = request.files.get('file')
         if file and allowed_file(file.filename):
