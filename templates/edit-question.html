@@ -20,20 +20,6 @@
                     <label for="file">Upload Image</label><br>
                     <input type="file" name="file"><br>
                 {% endif %}
-
-                <h4>Edit tags</h4>
-
-                {% for tag in tags %}
-
-                    {% for question_tag in tag_ids %}
-
-                    {% if tag.id == question_tag.tag_id  %}
-                    <em>#{{ tag.name }}
-                        <a class="questionLink" style="text-decoration: none" href="tag/{{ tag.id }}/delete">
-                            <sup style="color: red">&#x2717;</sup>
-                        </a>
-                    </em>
-                {% endif %}{% endfor %}{% endfor %}
                 <hr>
                 <input type="submit">
             </form>
