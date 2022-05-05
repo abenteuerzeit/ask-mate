@@ -19,14 +19,12 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 @app.route("/list")
 @app.route('/search')
 def list_questions():
-    order_by = request.args.get('order_by', 'id')
-    order_direction = request.args.get('order_direction', 'desc')
+    order_by, order_direction = request.args.get('order_by', 'id'), request.args.get('order_direction', 'desc')
     if 'asc' in order_by:
         order_by, order_direction = order_by[:-len('-asc')], 'asc'
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    search_phrase = request.args.get('q')
-    results = db_data_handler.search(search_phrase)
+    results = db_data_handler.search(request.args.get('q'))
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
                            results=results,
@@ -36,9 +34,8 @@ def list_questions():
 
 @app.route('/question/<id>', methods=['GET'])
 def display_question(id):
-    question = db_data_handler.get_question(id)
+    question, answers = db_data_handler.get_question(id), db_data_handler.get_answer_for_question(id)
     db_data_handler.increase_question_view_count(question['id'])
-    answers = db_data_handler.get_answer_for_question(id)
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers,
                                tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tag_ids(id))
@@ -50,21 +47,20 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-        image = upload_image()
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': image})
+            'image': upload_image()})
         return redirect('/question/' + str(new_question['id']))
 
 
 @app.route("/question/<id>/delete")
 def delete_question(id):
     image_delete_from_server(db_data_handler.get_question(id))
-    answers = db_data_handler.get_answer_for_question(id)
-    tags = db_data_handler.get_question_tag_ids(id)
-    for tag in tags:
-        db_data_handler.delete_tag_from_question(id, tag.get('tag_id'))
+    answers, tags = db_data_handler.get_answer_for_question(id), db_data_handler.get_question_tag_ids(id)
+    if tags:
+        for tag in tags:
+            db_data_handler.delete_tag_from_question(id, tag.get('tag_id'))
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
@@ -80,8 +76,7 @@ def delete_question(id):
 @app.route("/question/<id>/edit", methods=['GET', 'POST'])
 def edit_question(id):
     question = db_data_handler.get_question(id)
-    tag_ids = db_data_handler.get_question_tag_ids(id)
-    tags = db_data_handler.get_tags()
+    tag_ids, tags = db_data_handler.get_question_tag_ids(id), db_data_handler.get_tags()
     if request.method == 'GET':
         return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
     elif request.method == 'POST':
@@ -106,14 +101,12 @@ def add_tag_to_question(id):
                                tags=db_data_handler.get_tags(),
                                question_tags=question_tags)
     elif request.method == 'POST':
-        tag_id = request.form.get('tag')
-        name = request.form.get('add_tag')
+        tag_id, name = request.form.get('tag'), request.form.get('add_tag')
         if name:
             db_data_handler.create_new_tag(name)
             tag_id = db_data_handler.get_tag_id(name)
             tag_id = tag_id.get('id')
         db_data_handler.assign_tag_to_question(id, tag_id)
-        db_data_handler.get_question_tag_ids(id)
         return redirect(f'/question/{id}')
 
 
@@ -127,8 +120,7 @@ def delete_tag_from_question(question_id, tag_id):
 @app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
 def add_answer(id):
     if request.method == 'GET':
-        answers = db_data_handler.get_answer_for_question(id)
-        question = db_data_handler.get_question(id)
+        question, answers = db_data_handler.get_question(id), db_data_handler.get_answer_for_question(id)
         question['id'] = str(question.get('id'))
         return render_template('add-answer.html', question=question, answers=answers)
     elif request.method == 'POST':
@@ -139,8 +131,7 @@ def add_answer(id):
 
 @app.route('/answer/<id>/delete')
 def delete_answer(id):
-    question_id = request.args.get('question_id')
-    answer_list = db_data_handler.get_answers()
+    question_id, answer_list = request.args.get('question_id'), db_data_handler.get_answers()
     for answer in answer_list:
         if str(answer['id']) == id:
             image_delete_from_server(answer)
