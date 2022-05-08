@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block title %}Question {{ question.id }}{% endblock %}
+{% block body %}
+    <div class="questions">
+        <div class="question">
+            <h1>Question</h1>
+            <a class="questionLink" href="/">Go back</a><br>
+            <div class="question">
+                <h2>{{ question.title }}</h2>
+                <p>
+                    <a class="questionLink" href="{{ question.id }}/edit">Edit</a>
+                    <a class="questionLink" href="/question/{{ question.id }}/delete">Delete</a>
+                </p>
+                {% if question.image %}
+                    <div class="item">
+                        <a href="{{ question.image }}" target="_blank">
+                            <img src="{{ question.image if question.image }}" height="100" alt="Uploaded image">
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="question"><p>{{ question.message }}</p></div>
+                <div class="question"><p><small>Added: {{ question.submission_time }}</small></p></div>
+                <div class="question"><h3>Tags</h3>
+                    <p>
+                        {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
+                            <em>#{{ tag.name }}
+                                <a class="questionLink" style="text-decoration: none"
+                                   href="{{ question.id }}/tag/{{ tag.id }}/delete">
+                                    <sup style="color: red">&#x2717;</sup>
+                                </a>
+                            </em>
+                        {% endif %}{% endfor %}{% endfor %}
+                    </p>
+                    <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
+                </div>
+            </div>
+            <div><p><a class="questionLink" href="/question/{{ question.id }}/new-answer">Add a new answer</a></p></div>
+        </div>
+    </div>
+    {% if answers %}
+        <div class="question">
+        <h2 style="color: whitesmoke; text-align: center;">Answers </h2>
+        {% for answer in answers %}
+            <div class="questions">
+                <div class="question"><small>
+                    <a class="questionLink"
+                       href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
+                    {{ answer.vote_number }}
+                    <a class="questionLink" href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
+                </small><br>
+                </div>
+
+                <div class="question">
+                    <p>{{ answer.message }}</p>
+                    <small>{{ answer.submission_time }}</small><br>
+                    <p><small>
+                        <a class="questionLink" style="padding-right: 10px"
+                           href="/question/{{ question.id }}/new-comment">
+                            Comment
+                        </a>
+                        <a class="questionLink" style="padding-right: 10px"
+                           href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
+                            Delete
+                        </a>
+                    </small>
+                    </p>
+
+                </div>
+
+                {% if answer.image %}
+                    <div class="question">
+                        <a class="questionLink" href="{{ answer.image }}" target="_blank">
+                            <img src="{{ answer.image if answer.image }}" height="100px" alt="Uploaded image">
+                        </a><br>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

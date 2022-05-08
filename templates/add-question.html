@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Add Question{% endblock %}
+{% block body %}
+        <div class="forms">
+        <div class="item">
+    <h1>Add question</h1>
+    <a href="/?display=False">Go back</a><br>
+    <form method="post" action="/add-question" enctype="multipart/form-data">
+        <label for="title">Question title:</label><br>
+        <input style="width: 500px" type="text" name="title" id="title" required><br><br>
+        <label for="message">Message</label><br>
+        <textarea style="width: 500px" name="message" id="message"></textarea><br>
+        <label for="file">Upload image</label><br>
+        <input type="file" name="file"><br>
+        <input type="submit">
+        <br>
+    </form>
+        </div></div>
+{% endblock %}
