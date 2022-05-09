@@ -3,9 +3,11 @@
 import os
 import psycopg2
 import psycopg2.extras
+from dotenv import load_dotenv
 
 
 def get_connection_string():
+    load_dotenv()
     # setup connection string
     # to do this, please define these environment variables first
     user_name = os.environ.get('PSQL_USER_NAME')
