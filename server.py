@@ -43,7 +43,7 @@ A user account consists of an email address stored as a username, a password sto
 """
 
 
-@app.route('registration', methods=['GET', 'POST'])
+@app.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'GET':
         return render_template('registration.html')
