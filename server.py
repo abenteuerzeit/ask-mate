@@ -2,7 +2,7 @@ import fnmatch
 import os
 import bcrypt
 
-from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
 import data_handler
