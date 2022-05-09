@@ -332,3 +332,11 @@ def delete_tag_from_question(cursor, question_id, tag_id):
     WHERE question_id = %(question_id)s AND tag_id = %(tag_id)s
     """
     cursor.execute(query, {'question_id': question_id, 'tag_id': tag_id})
+
+
+@connection.connection_handler
+def register_user(cursor, data):
+    cursor.execute("""
+    INSERT INTO users (username, password, date)
+    VALUES (%(username)s, %(password)s, %(date)s)
+    """, data)
