@@ -48,15 +48,22 @@ def registration():
     if request.method == 'GET':
         return render_template('registration.html')
     elif request.method == 'POST':
-        return redirect(url_for('list'))
+        username = request.form.get("username")
+        password = request.form.get("password")
+        registration_data = dict()
+        registration_data['username'] = username
+        registration_data['password'] = password
+        registration_data['date'] = db_data_handler.NOW
+        db_data_handler.register_user(registration_data)
+        return redirect(url_for('list_questions'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
-        username = request.form.get("username") or request.form.get("email")
+        username = request.form.get("username")
         password = request.form.get("user_password")
-        user_hash = db_data_handler.users.get(username)  # TODO SQL users table
+        user_hash = db_data_handler.users.get(username)  # TODO SQL users table; SELECT WHERE username
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash):
                 session["username"] = username
