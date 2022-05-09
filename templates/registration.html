@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Registration{% endblock %}
+{% block body %}
+    <form method="POST" action="{{ url_for('login') }}">
+        {% if status %}
+            <h2>Invalid login attempt error message.</h2>
+        {% endif %}
+
+        <label for="user_name">E-mail</label>
+        <input type="email" name="user_name" id="user_name">
+        <label for="user_password">Password</label>
+        <input type="password" name="user_password" id="user_password">
+        <input type="submit" value="login">
+    </form>
+
+{% endblock %}
