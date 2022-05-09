@@ -1,16 +1,21 @@
 {% extends "layout.html" %}
 {% block title %}Registration{% endblock %}
 {% block body %}
-    <form method="POST" action="{{ url_for('registration') }}">
-        {% if status %}
-            <h2>Invalid login attempt error message.</h2>
-        {% endif %}
+    <div class="registration-form">
 
-        <label for="username">E-mail</label>
-        <input type="email" name="username" id="username">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password">
-        <input type="submit" value="Register">
-    </form>
+        <form method="POST" action="{{ url_for('registration') }}">
+            {% if status %}
+                <h2>Invalid login attempt error message.</h2>
+            {% endif %}
+
+            <label for="username" class="registration-form-text">E-mail<br><br></label>
+            <input type="email" name="username" id="username" value placeholder="ex: myname@example.com" class="form-textbox">
+            <br><br>
+            <label for="password" class="registration-form-text">Password<br><br></label>
+            <input type="password" name="password" id="password" class="form-textbox"><br>
+            <button type="submit" class="submit-button">Register</button>
+        </form>
+
+    </div>
 
 {% endblock %}
