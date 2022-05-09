@@ -42,6 +42,7 @@ After submitting, the page redirects to the main page and the new user account i
 A user account consists of an email address stored as a username, a password stored as a password hash, and a registration date.
 """
 
+
 @app.route('registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'GET':
@@ -55,11 +56,11 @@ def login():
     if request.method == "POST":
         username = request.form.get("username") or request.form.get("email")
         password = request.form.get("user_password")
-        user_hash = data.users.get(username)
+        user_hash = db_data_handler.users.get(username)  # TODO SQL users table
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash):
                 session["username"] = username
-                return redirect(url_for("index"))
+                return redirect(url_for("list"))
         session["bad_login_or_password"] = True
     return render_template('registration.html', status=session.get("bad_login_or_password", default=False))
 
@@ -67,8 +68,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for("index"))
-
+    return redirect(url_for("list"))
 
 
 @app.route("/bonus-questions")
