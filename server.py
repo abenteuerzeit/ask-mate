@@ -1,7 +1,8 @@
 import fnmatch
 import os
+import bcrypt
 
-from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
 import data_handler
@@ -31,6 +32,43 @@ def list_questions():
                            results=results,
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags()
                            )
+
+"""
+TODO:
+The page is linked on the front page.
+There is a form on the /registration page when a request is issued with the GET method.
+The form asks for a username (or email address) and a password, then issues a POST request to /registration upon submitting.
+After submitting, the page redirects to the main page and the new user account is saved in the database.
+A user account consists of an email address stored as a username, a password stored as a password hash, and a registration date.
+"""
+
+@app.route('registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'GET':
+        return render_template('registration.html')
+    elif request.method == 'POST':
+        return redirect(url_for('list'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username") or request.form.get("email")
+        password = request.form.get("user_password")
+        user_hash = data.users.get(username)
+        if user_hash is not None:
+            if bcrypt.checkpw(password.encode('utf-8'), user_hash):
+                session["username"] = username
+                return redirect(url_for("index"))
+        session["bad_login_or_password"] = True
+    return render_template('registration.html', status=session.get("bad_login_or_password", default=False))
+
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
 
 
 @app.route("/bonus-questions")
