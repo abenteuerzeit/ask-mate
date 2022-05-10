@@ -9,9 +9,8 @@ import data_handler
 import db_data_handler
 from bonus_questions import SAMPLE_QUESTIONS
 
-UPLOAD_FOLDER = './sample_data/images'
+UPLOAD_FOLDER = './static/images'
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
-
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(12).hex()
