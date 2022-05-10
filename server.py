@@ -47,8 +47,7 @@ def registration():
         return render_template('registration.html')
     elif request.method == 'POST':
         username = request.form.get("username")
-        password = bcrypt.hashpw((request.form.get("password")).encode('utf-8'), bcrypt.gensalt())
-        print(password)
+        password = bcrypt.hashpw((request.form.get("password")).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         registration_data = dict()
         registration_data['username'] = username
         registration_data['password'] = password
@@ -64,11 +63,10 @@ def login():
         password = request.form.get("password")
         user_hash = db_data_handler.users(username)  # TODO SQL users table; SELECT WHERE username
         if user_hash is not None:
-            print("70", password.encode('utf-8'))
-            if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash']):
+            print("70", user_hash['passwordhash'])
+            if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session["username"] = username
-                print("Zalogowany!")
-                return redirect(url_for("list"))
+                return redirect(url_for("list_questions"))
         session["bad_login_or_password"] = True
     return render_template('login.html', status=session.get("bad_login_or_password", default=False))
 
