@@ -5,7 +5,6 @@ import bcrypt
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
-import data_handler
 import db_data_handler
 from bonus_questions import SAMPLE_QUESTIONS
 
@@ -48,7 +47,8 @@ def registration():
         return render_template('registration.html')
     elif request.method == 'POST':
         username = request.form.get("username")
-        password = request.form.get("password")
+        password = bcrypt.hashpw((request.form.get("password")).encode('utf-8'), bcrypt.gensalt())
+        print(password)
         registration_data = dict()
         registration_data['username'] = username
         registration_data['password'] = password
@@ -61,14 +61,16 @@ def registration():
 def login():
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("user_password")
-        user_hash = db_data_handler.users.get(username)  # TODO SQL users table; SELECT WHERE username
+        password = request.form.get("password")
+        user_hash = db_data_handler.users(username)  # TODO SQL users table; SELECT WHERE username
         if user_hash is not None:
-            if bcrypt.checkpw(password.encode('utf-8'), user_hash):
+            print("70", password.encode('utf-8'))
+            if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash']):
                 session["username"] = username
+                print("Zalogowany!")
                 return redirect(url_for("list"))
         session["bad_login_or_password"] = True
-    return render_template('registration.html', status=session.get("bad_login_or_password", default=False))
+    return render_template('login.html', status=session.get("bad_login_or_password", default=False))
 
 
 @app.route('/logout', methods=['GET'])
