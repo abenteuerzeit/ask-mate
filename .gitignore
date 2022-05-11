@@ -4,3 +4,4 @@ venv
 misc.xml
 .idea/*
 .idea
+.env
