@@ -1,0 +1,90 @@
+<html lang="en">
+
+
+{% macro fancy_search(text) -%}
+    {% set search_phrase = request.args.get('q') %}
+    {% for word in text.split() %}
+        {% if search_phrase.lower() in word.lower() %}
+            <strong style="background-color: greenyellow">{{ word }}</strong>
+        {% else %}
+            {{ word }}
+        {% endif %}
+    {% endfor %}
+{%- endmacro %}
+
+
+{% macro search_answers(row) -%}
+    {% set search_phrase = request.args.get('q') %}
+        {% if results %}
+            {% for result in results %}
+                {% if result.id == row.id and result.answer_message
+                      and search_phrase.lower() in result.answer_message.lower() %}
+                    <p style="margin-left: 50px;">
+                        ---{{ fancy_search(result.answer_message) }}</p>
+                    {% if search_phrase.lower() in results.tag %}
+                        {{ fancy_search(get_tags(row.id)) }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {%- endmacro %}
+
+
+{% macro get_tags(row) -%}
+        {% for tag in tags %}{% for q in question_tags %}{% if q.question_id == row.id and q.tag_id == tag.id %}
+            {#            <a class="questionLink" href=""> #}
+            <em> # {{ tag.name }} </em>
+            {#            </a>#}
+        {% endif %}{% endfor %}{% endfor %}
+    {%- endmacro %}
+
+
+{% macro get_questions(row, search_phrase) -%}
+    {% set search_phrase = request.args.get('q') %}
+    <div class="questions">
+        <div class="question">
+            <p style="text-align: center">
+                <a class="questionLink" href="/question/{{ row.id }}/vote-up">&#8679</a><br>
+                <small>{{ row.vote_number }}</small><br>
+                <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
+            </p>
+        </div>
+
+        <div class="question">
+            <h3><a class="questionLink" href="/question/{{ row.id }}">
+                {% if results %}
+                    {{ fancy_search( row.title ) }}
+                {% else %}
+                    {{ row.title }}
+                {% endif %}</a>
+            </h3>
+
+            <p><small>Views: {{ row.view_number }}</small></p>
+
+            {% if row.image %}
+                <a href="{{ row.image }}">
+                    <img src="{{ row.image }}" alt="uploaded image" style="float: right;
+margin: auto; padding: 5px; height: 150px;"></a>
+            {% endif %}
+
+            <p> {% if results %}
+                {{ fancy_search( row.message ) }}
+            {% else %}
+                {{ row.message }}
+            {% endif %}
+                {{ search_answers(row) }}
+            </p>
+            <p>{% if results %}
+                {% set tags = get_tags(row) %}
+                {{ fancy_search( tags ) }}
+            {% else %}
+                {{ get_tags(row) }}
+            {% endif %}
+            </p>
+            <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
+        </div>
+    </div>
+{%- endmacro %}
+
+
+</html>

@@ -1,75 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}List Questions{% endblock %}
 {% block body %}
-
-    {% macro search_answers(row) -%}
-        {% if results %}
-            {% for result in results %}
-                {% if result.id == row.id and result.answer_message
-                           and search_phrase.lower() in result.answer_message.lower() %}
-                    <p style="margin-left: 50px;">
-                        ---{{ fancy_search(result.answer_message) }}</p>
-                    {% if search_phrase.lower() in results.tag %}
-                        {{ get_tags(row.id) }}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    {%- endmacro %}
-
-    {% macro get_tags(row) -%}
-        {% for tag in tags %}{% for q in question_tags %}{% if q.question_id == row.id and q.tag_id == tag.id %}
-            {#            <a class="questionLink" href=""> #}
-            <em> # {{ tag.name }} </em>
-            {#            </a>#}
-        {% endif %}{% endfor %}{% endfor %}
-    {%- endmacro %}
-
-    {% macro get_questions(row, search_phrase) -%}
-        <div class="questions">
-            <div class="question">
-                <p style="text-align: center">
-                    <a class="questionLink" href="/question/{{ row.id }}/vote-up">&#8679</a><br>
-                    <small>{{ row.vote_number }}</small><br>
-                    <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
-                </p>
-            </div>
-
-            <div class="question">
-                <h3><a class="questionLink" href="/question/{{ row.id }}">
-                    {% if results %}
-                        {{ fancy_search( row.title ) }}
-                    {% else %}
-                        {{ row.title }}
-                    {% endif %}</a>
-                </h3>
-
-                <p><small>Views: {{ row.view_number }}</small></p>
-
-                {% if row.image %}
-                    <a href="{{ row.image }}">
-                        <img src="{{ row.image }}" alt="uploaded image" style="float: right;
-margin: auto; padding: 5px; height: 150px;"></a>
-                {% endif %}
-
-                <p> {% if results %}
-                    {{ fancy_search( row.message ) }}
-                {% else %}
-                    {{ row.message }}
-                {% endif %}
-                    {{ search_answers(row) }}
-                </p>
-                <p>{% if results %}
-                    {{ fancy_search( get_tags(row) ) }}
-                {% else %}
-                    {{ get_tags(row) }}
-                {% endif %}
-                </p>
-                <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
-            </div>
-        </div>
-    {%- endmacro %}
-
+    {% from 'macros.html' import search_answers with context  %}
+    {% from 'macros.html' import get_tags with context  %}
+    {% from 'macros.html' import get_questions with context  %}
 
     {#    MAIN PAGE     #}
     {% if is_logged_in %}
@@ -115,16 +49,18 @@ margin: auto; padding: 5px; height: 150px;"></a>
         <div class="item">
 
         <main>
-            {% from 'search-results.html' import fancy_search as fancy_search %}
+            {% from 'macros.html' import fancy_search  %}
             {% set search_phrase = request.args.get('q') %}
-            {% if not search_phrase %}{% for question in questions %}{{ get_questions(question) }}{% endfor %}
+            {% if not search_phrase %}
+                {% for question in questions %}
+                    {{ get_questions(question) }}
+                {% endfor %}
             {% else %}
                 {% if not results and search_phrase %}
                     <div class="questions">
                         <div class="question"><h2>No results found for <em>{{ search_phrase }}</em>.</h2>
                             <p>Try a different phrase or check your spelling. </p></div>
                     </div>
-
                 {% elif results %}
                     <div class="questions">
                         <div class="question">
@@ -134,17 +70,9 @@ margin: auto; padding: 5px; height: 150px;"></a>
                                 either a question's title or message, or in an answer's message to a question.</p>
                         </div>
                     </div>
-
-                    {% for question in questions %}
-                        {% if search_phrase.lower() in question.title.lower()
-                           or search_phrase.lower() in question.message.lower()
-                           or search_phrase.lower() in get_tags(question.id) %}
-                            {{ get_questions(question, request.args.get('q') ) }}
-                        {% endif %}
-                        {% if results %}{% for result in results %}{% if result.id == question.id and result.answer_message
-                        and search_phrase.lower() in result.answer_message.lower() %}
-                            {{ get_questions(question) }}{% endif %}{% endfor %} {% endif %}
-                    {% endfor %}
+                    {% for result in results %}{% for question in questions %}{% if result.id == question.id %}
+                                    {{ get_questions(question, search_phrase ) }}
+                    {% endif %}{% endfor %}{% endfor %}
                 {% endif %}
                 </main>
             {% endif %}

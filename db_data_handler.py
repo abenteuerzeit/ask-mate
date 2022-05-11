@@ -29,8 +29,7 @@ def search(cursor, search_phrase):
         ON question.id = answer.question_id
         LEFT JOIN question_tag qt on question.id = qt.question_id
         LEFT JOIN tag on qt.tag_id = tag.id
-        WHERE  
-            LOWER(title) LIKE LOWER(%(search_phrase)s)
+        WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
             OR LOWER(question.message) like LOWER(%(search_phrase)s)
             OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
             OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
