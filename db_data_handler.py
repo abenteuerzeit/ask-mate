@@ -350,3 +350,7 @@ def users(cursor, username):
     WHERE username=%s
     """, (username, ))
     return cursor.fetchone()
+
+
+# @connection.connection_handler
+# def get_user_id(cursor, )
