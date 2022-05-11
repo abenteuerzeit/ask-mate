@@ -1,6 +1,7 @@
 import fnmatch
 import os
 
+import bcrypt
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
@@ -65,7 +66,6 @@ def login():
         password = request.form.get("password")
         user_hash = db_data_handler.users(username)  # TODO SQL users table; SELECT WHERE username
         if user_hash is not None:
-            print("70", user_hash['passwordhash'])
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session["username"] = username
                 return redirect(url_for("list_questions"))
