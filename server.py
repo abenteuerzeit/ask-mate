@@ -15,33 +15,29 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 
-@app.route("/")
 @app.route("/list")
 @app.route('/search')
+@app.route("/")
 def list_questions():
     order_by, order_direction = request.args.get('order_by', 'id'), request.args.get('order_direction', 'desc')
     if 'asc' in order_by:
         order_by, order_direction = order_by[:-len('-asc')], 'asc'
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    results = db_data_handler.search(request.args.get('q'))
+
+    search_results = db_data_handler.search(request.args.get('q'))
+
+    is_logged_in = False
+    if "username" in session:
+        is_logged_in = True
+
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=results,
-                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags()
+                           results=search_results,
+                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
+                           is_logged_in=is_logged_in,
+                           username=session.get("username")
                            )
-
-
-"""
-TODO:
-The page is linked on the front page.
-There is a form on the /registration page when a request is issued with the GET method.
-The form asks for a username (or email address) and a password, then issues a POST request 
-to /registration upon submitting.
-After submitting, the page redirects to the main page and the new user account is saved in the database.
-A user account consists of an email address stored as a username, a password stored as a password hash,
-and a registration date.
-"""
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -76,7 +72,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for("list"))
+    return redirect(url_for("list_questions"))
 
 
 @app.route("/bonus-questions")

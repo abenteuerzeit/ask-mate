@@ -10,7 +10,7 @@
                     <p style="margin-left: 50px;">
                         ---{{ fancy_search(result.answer_message) }}</p>
                     {% if search_phrase.lower() in results.tag %}
-                    {{ get_tags(row.id) }}
+                        {{ get_tags(row.id) }}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -19,9 +19,9 @@
 
     {% macro get_tags(row) -%}
         {% for tag in tags %}{% for q in question_tags %}{% if q.question_id == row.id and q.tag_id == tag.id %}
-{#            <a class="questionLink" href=""> #}
-                <em> # {{ tag.name }} </em>
-{#            </a>#}
+            {#            <a class="questionLink" href=""> #}
+            <em> # {{ tag.name }} </em>
+            {#            </a>#}
         {% endif %}{% endfor %}{% endfor %}
     {%- endmacro %}
 
@@ -60,10 +60,10 @@ margin: auto; padding: 5px; height: 150px;"></a>
                     {{ search_answers(row) }}
                 </p>
                 <p>{% if results %}
-                        {{ fancy_search( get_tags(row) ) }}
-                    {% else %}
-                        {{ get_tags(row) }}
-                    {% endif %}
+                    {{ fancy_search( get_tags(row) ) }}
+                {% else %}
+                    {{ get_tags(row) }}
+                {% endif %}
                 </p>
                 <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
             </div>
@@ -72,9 +72,14 @@ margin: auto; padding: 5px; height: 150px;"></a>
 
 
     {#    MAIN PAGE     #}
+    {% if is_logged_in %}
+            <br><em style="text-align: center; color: greenyellow;">{{ username }} logged in </em><br>
+    {% endif %}
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
         <div style="margin: 25px; padding: 10px;"><a href="/">
-            <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100" style="float: left"></a></div>
+            <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100" style="float: left"></a>
+        </div>
+
         <div style="margin: 25px; padding: 10px;">
 
             {% if results %}
@@ -85,13 +90,17 @@ margin: auto; padding: 5px; height: 150px;"></a>
 
     {% if questions %}
         <div style="margin: 25px; padding: 10px;"><a href="/add-question">Add a question</a><br><br>
-                        <a href="/registration">Create Account</a><br><br>
-                        <a href="/login">Login</a>
+            <a href="/registration">Create Account</a><br><br>
+            {% if is_logged_in %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
         </div>
         <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
             <select style="display: inline;" name="order_by" id="order_by" form="sort">
                 <option value="">--Please choose an option--</option>
-                <option name="title-asc" value="title-asc">Title &#8679 </option>
+                <option name="title-asc" value="title-asc">Title &#8679</option>
                 <option value="title">Title &#8681</option>
                 <option value="view_number-asc">Views &#8679</option>
                 <option value="view_number">Views &#8681</option>
@@ -106,8 +115,7 @@ margin: auto; padding: 5px; height: 150px;"></a>
         <div class="item">
 
         <main>
-
-        {% from 'search-results.html' import fancy_search as fancy_search %}
+            {% from 'search-results.html' import fancy_search as fancy_search %}
             {% set search_phrase = request.args.get('q') %}
             {% if not search_phrase %}{% for question in questions %}{{ get_questions(question) }}{% endfor %}
             {% else %}
@@ -130,7 +138,7 @@ margin: auto; padding: 5px; height: 150px;"></a>
                     {% for question in questions %}
                         {% if search_phrase.lower() in question.title.lower()
                            or search_phrase.lower() in question.message.lower()
-                           or search_phrase.lower() in get_tags(question.id)    %}
+                           or search_phrase.lower() in get_tags(question.id) %}
                             {{ get_questions(question, request.args.get('q') ) }}
                         {% endif %}
                         {% if results %}{% for result in results %}{% if result.id == question.id and result.answer_message
