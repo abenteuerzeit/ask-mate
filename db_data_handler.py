@@ -350,3 +350,13 @@ def users(cursor, username):
     WHERE username=%s
     """, (username, ))
     return cursor.fetchone()
+
+
+#TODO Create html and flask
+@connection.connection_handler
+def get_users_name_time(cursor):
+    cursor.execute("""
+    SELECT username, submission_time
+    FROM users
+    """)
+    return cursor.fetchall()
