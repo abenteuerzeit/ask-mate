@@ -340,3 +340,13 @@ def register_user(cursor, data):
     INSERT INTO users (username, passwordhash, submission_time)
     VALUES (%(username)s, %(password)s, %(date)s)
     """, data)
+
+
+@connection.connection_handler
+def users(cursor, username):
+    cursor.execute("""
+    SELECT passwordhash
+    FROM users
+    WHERE username=%s
+    """, (username, ))
+    return cursor.fetchone()
