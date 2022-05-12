@@ -145,17 +145,26 @@ def add_tag_to_question(question_id):
     question = db_data_handler.get_question(question_id)
     if request.method == 'GET':
         question_tags = db_data_handler.get_question_tag_ids(question_id)
-        return render_template('add-tag.html', question=question,
-                               tags=db_data_handler.get_tags(),
-                               question_tags=question_tags)
+        unassigned_tags = db_data_handler.get_unassigned_tags(question_id)
+        return render_template('add-tag.html', question=question, tags=unassigned_tags, question_tags=question_tags)
     elif request.method == 'POST':
-        tag_id, name = request.form.get('tag'), request.form.get('add_tag')
+        name = request.form.get('add_tag')
+        if already_exists(name):
+            return redirect('/error/2')
+        tag_id = request.form.get('tag'),
         if name:
             db_data_handler.create_new_tag(name)
             tag_id = db_data_handler.get_tag_id(name)
             tag_id = tag_id.get('id')
-        db_data_handler.assign_tag_to_question(id, tag_id)
+        db_data_handler.assign_tag_to_question(question_id, tag_id)
         return redirect(f'/question/{question_id}')
+
+
+def already_exists(tag):
+    for tag_dict in db_data_handler.get_tags():
+        if tag == tag_dict.get('name'):
+            return True
+    return False
 
 
 @app.route('/question/<question_id>/tag/<tag_id>/delete')
@@ -285,11 +294,15 @@ def edit_delete_image(question_id):
     return redirect('/question/' + question_id + '/edit')
 
 
-# # ------------------- ERRORS ---------------------- #
-# @app.route("/error")
-# def display_error_message(error_id):
-#     error_dict = {'id': error_id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
-#     return error_dict
+# ------------------- ERRORS ---------------------- #
+@app.route("/error/<error_id>")
+def display_error_message(error_id):
+    error_dict = {
+        '1': {'name': 'Extension Error', "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"},
+        '2': {'name': "Tag Error", 'title': "Tag already exists!",
+              "message": "Only enter a new tag name. You can choose a this tag by clicking on the appropriate button"}
+    }
+    return render_template('error.html', error=error_dict[error_id])
 
 
 if __name__ == "__main__":
