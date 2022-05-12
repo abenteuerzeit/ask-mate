@@ -3,4 +3,5 @@ __pycache__/
 venv
 misc.xml
 .idea/*
-.env/
+.idea
+.env

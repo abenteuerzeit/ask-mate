@@ -15,33 +15,29 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 
-@app.route("/")
 @app.route("/list")
 @app.route('/search')
+@app.route("/")
 def list_questions():
     order_by, order_direction = request.args.get('order_by', 'id'), request.args.get('order_direction', 'desc')
     if 'asc' in order_by:
         order_by, order_direction = order_by[:-len('-asc')], 'asc'
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
-    results = db_data_handler.search(request.args.get('q'))
-    is_log_in = False
+
+    search_results = db_data_handler.search(request.args.get('q'))
+
+    is_logged_in = False
     if "username" in session:
-        is_log_in = True
+        is_logged_in = True
+
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=results,
+                           results=search_results,
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
-                           is_log_in=is_log_in)
-
-"""
-TODO:
-The page is linked on the front page.
-There is a form on the /registration page when a request is issued with the GET method.
-The form asks for a username (or email address) and a password, then issues a POST request to /registration upon submitting.
-After submitting, the page redirects to the main page and the new user account is saved in the database.
-A user account consists of an email address stored as a username, a password stored as a password hash, and a registration date.
-"""
+                           is_logged_in=is_logged_in,
+                           username=session.get("username")
+                           )
 
 @app.route('/users', methods=['GET'])
 def users():
@@ -94,13 +90,14 @@ def main():
     return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
-@app.route('/question/<id>', methods=['GET'])
-def display_question(id):
-    question, answers = db_data_handler.get_question(id), db_data_handler.get_answer_for_question(id)
+@app.route('/question/<question_id>', methods=['GET'])
+def display_question(question_id):
+    question, answers = db_data_handler.get_question(question_id), db_data_handler.get_answer_for_question(question_id)
     db_data_handler.increase_question_view_count(question['id'])
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers,
-                               tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tag_ids(id))
+                               tags=db_data_handler.get_tags(),
+                               question_tags=db_data_handler.get_question_tag_ids(question_id))
     return question, answers
 
 
@@ -117,13 +114,13 @@ def add_question():
         return redirect('/question/' + str(new_question['id']))
 
 
-@app.route("/question/<id>/delete")
-def delete_question(id):
-    image_delete_from_server(db_data_handler.get_question(id))
-    answers, tags = db_data_handler.get_answer_for_question(id), db_data_handler.get_question_tag_ids(id)
+@app.route("/question/<question_id>/delete")
+def delete_question(question_id):
+    image_delete_from_server(db_data_handler.get_question(question_id))
+    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(id)
     if tags:
         for tag in tags:
-            db_data_handler.delete_tag_from_question(id, tag.get('tag_id'))
+            db_data_handler.delete_tag_from_question(question_id, tag.get('tag_id'))
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
@@ -131,15 +128,15 @@ def delete_question(id):
             for comment in comments:
                 db_data_handler.delete_comment(comment.get('id'))
             db_data_handler.delete_answer(answer.get('id'))
-    db_data_handler.delete_question_comment(id)
-    db_data_handler.delete_question(id)
+    db_data_handler.delete_question_comment(question_id)
+    db_data_handler.delete_question(question_id)
     return redirect("/")
 
 
-@app.route("/question/<id>/edit", methods=['GET', 'POST'])
-def edit_question(id):
-    question = db_data_handler.get_question(id)
-    tag_ids, tags = db_data_handler.get_question_tag_ids(id), db_data_handler.get_tags()
+@app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
+def edit_question(question_id):
+    question = db_data_handler.get_question(question_id)
+    tag_ids, tags = db_data_handler.get_question_tag_ids(question_id), db_data_handler.get_tags()
     if request.method == 'GET':
         return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
     elif request.method == 'POST':
@@ -148,18 +145,18 @@ def edit_question(id):
             filename = save_image(file)
             filepath = url_for('uploaded_file', filename=filename)
             question['image'] = filepath
-        db_data_handler.edit_question({'id': id,
+        db_data_handler.edit_question({'id': question_id,
                                        'title': request.form.get('title'),
                                        'message': request.form.get('message'),
                                        'image': question['image']})
-        return redirect('/question/' + id)
+        return redirect('/question/' + question_id)
 
 
-@app.route('/question/<id>/new-tag', methods=['GET', 'POST'])
-def add_tag_to_question(id):
-    question = db_data_handler.get_question(id)
+@app.route('/question/<question_id>/new-tag', methods=['GET', 'POST'])
+def add_tag_to_question(question_id):
+    question = db_data_handler.get_question(question_id)
     if request.method == 'GET':
-        question_tags = db_data_handler.get_question_tag_ids(id)
+        question_tags = db_data_handler.get_question_tag_ids(question_id)
         return render_template('add-tag.html', question=question,
                                tags=db_data_handler.get_tags(),
                                question_tags=question_tags)
@@ -170,7 +167,7 @@ def add_tag_to_question(id):
             tag_id = db_data_handler.get_tag_id(name)
             tag_id = tag_id.get('id')
         db_data_handler.assign_tag_to_question(id, tag_id)
-        return redirect(f'/question/{id}')
+        return redirect(f'/question/{question_id}')
 
 
 @app.route('/question/<question_id>/tag/<tag_id>/delete')
@@ -180,43 +177,46 @@ def delete_tag_from_question(question_id, tag_id):
 
 
 # ------------------- ANSWERS ---------------------- #
-@app.route('/question/<id>/new-answer', methods=['GET', 'POST'])
-def add_answer(id):
+@app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
+def add_answer(question_id):
     if request.method == 'GET':
-        question, answers = db_data_handler.get_question(id), db_data_handler.get_answer_for_question(id)
+        question = db_data_handler.get_question(question_id)
+        answers = db_data_handler.get_answer_for_question(question_id)
         question['id'] = str(question.get('id'))
         return render_template('add-answer.html', question=question, answers=answers)
     elif request.method == 'POST':
-        db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': id,
+        db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
                                           'image': upload_image()})
-        return redirect('/question/' + id)
+        return redirect('/question/' + question_id)
 
 
-@app.route('/answer/<id>/delete')
-def delete_answer(id):
+@app.route('/answer/<answer_id>/delete')
+def delete_answer(answer_id):
     question_id, answer_list = request.args.get('question_id'), db_data_handler.get_answers()
     for answer in answer_list:
-        if str(answer['id']) == id:
+        if str(answer['id']) == answer_id:
             image_delete_from_server(answer)
-    db_data_handler.delete_answer(id)
+    db_data_handler.delete_answer(answer_id)
     return redirect('/question/' + question_id)
 
 
 # ------------------- COMMENTS ---------------------- #
-@app.route('/question/<id>/new-comment', methods=['GET', 'POST'])
-def add_comment(id):
+@app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
+def add_comment(question_id):
     if request.method == 'GET':
-        comments = db_data_handler.get_comment_for_question(id)
-        return render_template('new-comment.html', question=db_data_handler.get_question(id), comments=comments)
+        comments = db_data_handler.get_comment_for_question(question_id)
+        return render_template('new-comment.html',
+                               question=db_data_handler.get_question(question_id),
+                               comments=comments)
     elif request.method == 'POST':
-        file = request.files['file']
-        if file.filename != "" and not allowed_file(file.filename):
-            error = display_error_message(id)
-            return render_template('error.html', error=error, is_comment=True)
-        comment_data = {'message': request.form.get('message'), 'answer_id': id,
+        # file = request.files['file']
+        # if file.filename != "" and not allowed_file(file.filename):
+        #     error = display_error_message(question_id)
+        #     return render_template('error.html', error=error, is_comment=True)
+        comment_data = {'message': request.form.get('message'), 'answer_id': question_id,
                         'image': upload_image()}
         db_data_handler.save_new_comment(comment_data)
-        return redirect('question' + id)
+        return redirect('question' + question_id)
 
 
 # ------------------- VOTES ---------------------- #
@@ -288,20 +288,20 @@ def upload_image():
             return url_for('uploaded_file', filename=filename)
 
 
-@app.route('/question/<id>/delete-image', methods=["GET"])
-def edit_delete_image(id):
-    question = db_data_handler.get_question(id)
+@app.route('/question/<question_id>/delete-image', methods=["GET"])
+def edit_delete_image(question_id):
+    question = db_data_handler.get_question(question_id)
     image_delete_from_server(question)
     question['image'] = ''
     db_data_handler.edit_question(question)
-    return redirect('/question/' + id + '/edit')
+    return redirect('/question/' + question_id + '/edit')
 
 
-# ------------------- ERRORS ---------------------- #
-@app.route("/error")
-def display_error_message(id):
-    error_dict = {'id': id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
-    return error_dict
+# # ------------------- ERRORS ---------------------- #
+# @app.route("/error")
+# def display_error_message(error_id):
+#     error_dict = {'id': error_id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
+#     return error_dict
 
 
 if __name__ == "__main__":
