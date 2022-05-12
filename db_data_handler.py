@@ -16,6 +16,7 @@ def get_questions(cursor):  # fetchall()
     return cursor.fetchall()
 
 
+
 @connection.connection_handler
 def search(cursor, search_phrase):
     if search_phrase is not None:
@@ -358,5 +359,28 @@ def get_users_name_time(cursor):
     cursor.execute("""
     SELECT username, submission_time
     FROM users
+    """)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def count_user_comment_and_answer(cursor):
+    cursor.execute("""
+    SELECT users.id, users.username, users.submission_time, COUNT(comment.author) AS comment_num, COUNT(answer.author) AS answer_num
+    FROM users
+    LEFT JOIN comment ON users.id = comment.author
+    LEFT JOIN answer ON users.id = answer.author
+    GROUP BY users.id, users.username, users.submission_time
+    """)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def count_user_question(cursor):
+    cursor.execute("""
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.author) AS question_num
+    FROM users
+    LEFT JOIN question ON users.id = question.author
+    GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
