@@ -109,7 +109,7 @@ def get_comment_for_answer(cursor, answer_id):
         FROM comment
         WHERE answer_id=%s
     """
-    cursor.execute(query, (answer_id, ))
+    cursor.execute(query, (answer_id,))
     return cursor.fetchall()
 
 
@@ -128,7 +128,7 @@ def delete_question_comment(cursor, question_id):
         DELETE FROM comment
         WHERE question_id=%s
     """
-    cursor.execute(query, (question_id, ))
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
@@ -289,9 +289,24 @@ def delete_answer(cursor, id):
 @connection.connection_handler
 def get_question_tag_ids(cursor, question_id):
     query = """
-    SELECT tag_id
+    SELECT tag.id AS tag_id, name
     FROM question_tag
+    LEFT JOIN tag ON question_tag.tag_id = tag.id
     WHERE question_id = %s
+    """
+    cursor.execute(query, (question_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_unassigned_tags(cursor, question_id):
+    query = """
+    SELECT DISTINCT id, name FROM tag
+    LEFT JOIN question_tag qt on tag.id = qt.tag_id
+    WHERE name NOT IN
+        (SELECT name FROM question_tag
+        LEFT JOIN tag ON question_tag.tag_id = tag.id
+        WHERE question_id = %s);
     """
     cursor.execute(query, (question_id,))
     return cursor.fetchall()
@@ -369,5 +384,5 @@ def users(cursor, username):
     SELECT passwordhash
     FROM users
     WHERE username=%s
-    """, (username, ))
+    """, (username,))
     return cursor.fetchone()

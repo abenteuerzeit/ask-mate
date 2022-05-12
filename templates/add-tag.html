@@ -6,14 +6,14 @@
         <div class="item" style="color: whitesmoke">
             <h3>Select a tag </h3>
             <form method="post" action="/question/{{ question.id }}/new-tag">
-            {% for tag in tags %}
-               <button id="{{ tag.id }}" name="tag" type="submit" value="{{ tag.id }}">{{ tag.name }}</button>
-            {% endfor %}
-           </form>
+                {% for tag in tags %}
+                    <button id="{{ tag.id }}" name="tag" type="submit" value="{{ tag.id }}">{{ tag.name }}</button>
+                {% endfor %}
+            </form>
             <form method="post" action="/question/{{ question.id }}/new-tag">
                 <h3>or create a new one </h3>
                 <label for="add_tag">Add a new tag</label>
-                <input type="text" name="add_tag" , id="add_tag" placeholder="Enter tag name">
+                <input type="text" name="add_tag" id="add_tag" placeholder="Enter tag name">
                 <input type="submit">
             </form>
         </div>
