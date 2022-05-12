@@ -56,12 +56,12 @@
                     {{ get_questions(question) }}
                 {% endfor %}
             {% else %}
-                {% if not results and search_phrase %}
+                {% if not results and not answers and search_phrase %}
                     <div class="questions">
                         <div class="question"><h2>No results found for <em>{{ search_phrase }}</em>.</h2>
                             <p>Try a different phrase or check your spelling. </p></div>
                     </div>
-                {% elif results %}
+                {% elif results or answers %}
                     <div class="questions">
                         <div class="question">
                             <h2>Search Results</h2>
@@ -70,8 +70,13 @@
                                 either a question's title or message, or in an answer's message to a question.</p>
                         </div>
                     </div>
-                    {% for result in results %}{% for question in questions %}{% if result.id == question.id %}
-                                    {{ get_questions(question, search_phrase ) }}
+                    {% for result in results %}{% for question in questions %}{% if question.id == result.id %}
+                        {{ get_questions(question, answers, search_phrase ) }}
+                    {% endif %}{% endfor %}{% endfor %}
+                    {% for answer in answers %}{% for question in questions %}{% if question.id == answer.question_id %}
+                        {% if search_phrase not in question.message and search_phrase not in question.title %}
+                        {{ get_questions(question, answers, search_phrase ) }}
+                        {% endif %}
                     {% endif %}{% endfor %}{% endfor %}
                 {% endif %}
                 </main>

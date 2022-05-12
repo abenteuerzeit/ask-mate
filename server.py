@@ -25,15 +25,14 @@ def list_questions():
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
 
-    search_results = db_data_handler.search(request.args.get('q'))
-
     is_logged_in = False
     if "username" in session:
         is_logged_in = True
 
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=search_results,
+                           results=db_data_handler.search(request.args.get('q')),
+                           answers=db_data_handler.search_answers(request.args.get('q')),
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
                            is_logged_in=is_logged_in,
                            username=session.get("username")
