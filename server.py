@@ -95,10 +95,13 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
+        question_author = None
+        if "username" in session:
+            question_author = session['username']
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': upload_image()})
+            'image': upload_image(), 'question_author': question_author})
         return redirect('/question/' + str(new_question['id']))
 
 
