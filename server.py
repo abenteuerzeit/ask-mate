@@ -48,7 +48,7 @@ def users():
     if request.method == 'GET':
         if "username" in session:
             comment_and_answer = db_data_handler.count_user_comment_and_answer()
-            question = db_data_handler. count_user_question()
+            question = db_data_handler.count_user_question()
             return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
     return redirect(url_for('list_questions'))
 
