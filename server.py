@@ -50,6 +50,7 @@ def users():
     return redirect(url_for('list_questions'))
 
 
+
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'GET':
