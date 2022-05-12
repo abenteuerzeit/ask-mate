@@ -25,11 +25,14 @@ def list_questions():
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
     results = db_data_handler.search(request.args.get('q'))
+    is_log_in = False
+    if "username" in session:
+        is_log_in = True
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
                            results=results,
-                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags()
-                           )
+                           tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
+                           is_log_in=is_log_in)
 
 """
 TODO:
@@ -63,7 +66,6 @@ def login():
         password = request.form.get("password")
         user_hash = db_data_handler.users(username)  # TODO SQL users table; SELECT WHERE username
         if user_hash is not None:
-            print("70", user_hash['passwordhash'])
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session["username"] = username
                 return redirect(url_for("list_questions"))
@@ -74,7 +76,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for("list"))
+    return redirect(url_for('list_questions'))
 
 
 @app.route("/bonus-questions")
@@ -97,10 +99,11 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
+        user_id = db_data_handler.get_user_id(session.get('username'))
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': upload_image()})
+            'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
         return redirect('/question/' + str(new_question['id']))
 
 
@@ -202,7 +205,7 @@ def add_comment(id):
             return render_template('error.html', error=error, is_comment=True)
         comment_data = {'message': request.form.get('message'), 'answer_id': id,
                         'image': upload_image()}
-        data_handler.save_new_comment(comment_data)
+        db_data_handler.save_new_comment(comment_data)
         return redirect('question' + id)
 
 

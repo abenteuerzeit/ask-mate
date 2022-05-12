@@ -72,6 +72,9 @@ margin: auto; padding: 5px; height: 150px;"></a>
 
 
     {#    MAIN PAGE     #}
+                        {%  if is_log_in %}
+                            <p style="align-self: center; color: greenyellow; text-shadow: 0px 4px black"><b>You are logged as {{ session['username'] }}</b></p>
+                        {% endif %}
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
         <div style="margin: 25px; padding: 10px;"><a href="/">
             <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100" style="float: left"></a></div>
@@ -86,7 +89,11 @@ margin: auto; padding: 5px; height: 150px;"></a>
     {% if questions %}
         <div style="margin: 25px; padding: 10px;"><a href="/add-question">Add a question</a><br><br>
                         <a href="/registration">Create Account</a><br><br>
-                        <a href="/login">Login</a>
+                        {%  if is_log_in %}
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}">Login</a>
+                        {% endif %}
         </div>
         <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
             <select style="display: inline;" name="order_by" id="order_by" form="sort">
