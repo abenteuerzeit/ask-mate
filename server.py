@@ -40,6 +40,15 @@ After submitting, the page redirects to the main page and the new user account i
 A user account consists of an email address stored as a username, a password stored as a password hash, and a registration date.
 """
 
+@app.route('/users', methods=['GET'])
+def users():
+    if request.method == 'GET':
+        if "username" in session:
+            comment_and_answer = db_data_handler.count_user_comment_and_answer()
+            question = db_data_handler. count_user_question()
+            return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
+    return redirect(url_for('list_questions'))
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():

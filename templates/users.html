@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Registration{% endblock %}
+{% block body %}
+    <table style="color:#fff">
+    <caption>all the registered users</caption>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Registration date</th>
+                <th>Number of asked questions</th>
+                <th>Number of answers</th>
+                <th>Number of comments</th>
+                <th>Reputation</th>
+            </tr>
+        </thead>
+    <tbody>
+        {% for c_a in comment_and_answer %}
+            <tr>
+                <th>{{ c_a.username }}</th>
+                <th>{{ c_a.submission_time }}</th>
+                {% for q in question %}
+                    {% if c_a.username == q.username %}
+                    <th>{{ q.question_num }}</th>
+                    {% endif %}
+                {% endfor %}
+                <th>{{ c_a.answer_num }}</th>
+                <th>{{ c_a.comment_num }}</th>
+                <th>Coming Soon</th>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+    </table>
+{% endblock %}
