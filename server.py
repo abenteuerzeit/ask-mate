@@ -38,16 +38,6 @@ def list_questions():
                            username=session.get("username")
                            )
 
-@app.route('/users', methods=['GET'])
-def users():
-    if request.method == 'GET':
-        if "username" in session:
-            comment_and_answer = db_data_handler.count_user_comment_and_answer()
-            question = db_data_handler.count_user_question()
-            return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
-    return redirect(url_for('list_questions'))
-
-
 
 @app.route('/users', methods=['GET'])
 def users():
@@ -116,11 +106,11 @@ def add_question():
         return render_template("add-question.html")
     if request.method == 'POST':
 
-#         user_id = db_data_handler.get_user_id(session.get('username'))
-#         new_question = db_data_handler.save_new_question_data({
-#             'title': request.form.get('title', default="not provided"),
-#             'message': request.form.get('message', default="not provided"),
-#             'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
+        #  user_id = db_data_handler.get_user_id(session.get('username'))
+        #  new_question = db_data_handler.save_new_question_data({
+        #       'title': request.form.get('title', default="not provided"),
+        #       'message': request.form.get('message', default="not provided"),
+        #       'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
 
         question_author = None
         if "username" in session:
@@ -129,7 +119,6 @@ def add_question():
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
             'image': upload_image(), 'question_author': question_author})
-
         return redirect('/question/' + str(new_question['id']))
 
 
