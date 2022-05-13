@@ -24,6 +24,7 @@
                         by {{ question.question_author }}
                     {% endif %}
                 </small></p></div>
+
                 <div class="question"><h3>Tags</h3>
                     <p>
                         {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
