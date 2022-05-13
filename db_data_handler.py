@@ -16,6 +16,7 @@ def get_questions(cursor):  # fetchall()
     return cursor.fetchall()
 
 
+
 @connection.connection_handler
 def search(cursor, search_phrase):
     if search_phrase is not None:
@@ -385,7 +386,7 @@ def users(cursor, username):
     SELECT passwordhash
     FROM users
     WHERE username=%s
-    """, (username,))
+    """, (username, ))
     return cursor.fetchone()
 
 

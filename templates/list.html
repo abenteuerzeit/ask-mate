@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}List Questions{% endblock %}
 {% block body %}
+
     {% from 'macros.html' import search_answers with context  %}
     {% from 'macros.html' import get_tags with context  %}
     {% from 'macros.html' import get_questions with context  %}
@@ -24,12 +25,13 @@
             {% endif %}
 
     {% if questions %}
-        <div style="margin: 25px; padding: 10px;"><a href="/add-question">Add a question</a><br><br>
+        <div style="margin: 25px; padding: 10px;">
+            <a href="/add-question">Add a question</a><br><br>
             <a href="/registration">Create Account</a><br><br>
-            {% if is_logged_in %}
-                <a href="{{ url_for('logout') }}">Logout</a>
+            {%  if is_logged_in %}
+            <a href="{{ url_for('logout') }}">Logout</a><br>
             {% else %}
-                <a href="/login">Login</a>
+            <a href="{{ url_for('login') }}">Login</a>
             {% endif %}
         </div>
         <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
