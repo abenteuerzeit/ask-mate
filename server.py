@@ -2,6 +2,7 @@ import fnmatch
 import os
 import bcrypt
 
+
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
@@ -105,7 +106,6 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-
         #  user_id = db_data_handler.get_user_id(session.get('username'))
         #  new_question = db_data_handler.save_new_question_data({
         #       'title': request.form.get('title', default="not provided"),
@@ -119,6 +119,7 @@ def add_question():
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
             'image': upload_image(), 'question_author': question_author})
+
         return redirect('/question/' + str(new_question['id']))
 
 
