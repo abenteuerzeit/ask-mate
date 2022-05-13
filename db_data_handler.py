@@ -213,13 +213,14 @@ def set_image_to_null(table):
 def save_new_question_data(cursor, user_input):
     image = 'NULL' if user_input.get('image') == "" else user_input.get('image')
     query = """
-            INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s)
+            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, question_author)
+            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s, %(question_author)s)
             """
     cursor.execute(query, {'time': NOW,
                            'title': user_input.get('title'),
                            'message': user_input.get('message'),
-                           'image': image})
+                           'image': image,
+                           'question_author': user_input.get('question_author')})
     cursor.execute(set_image_to_null('question'))
     query = """
         SELECT max(id) AS id
@@ -384,7 +385,7 @@ def users(cursor, username):
     SELECT passwordhash
     FROM users
     WHERE username=%s
-    """, (username,))
+    """, (username, ))
     return cursor.fetchone()
 
 
@@ -413,9 +414,9 @@ def count_user_comment_and_answer(cursor):
 @connection.connection_handler
 def count_user_question(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time,  COUNT(question.author) AS question_num
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.question_author) AS question_num
     FROM users
-    LEFT JOIN question ON users.id = question.author
+    LEFT JOIN question ON users.id = question.question_author
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()

@@ -1,7 +1,8 @@
 import fnmatch
 import os
-
 import bcrypt
+
+
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
@@ -81,7 +82,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for("list_questions"))
+    return redirect(url_for('list_questions'))
 
 
 @app.route("/bonus-questions")
@@ -105,10 +106,20 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
+        #  user_id = db_data_handler.get_user_id(session.get('username'))
+        #  new_question = db_data_handler.save_new_question_data({
+        #       'title': request.form.get('title', default="not provided"),
+        #       'message': request.form.get('message', default="not provided"),
+        #       'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
+
+        question_author = None
+        if "username" in session:
+            question_author = session['username']
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': upload_image()})
+            'image': upload_image(), 'question_author': question_author})
+
         return redirect('/question/' + str(new_question['id']))
 
 
