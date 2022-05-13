@@ -21,20 +21,41 @@ def get_questions(cursor):  # fetchall()
 def search(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
+        # query = """
+        # SELECT  question.id, title, question.message as question_message,
+        #         answer.message as answer_message,
+        #         tag.name as tag
+        # FROM question
+        # LEFT JOIN answer ON question.id = answer.question_id
+        # LEFT JOIN question_tag qt on question.id = qt.question_id
+        # LEFT JOIN tag on qt.tag_id = tag.id
+        # WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
+        #     OR LOWER(question.message) LIKE LOWER(%(search_phrase)s)
+        #     OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+        #     OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        # """
         query = """
         SELECT  question.id, title, question.message as question_message,
-                answer.message as answer_message, 
                 tag.name as tag
         FROM question
-        LEFT JOIN answer
-        ON question.id = answer.question_id
         LEFT JOIN question_tag qt on question.id = qt.question_id
         LEFT JOIN tag on qt.tag_id = tag.id
-        WHERE  
-            LOWER(title) LIKE LOWER(%(search_phrase)s)
-            OR LOWER(question.message) like LOWER(%(search_phrase)s)
-            OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+        WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
+            OR LOWER(question.message) LIKE LOWER(%(search_phrase)s)
             OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        """
+        cursor.execute(query, {'search_phrase': search_phrase})
+        return cursor.fetchall()
+
+
+@connection.connection_handler
+def search_answers(cursor, search_phrase):
+    if search_phrase is not None:
+        search_phrase = '%' + search_phrase + '%'
+        query = """
+        SELECT id as answer_id, question_id, message
+        FROM answer
+        WHERE LOWER(message) LIKE LOWER(%(search_phrase)s)
         """
         cursor.execute(query, {'search_phrase': search_phrase})
         return cursor.fetchall()
@@ -89,7 +110,7 @@ def get_comment_for_answer(cursor, answer_id):
         FROM comment
         WHERE answer_id=%s
     """
-    cursor.execute(query, (answer_id, ))
+    cursor.execute(query, (answer_id,))
     return cursor.fetchall()
 
 
@@ -108,7 +129,7 @@ def delete_question_comment(cursor, question_id):
         DELETE FROM comment
         WHERE question_id=%s
     """
-    cursor.execute(query, (question_id, ))
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
@@ -193,13 +214,14 @@ def set_image_to_null(table):
 def save_new_question_data(cursor, user_input):
     image = 'NULL' if user_input.get('image') == "" else user_input.get('image')
     query = """
-            INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s)
+            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, question_author)
+            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s, %(question_author)s)
             """
     cursor.execute(query, {'time': NOW,
                            'title': user_input.get('title'),
                            'message': user_input.get('message'),
-                           'image': image})
+                           'image': image,
+                           'question_author': user_input.get('question_author')})
     cursor.execute(set_image_to_null('question'))
     query = """
         SELECT max(id) AS id
@@ -269,9 +291,24 @@ def delete_answer(cursor, id):
 @connection.connection_handler
 def get_question_tag_ids(cursor, question_id):
     query = """
-    SELECT tag_id
+    SELECT tag.id AS tag_id, name
     FROM question_tag
+    LEFT JOIN tag ON question_tag.tag_id = tag.id
     WHERE question_id = %s
+    """
+    cursor.execute(query, (question_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_unassigned_tags(cursor, question_id):
+    query = """
+    SELECT DISTINCT id, name FROM tag
+    LEFT JOIN question_tag qt on tag.id = qt.tag_id
+    WHERE name NOT IN
+        (SELECT name FROM question_tag
+        LEFT JOIN tag ON question_tag.tag_id = tag.id
+        WHERE question_id = %s);
     """
     cursor.execute(query, (question_id,))
     return cursor.fetchall()

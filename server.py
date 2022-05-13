@@ -25,15 +25,14 @@ def list_questions():
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
 
-    search_results = db_data_handler.search(request.args.get('q'))
-
     is_logged_in = False
     if "username" in session:
         is_logged_in = True
 
     return render_template("list.html", questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=search_results,
+                           results=db_data_handler.search(request.args.get('q')),
+                           answers=db_data_handler.search_answers(request.args.get('q')),
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
                            is_logged_in=is_logged_in,
                            username=session.get("username")
@@ -48,6 +47,16 @@ def users():
             return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
     return redirect(url_for('list_questions'))
 
+
+
+@app.route('/users', methods=['GET'])
+def users():
+    if request.method == 'GET':
+        if "username" in session:
+            comment_and_answer = db_data_handler.count_user_comment_and_answer()
+            question = db_data_handler.count_user_question()
+            return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
+    return redirect(url_for('list_questions'))
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -106,11 +115,21 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
-        user_id = db_data_handler.get_user_id(session.get('username'))
+
+#         user_id = db_data_handler.get_user_id(session.get('username'))
+#         new_question = db_data_handler.save_new_question_data({
+#             'title': request.form.get('title', default="not provided"),
+#             'message': request.form.get('message', default="not provided"),
+#             'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
+
+        question_author = None
+        if "username" in session:
+            question_author = session['username']
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
-            'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
+            'image': upload_image(), 'question_author': question_author})
+
         return redirect('/question/' + str(new_question['id']))
 
 
@@ -157,17 +176,26 @@ def add_tag_to_question(question_id):
     question = db_data_handler.get_question(question_id)
     if request.method == 'GET':
         question_tags = db_data_handler.get_question_tag_ids(question_id)
-        return render_template('add-tag.html', question=question,
-                               tags=db_data_handler.get_tags(),
-                               question_tags=question_tags)
+        unassigned_tags = db_data_handler.get_unassigned_tags(question_id)
+        return render_template('add-tag.html', question=question, tags=unassigned_tags, question_tags=question_tags)
     elif request.method == 'POST':
-        tag_id, name = request.form.get('tag'), request.form.get('add_tag')
+        name = request.form.get('add_tag')
+        if already_exists(name):
+            return redirect('/error/2')
+        tag_id = request.form.get('tag'),
         if name:
             db_data_handler.create_new_tag(name)
             tag_id = db_data_handler.get_tag_id(name)
             tag_id = tag_id.get('id')
-        db_data_handler.assign_tag_to_question(id, tag_id)
+        db_data_handler.assign_tag_to_question(question_id, tag_id)
         return redirect(f'/question/{question_id}')
+
+
+def already_exists(tag):
+    for tag_dict in db_data_handler.get_tags():
+        if tag == tag_dict.get('name'):
+            return True
+    return False
 
 
 @app.route('/question/<question_id>/tag/<tag_id>/delete')
@@ -297,11 +325,15 @@ def edit_delete_image(question_id):
     return redirect('/question/' + question_id + '/edit')
 
 
-# # ------------------- ERRORS ---------------------- #
-# @app.route("/error")
-# def display_error_message(error_id):
-#     error_dict = {'id': error_id, "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"}
-#     return error_dict
+# ------------------- ERRORS ---------------------- #
+@app.route("/error/<error_id>")
+def display_error_message(error_id):
+    error_dict = {
+        '1': {'name': 'Extension Error', "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"},
+        '2': {'name': "Tag Error", 'title': "Tag already exists!",
+              "message": "Only enter a new tag name. You can choose a this tag by clicking on the appropriate button"}
+    }
+    return render_template('error.html', error=error_dict[error_id])
 
 
 if __name__ == "__main__":

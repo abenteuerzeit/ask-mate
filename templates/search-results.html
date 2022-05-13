@@ -1,14 +1,5 @@
 
-{% macro fancy_search(text) -%}
-    {% set search_phrase = request.args.get('q') %}
-    {% for word in text.split() %}
-        {% if search_phrase.lower() in word.lower() %}
-            <strong style="background-color: greenyellow">{{ word }}</strong>
-        {% else %}
-            {{ word }}
-        {% endif %}
-    {% endfor %}
-{%- endmacro %}
+
 
 
 {% if results %}
