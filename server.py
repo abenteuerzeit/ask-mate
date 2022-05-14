@@ -15,9 +15,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 
-@app.route("/list")
+@app.route('/list')
 @app.route('/search')
-@app.route("/")
+@app.route('/')
 def list_questions():
     order_by, order_direction = request.args.get('order_by', 'id'), request.args.get('order_direction', 'desc')
     if 'asc' in order_by:
@@ -26,22 +26,22 @@ def list_questions():
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
 
     is_logged_in = False
-    if "username" in session:
+    if 'username' in session:
         is_logged_in = True
 
-    return render_template("list.html", questions=db_questions,
+    return render_template('list.html', questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
                            results=db_data_handler.search(request.args.get('q')),
                            answers=db_data_handler.search_answers(request.args.get('q')),
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
                            is_logged_in=is_logged_in,
-                           username=session.get("username"))
+                           username=session.get('username'))
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/users')
 def users():
     if request.method == 'GET':
-        if "username" in session:
+        if 'username' in session:
             comment_and_answer = db_data_handler.count_user_comment_and_answer()
             question = db_data_handler.count_user_question()
             return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
@@ -53,38 +53,38 @@ def registration():
     if request.method == 'GET':
         return render_template('registration.html')
     elif request.method == 'POST':
-        username = request.form.get("username")
-        password = bcrypt.hashpw((request.form.get("password")).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        username = request.form.get('username')
+        password = bcrypt.hashpw((request.form.get('password')).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         db_data_handler.register_user({'username': username, 'password': password, 'date': db_data_handler.NOW})
         return redirect(url_for('list_questions'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username, password = request.form.get("username"), request.form.get("password")
+    if request.method == 'POST':
+        username, password = request.form.get('username'), request.form.get('password')
         user_hash = db_data_handler.users(username)
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
-                session["username"] = username
-                session["user_id"] = user_hash['id']
-                return redirect(url_for("list_questions"))
-        session["bad_login_or_password"] = True
-    return render_template('login.html', status=session.get("bad_login_or_password", default=False))
+                session['username'] = username
+                session['user_id'] = user_hash['id']
+                return redirect(url_for('list_questions'))
+        session['bad_login_or_password'] = True
+    return render_template('login.html', status=session.get('bad_login_or_password', default=False))
 
 
-@app.route('/logout', methods=['GET'])
+@app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('list_questions'))
 
 
-@app.route("/bonus-questions")
+@app.route('/bonus-questions')
 def main():
     return render_template('bonus_questions.html', questions=SAMPLE_QUESTIONS)
 
 
-@app.route('/question/<question_id>', methods=['GET'])
+@app.route('/question/<question_id>')
 def display_question(question_id):
     if request.method == 'GET':
         question = db_data_handler.get_question(question_id)
@@ -96,22 +96,22 @@ def display_question(question_id):
                                author=db_data_handler.get_username(question['author_id']))
 
 
-@app.route("/add-question", methods=["GET", "POST"])
+@app.route('/add-question', methods=['GET', 'POST'])
 def add_question():
-    if request.method == "GET":
-        return render_template("add-question.html")
+    if request.method == 'GET':
+        return render_template('add-question.html')
     if request.method == 'POST':
         author_id = None
-        if "username" in session:
+        if 'username' in session:
             author_id = session['user_id']
         new_question = db_data_handler.save_new_question_data({
-            'title': request.form.get('title', default="not provided"),
-            'message': request.form.get('message', default="not provided"),
+            'title': request.form.get('title', default='not provided'),
+            'message': request.form.get('message', default='not provided'),
             'image': upload_image(), 'author_id': author_id})
         return redirect('/question/' + str(new_question['id']))
 
 
-@app.route("/question/<question_id>/delete")
+@app.route('/question/<question_id>/delete')
 def delete_question(question_id):
     image_delete_from_server(db_data_handler.get_question(question_id))
     tags = db_data_handler.get_question_tag_ids(question_id)
@@ -128,10 +128,10 @@ def delete_question(question_id):
             db_data_handler.delete_answer(answer.get('id'))
     db_data_handler.delete_question_comment(question_id)
     db_data_handler.delete_question(question_id)
-    return redirect("/")
+    return redirect('/')
 
 
-@app.route("/question/<question_id>/edit", methods=['GET', 'POST'])
+@app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
     question = db_data_handler.get_question(question_id)
     tag_ids, tags = db_data_handler.get_question_tag_ids(question_id), db_data_handler.get_tags()
@@ -157,8 +157,8 @@ def add_tag_to_question(question_id):
     elif request.method == 'POST':
         name = request.form.get('add_tag')
         if already_exists(name):
-            flash("""Tag already exists! Only enter a name for a tag that does not exist. Choose a new tag 
-            by clicking on a button to assign the tag to the question.""")
+            flash('Tag already exists! Only enter a name for a tag that does not exist.\n'
+                  'Choose a new tag by clicking on a button to assign the tag to the question.')
             return redirect(url_for('add_tag_to_question', question_id=question_id))
         tag_id = request.form.get('tag'),
         if name:
@@ -252,7 +252,7 @@ def image_delete_from_server(item):
         url_path = item['image']
         if url_path is not None:
             filename = url_path[len('/uploads/'):]
-            filepath = UPLOAD_FOLDER + "/" + filename
+            filepath = UPLOAD_FOLDER + '/' + filename
             if os.path.exists(filepath):
                 os.remove(filepath)
 
@@ -265,7 +265,7 @@ def allowed_file(filename):
 def save_image(file):
     file_extension = file.filename.rsplit('.', 1)[1].lower()
     count = len(fnmatch.filter(os.listdir(UPLOAD_FOLDER), '*.*'))
-    new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
+    new_name = 'Ask-Mate-' + str(count) + os.urandom(4).hex() + '.' + file_extension
     filename = secure_filename(new_name)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     return filename
@@ -292,7 +292,7 @@ def upload_image():
             return None
 
 
-@app.route('/question/<question_id>/delete-image', methods=["GET"])
+@app.route('/question/<question_id>/delete-image')
 def edit_delete_image(question_id):
     question = db_data_handler.get_question(question_id)
     image_delete_from_server(question)
@@ -302,17 +302,17 @@ def edit_delete_image(question_id):
 
 
 # ------------------- ERRORS ---------------------- #
-@app.route("/error/<error_id>")
+@app.route('/error/<error_id>')
 def display_error_message(error_id):
     error_dict = {
-        '1': {'name': 'Extension Error', "title": "Wrong file type!", "message": "Only .jpg and .png files accepted!"},
-        '2': {'name': "Tag Error", 'title': "Tag already exists!",
-              "message": "Only enter a new tag name. You can choose a this tag by clicking on the appropriate button"}
+        '1': {'name': 'Extension Error', 'title': 'Wrong file type!', 'message': 'Only .jpg and .png files accepted!'},
+        '2': {'name': 'Tag Error', 'title': 'Tag already exists!',
+              'message': 'Only enter a new tag name. You can choose a this tag by clicking on the appropriate button'}
     }
     return render_template('error.html', error=error_dict[error_id])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=8000,
