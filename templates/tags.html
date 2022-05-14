@@ -3,16 +3,23 @@
 {% block body %}
     <div class="questions">
         <div class="question">
-            <h1>Tags</h1>
             <a class="questionLink" href="{{ url_for('list_questions') }}">Go to all questions</a><br>
+
+            <h1>Tags</h1>
+            <p>Click on a tag to display the assigned questions </p>
             <div class="question">
                 <ul>
                     {% for tag in tags %}
-                        <li>{{ tag.name }}: {{ tag.amount }}</li>
+                        <li><a class="questionLink"
+                               href="{{ url_for('display_tags', tag_id=tag.id) }}">{{ tag.name }}: {{ tag.amount }}</a>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
-
+    {% from 'macros.html' import get_questions with context %}
+    {% for question in questions %}
+        {{ get_questions(question) }}
+    {% endfor %}
 {% endblock %}

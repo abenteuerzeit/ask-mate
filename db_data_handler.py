@@ -375,13 +375,28 @@ def delete_tag_from_question(cursor, question_id, tag_id):
 @connection.connection_handler
 def count_questions_with_tag(cursor):
     query = """
-    SELECT name, COUNT(question_id) AS amount
+    SELECT id, name, COUNT(question_id) AS amount
     FROM question_tag
     LEFT JOIN tag on question_tag.tag_id = tag.id
-    GROUP BY name
+    GROUP BY id, name
     ORDER BY amount DESC
     """
     cursor.execute(query,)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def filter_questions_by_tag(cursor, tag_id):
+    query = """
+    SELECT question_id AS id, submission_time, view_number, vote_number, title, message, image, author_id, 
+    t.id AS tag_id, name AS tag_name
+    FROM question
+    INNER JOIN question_tag qt on question.id = qt.question_id
+    INNER JOIN tag t on qt.tag_id = t.id
+    WHERE tag_id = %s
+    ORDER BY view_number DESC
+    """
+    cursor.execute(query, (tag_id,))
     return cursor.fetchall()
 
 

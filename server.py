@@ -149,8 +149,10 @@ def edit_question(question_id):
 
 # ------------------- TAGS ---------------------- #
 @app.route('/tags')
-def display_tags():
-    return render_template('tags.html', tags=db_data_handler.count_questions_with_tag())
+@app.route('/tags/<tag_id>')
+def display_tags(tag_id=None):
+    questions = db_data_handler.filter_questions_by_tag(tag_id)
+    return render_template('tags.html', tags=db_data_handler.count_questions_with_tag(), questions=questions)
 
 
 @app.route('/question/<question_id>/new-tag', methods=['GET', 'POST'])
@@ -179,7 +181,6 @@ def add_tag_to_question(question_id):
 def delete_tag_from_question(question_id, tag_id):
     db_data_handler.delete_tag_from_question(question_id, tag_id)
     return redirect(f'/question/{question_id}')
-
 
 
 # ------------------- ANSWERS ---------------------- #
