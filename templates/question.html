@@ -12,14 +12,6 @@
                     <a class="questionLink" href="{{ url_for('delete_question', question_id=question.id ) }}">Delete</a>
                     <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Add Comment to Question </a>
                 </p>
-                <div class="question-comments">
-                    <ul>
-                    <h2>Comments to question</h2>
-                        {% for item in comments_question %}
-                            <li>{{ item.message }} <small>{{ item.author }}</small></li>
-                        {% endfor %}
-                    </ul>
-                </div>
                 {% if question.image %}
                     <div class="item">
                         <a href="{{ question.image }}" target="_blank">
@@ -27,14 +19,32 @@
                         </a>
                     </div>
                 {% endif %}
-                <div class="question"><p>{{ question.message }}</p></div>
-                <div class="question"><p><small>Added: {{ question.submission_time }}
-                    {% if author %}
-                        by {{ author.username }}
+                <div class="question">
+                    <p>{{ question.message }}</p>
+                </div>
+                <div class="question">
+                    <p>
+                        <small>Added: {{ question.submission_time }}
+                        {% if author %}
+                            by {{ author.username }}
+                        {% endif %}
+                        </small>
+                    </p>
+                </div>
+                <div class="question-comments">
+                    {% if comments_question %}
+                        <ul>
+                            <h2>Comments to question</h2>
+                            {% for item in comments_question %}
+                                <li>{{ item.message }} <small>Author's id: {{ item.author }}</small></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <h2>There's no comments to question. <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Be first! </a></h2>
                     {% endif %}
-                </small></p></div>
-
-                <div class="question"><h3>Tags</h3>
+                </div>
+                <div class="question">
+                    <h3>Tags</h3>
                     <p>
                         {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
                             <em>#{{ tag.name }}
