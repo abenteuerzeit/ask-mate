@@ -98,9 +98,13 @@ def get_comments(cursor):
 
 
 @connection.connection_handler
-def get_comment_for_question(cursor, answer_id):
-    return []
-
+def get_comment_for_question(cursor, comment_id):
+    cursor.execute("""
+            SELECT id, question_id, message, submission_time, author, edited_count
+            FROM comment
+            WHERE question_id=%s
+        """, (comment_id,))
+    return cursor.fetchall()
 
 @connection.connection_handler
 def get_comment_for_answer(cursor, answer_id):
@@ -235,8 +239,8 @@ def save_new_question_data(cursor, user_input):
 def save_new_comment(cursor, user_input):
     cursor.execute(
         """
-        INSERT INTO comment (question_id, message, submission_time, edited_count)
-        VALUES (%(question_id)s, %(message)s,%(submission_time)s, %(edited_count)s);
+        INSERT INTO comment (question_id, message, submission_time, edited_count, author)
+        VALUES (%(question_id)s, %(message)s,%(submission_time)s, %(edited_count)s, %(author)s);
         """, user_input)
 
 
@@ -465,3 +469,12 @@ def count_user_question(cursor):
     """)
     return cursor.fetchall()
 
+
+@connection.connection_handler
+def get_author_id(cursor, username):
+    cursor.execute("""
+    SELECT id
+    FROM users
+    WHERE username = %s
+    """, (username,))
+    return cursor.fetchone()

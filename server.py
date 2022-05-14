@@ -86,11 +86,12 @@ def display_question(question_id):
     if request.method == 'GET':
         question = db_data_handler.get_question(question_id)
         db_data_handler.increase_question_view_count(question['id'])
+        comments_question = db_data_handler.get_comment_for_question(question_id)
         return render_template('question.html', question=question,
                                answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
                                question_tags=db_data_handler.get_question_tag_ids(question_id),
-                               author=db_data_handler.get_username(question['author']))
+                               comments_question=comments_question)
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -219,11 +220,13 @@ def add_comment_to_question(question_id):
         return render_template('new-comment.html',
                                question=db_data_handler.get_question(question_id))
     elif request.method == 'POST':
-        comment_data = {'message': request.form.get('message'),
-                        'question_id': question_id,
-                        'submission_time': datetime.now(),
-                        'edited_count': 0}
-        db_data_handler.save_new_comment(comment_data)
+        if 'username' in session:
+            comment_data = {'message': request.form.get('message'),
+                            'question_id': question_id,
+                            'submission_time': datetime.now(),
+                            'author': db_data_handler.get_author_id(session['username']).get("id"),
+                            'edited_count': 0}
+            db_data_handler.save_new_comment(comment_data)
         return redirect(url_for('display_question', question_id=question_id ))
 
 

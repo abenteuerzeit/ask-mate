@@ -12,6 +12,14 @@
                     <a class="questionLink" href="{{ url_for('delete_question', question_id=question.id ) }}">Delete</a>
                     <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Add Comment to Question </a>
                 </p>
+                <div class="question-comments">
+                    <ul>
+                    <h2>Comments to question</h2>
+                        {% for item in comments_question %}
+                            <li>{{ item.message }} <small>{{ item.author }}</small></li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% if question.image %}
                     <div class="item">
                         <a href="{{ question.image }}" target="_blank">
