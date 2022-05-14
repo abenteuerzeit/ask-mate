@@ -1,18 +1,13 @@
-import fnmatch
-import os
-
 import bcrypt
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
-from werkzeug.utils import secure_filename
 
 import db_data_handler
+import util
 from bonus_questions import SAMPLE_QUESTIONS
 
-UPLOAD_FOLDER = './static/images'
-ALLOWED_EXTENSIONS = {'jpg', 'png'}
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = os.urandom(12).hex()
+app.config['UPLOAD_FOLDER'] = util.UPLOAD_FOLDER
+app.config['SECRET_KEY'] = util.SECRET_KEY
 
 
 @app.route('/list')
@@ -100,7 +95,11 @@ def display_question(question_id):
 @app.route('/add-question', methods=['GET', 'POST'])
 def add_question():
     if request.method == 'GET':
-        return render_template('add-question.html')
+        if 'username' in session:
+            return render_template('add-question.html')
+        else:
+            flash('You must be logged in to add a new question!')
+            return redirect(url_for('list_questions'))
     if request.method == 'POST':
         author_id = None
         if 'username' in session:
@@ -108,13 +107,13 @@ def add_question():
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default='not provided'),
             'message': request.form.get('message', default='not provided'),
-            'image': upload_image(), 'author_id': author_id})
+            'image': util.upload_image(), 'author_id': author_id})
         return redirect('/question/' + str(new_question['id']))
 
 
 @app.route('/question/<question_id>/delete')
 def delete_question(question_id):
-    image_delete_from_server(db_data_handler.get_question(question_id))
+    util.image_delete_from_server(db_data_handler.get_question(question_id))
     tags = db_data_handler.get_question_tag_ids(question_id)
     if tags:
         for tag in tags:
@@ -122,7 +121,7 @@ def delete_question(question_id):
     answers = db_data_handler.get_answer_for_question(question_id)
     if answers:
         for answer in answers:
-            image_delete_from_server(answer)
+            util.image_delete_from_server(answer)
             comments = db_data_handler.get_comment_for_answer(answer.get('id'))
             for comment in comments:
                 db_data_handler.delete_comment(comment.get('id'))
@@ -140,12 +139,20 @@ def edit_question(question_id):
         return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
     elif request.method == 'POST':
         if question['image'] is None:
-            question['image'] = upload_image()
+            question['image'] = util.upload_image()
         db_data_handler.edit_question({'id': question_id,
                                        'title': request.form.get('title'),
                                        'message': request.form.get('message'),
                                        'image': question['image']})
         return redirect('/question/' + question_id)
+
+
+# ------------------- TAGS ---------------------- #
+@app.route('/tags')
+@app.route('/tags/<tag_id>')
+def display_tags(tag_id=None):
+    questions = db_data_handler.filter_questions_by_tag(tag_id)
+    return render_template('tags.html', tags=db_data_handler.count_questions_with_tag(), questions=questions)
 
 
 @app.route('/question/<question_id>/new-tag', methods=['GET', 'POST'])
@@ -157,7 +164,7 @@ def add_tag_to_question(question_id):
         return render_template('add-tag.html', question=question, tags=unassigned_tags, question_tags=question_tags)
     elif request.method == 'POST':
         name = request.form.get('add_tag')
-        if already_exists(name):
+        if util.already_exists(name):
             flash(f'"{name.capitalize()}" already exists! Only enter a name for a tag that does not exist.')
             flash('Choose a new tag by clicking on a button to assign the tag to the question.')
             return redirect(url_for('add_tag_to_question', question_id=question_id))
@@ -170,13 +177,6 @@ def add_tag_to_question(question_id):
         return redirect(f'/question/{question_id}')
 
 
-def already_exists(tag):
-    for tag_dict in db_data_handler.get_tags():
-        if tag == tag_dict.get('name'):
-            return True
-    return False
-
-
 @app.route('/question/<question_id>/tag/<tag_id>/delete')
 def delete_tag_from_question(question_id, tag_id):
     db_data_handler.delete_tag_from_question(question_id, tag_id)
@@ -187,13 +187,17 @@ def delete_tag_from_question(question_id, tag_id):
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def add_answer(question_id):
     if request.method == 'GET':
-        question = db_data_handler.get_question(question_id)
-        answers = db_data_handler.get_answer_for_question(question_id)
-        question['id'] = str(question.get('id'))
-        return render_template('add-answer.html', question=question, answers=answers)
+        if 'username' in session:
+            question = db_data_handler.get_question(question_id)
+            answers = db_data_handler.get_answer_for_question(question_id)
+            question['id'] = str(question.get('id'))
+            return render_template('add-answer.html', question=question, answers=answers)
+        else:
+            flash('You must be logged in to add an answer!')
+            return redirect(url_for('display_question', question_id=question_id))
     elif request.method == 'POST':
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
-                                          'image': upload_image()})
+                                          'image': util.upload_image()})
         return redirect('/question/' + question_id)
 
 
@@ -202,7 +206,7 @@ def delete_answer(answer_id):
     question_id, answer_list = request.args.get('question_id'), db_data_handler.get_answers()
     for answer in answer_list:
         if str(answer['id']) == answer_id:
-            image_delete_from_server(answer)
+            util.image_delete_from_server(answer)
     db_data_handler.delete_answer(answer_id)
     return redirect('/question/' + question_id)
 
@@ -217,7 +221,7 @@ def add_comment(question_id):
                                comments=comments)
     elif request.method == 'POST':
         comment_data = {'message': request.form.get('message'), 'answer_id': question_id,
-                        'image': upload_image()}
+                        'image': util.upload_image()}
         db_data_handler.save_new_comment(comment_data)
         return redirect('question' + question_id)
 
@@ -248,69 +252,18 @@ def decrease_answer_vote(answer_id):
 
 
 # ------------------- IMAGE ---------------------- #
-def image_delete_from_server(item):
-    if item['image'] is not None:
-        url_path = item['image']
-        if url_path is not None:
-            filename = url_path[len('/uploads/'):]
-            filepath = UPLOAD_FOLDER + '/' + filename
-            if os.path.exists(filepath):
-                os.remove(filepath)
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def save_image(file):
-    file_extension = file.filename.rsplit('.', 1)[1].lower()
-    count = len(fnmatch.filter(os.listdir(UPLOAD_FOLDER), '*.*'))
-    new_name = 'Ask-Mate-' + str(count) + os.urandom(4).hex() + '.' + file_extension
-    filename = secure_filename(new_name)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    return filename
-
-
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-def upload_image():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('File missing from request query')
-            return None
-        file = request.files['file']
-        if file.filename == '':
-            return None
-        if file and allowed_file(file.filename):
-            filename = save_image(file)
-            return url_for('uploaded_file', filename=filename)
-        else:
-            flash('Only .jpg and .png files accepted!')
-            return None
-
-
 @app.route('/question/<question_id>/delete-image')
 def edit_delete_image(question_id):
     question = db_data_handler.get_question(question_id)
-    image_delete_from_server(question)
+    util.image_delete_from_server(question)
     question['image'] = None
     db_data_handler.edit_question(question)
     return redirect('/question/' + question_id + '/edit')
-
-
-# ------------------- ERRORS ---------------------- #
-@app.route('/error/<error_id>')
-def display_error_message(error_id):
-    error_dict = {
-        '1': {'name': 'Extension Error', 'title': 'Wrong file type!', 'message': 'Only .jpg and .png files accepted!'},
-        '2': {'name': 'Tag Error', 'title': 'Tag already exists!',
-              'message': 'Only enter a new tag name. You can choose a this tag by clicking on the appropriate button'}
-    }
-    return render_template('error.html', error=error_dict[error_id])
 
 
 if __name__ == '__main__':
