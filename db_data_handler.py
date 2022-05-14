@@ -465,9 +465,9 @@ def count_user_comment_and_answer(cursor):
 @connection.connection_handler
 def count_user_question(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time,  COUNT(question.question_author) AS question_num
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.author) AS question_num
     FROM users
-    LEFT JOIN question ON users.id = question.question_author
+    LEFT JOIN question ON users.id = question.author
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
