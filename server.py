@@ -1,8 +1,7 @@
 import fnmatch
 import os
+
 import bcrypt
-
-
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug.utils import secure_filename
 
@@ -75,7 +74,6 @@ def login():
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session["username"] = username
                 session["user_id"] = user_hash['id']
-                result = session["user_id"]
                 return redirect(url_for("list_questions"))
         session["bad_login_or_password"] = True
     return render_template('login.html', status=session.get("bad_login_or_password", default=False))
@@ -96,7 +94,6 @@ def main():
 def display_question(question_id):
     question, answers = db_data_handler.get_question(question_id), db_data_handler.get_answer_for_question(question_id)
     db_data_handler.increase_question_view_count(question['id'])
-    author = db_data_handler.get_username(question['author_id'])
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers,
                                tags=db_data_handler.get_tags(),
@@ -117,20 +114,14 @@ def add_question():
             'title': request.form.get('title', default="not provided"),
             'message': request.form.get('message', default="not provided"),
             'image': upload_image(), 'author_id': author_id})
-
-        #  user_id = db_data_handler.get_user_id(session.get('username'))
-        #  new_question = db_data_handler.save_new_question_data({
-        #       'title': request.form.get('title', default="not provided"),
-        #       'message': request.form.get('message', default="not provided"),
-        #       'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
-
         return redirect('/question/' + str(new_question['id']))
 
 
 @app.route("/question/<question_id>/delete")
 def delete_question(question_id):
     image_delete_from_server(db_data_handler.get_question(question_id))
-    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(question_id)
+    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(
+        question_id)
     if tags:
         for tag in tags:
             db_data_handler.delete_tag_from_question(question_id, tag.get('tag_id'))
