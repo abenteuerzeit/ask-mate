@@ -65,7 +65,7 @@
     </div>
     {% if answers %}
         <div class="question">
-        <h2 style="color: whitesmoke; text-align: center;">Answers </h2>
+        <h2 style="color: whitesmoke; text-align: center;">Answers</h2>
         {% for answer in answers %}
             <div class="questions">
                 <div class="question"><small>
@@ -78,7 +78,7 @@
 
                 <div class="question">
                     <p>{{ answer.message }}</p>
-                    <small>{{ answer.submission_time }}</small><br>
+                    <small>{{ answer.submission_time }} by {{ author.username }}</small><br>
                     <p><small>
                         <a class="questionLink" style="padding-right: 10px"
                            href="/question/{{ question.id }}/new-comment">
@@ -101,6 +101,7 @@
                     </div>
                 {% endif %}
             </div>
+        </div>
         {% endfor %}
     {% endif %}
 {% endblock %}
