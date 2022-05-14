@@ -373,6 +373,19 @@ def delete_tag_from_question(cursor, question_id, tag_id):
 
 
 @connection.connection_handler
+def count_questions_with_tag(cursor):
+    query = """
+    SELECT name, COUNT(question_id) AS amount
+    FROM question_tag
+    LEFT JOIN tag on question_tag.tag_id = tag.id
+    GROUP BY name
+    ORDER BY amount DESC
+    """
+    cursor.execute(query,)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
 def register_user(cursor, data):
     cursor.execute("""
     INSERT INTO users (username, passwordhash, submission_time)

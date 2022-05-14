@@ -35,6 +35,7 @@
                 <a href="/registration">Register</a><br>
                 <a href="{{ url_for('login') }}">Login</a>
             {% endif %}
+            <br><a href="{{ url_for('display_tags') }}">Tag list</a>
         </div>
     {% if questions %}
         <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>

@@ -37,6 +37,7 @@
                         {% endif %}{% endfor %}{% endfor %}
                     </p>
                     <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
+                    <p><a class="questionLink" href="{{ url_for('display_tags') }}">Tag list</a></p>
                 </div>
             </div>
             <div>

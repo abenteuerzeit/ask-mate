@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %}All tags {% endblock %}
+{% block body %}
+    <div class="questions">
+        <div class="question">
+            <h1>Tags</h1>
+            <a class="questionLink" href="{{ url_for('list_questions') }}">Go to all questions</a><br>
+            <div class="question">
+                <ul>
+                    {% for tag in tags %}
+                        <li>{{ tag.name }}: {{ tag.amount }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
