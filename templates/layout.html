@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="../static/css/bootstrap-reboot.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
+
     <title>{% block title %}{% endblock %}</title>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul class=flashes style="background-color: greenyellow; color: darkred;">{% for message in messages %}
-          <li>{{ message }}</li>{% endfor %}
-        </ul>{% endif %}
+        <p class=flashes style="background-color: greenyellow; color: darkred; margin: auto; padding: 10px;
+            height: 50px; text-align: center;">
+            {% for message in messages %}
+            {{ message }}<br>
+            {% endfor %}
+        </p>{% endif %}
     {% endwith %}
+
     <style>
         html, body {
           margin: 0;

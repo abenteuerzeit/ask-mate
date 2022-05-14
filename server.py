@@ -158,8 +158,8 @@ def add_tag_to_question(question_id):
     elif request.method == 'POST':
         name = request.form.get('add_tag')
         if already_exists(name):
-            flash('Tag already exists! Only enter a name for a tag that does not exist.\n'
-                  'Choose a new tag by clicking on a button to assign the tag to the question.')
+            flash(f'"{name.capitalize()}" already exists! Only enter a name for a tag that does not exist.')
+            flash('Choose a new tag by clicking on a button to assign the tag to the question.')
             return redirect(url_for('add_tag_to_question', question_id=question_id))
         tag_id = request.form.get('tag'),
         if name:

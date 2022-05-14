@@ -19,7 +19,7 @@
         <div style="margin: 25px; padding: 10px;">
 
             {% if results %}
-                <h1>Filtered question list </h1></div>
+                <h2>Search<br>Results</h2></div>
             {% else %}
                 <h1>All questions</h1></div>
             {% endif %}
@@ -67,8 +67,7 @@
                 {% elif results or answers %}
                     <div class="questions">
                         <div class="question">
-                            <h2>Search Results</h2>
-                            <p>Searched phrase: <em>{{ search_phrase }}</em></p>
+                            <h2>Phrase: <em>{{ search_phrase }}</em></h2>
                             <p>The following results list questions that contain the phrase "{{ search_phrase }}" in
                                 either a question's title or message, or in an answer's message to a question.</p>
                         </div>
