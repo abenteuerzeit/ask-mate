@@ -144,11 +144,8 @@ def edit_question(question_id):
     if request.method == 'GET':
         return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
     elif request.method == 'POST':
-        file = request.files.get('file')
-        if file and allowed_file(file.filename):
-            filename = save_image(file)
-            filepath = url_for('uploaded_file', filename=filename)
-            question['image'] = filepath
+        if question['image'] is None:
+            question['image'] = upload_image()
         db_data_handler.edit_question({'id': question_id,
                                        'title': request.form.get('title'),
                                        'message': request.form.get('message'),
@@ -222,10 +219,6 @@ def add_comment(question_id):
                                question=db_data_handler.get_question(question_id),
                                comments=comments)
     elif request.method == 'POST':
-        # file = request.files['file']
-        # if file.filename != "" and not allowed_file(file.filename):
-        #     error = display_error_message(question_id)
-        #     return render_template('error.html', error=error, is_comment=True)
         comment_data = {'message': request.form.get('message'), 'answer_id': question_id,
                         'image': upload_image()}
         db_data_handler.save_new_comment(comment_data)
@@ -290,15 +283,17 @@ def uploaded_file(filename):
 def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('File missing from request query')
             return None
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
             return None
         if file and allowed_file(file.filename):
             filename = save_image(file)
             return url_for('uploaded_file', filename=filename)
+        else:
+            flash('Only .jpg and .png files accepted!')
+            return None
 
 
 @app.route('/question/<question_id>/delete-image', methods=["GET"])
