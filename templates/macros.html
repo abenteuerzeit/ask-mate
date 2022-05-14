@@ -32,9 +32,7 @@
 
 {% macro get_tags(row) -%}
         {% for tag in tags %}{% for q in question_tags %}{% if q.question_id == row.id and q.tag_id == tag.id %}
-            {#            <a class="questionLink" href=""> #}
-            <em> # {{ tag.name }} </em>
-            {#            </a>#}
+            <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ tag.name }}</a></em>
         {% endif %}{% endfor %}{% endfor %}
     {%- endmacro %}
 
