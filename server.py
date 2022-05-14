@@ -1,5 +1,6 @@
 import bcrypt
 from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, session
+from datetime import datetime
 
 import db_data_handler
 import util
@@ -89,7 +90,7 @@ def display_question(question_id):
                                answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
                                question_tags=db_data_handler.get_question_tag_ids(question_id),
-                               author=db_data_handler.get_username(question['author_id']))
+                               author=db_data_handler.get_username(question['author']))
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -213,17 +214,17 @@ def delete_answer(answer_id):
 
 # ------------------- COMMENTS ---------------------- #
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
-def add_comment(question_id):
+def add_comment_to_question(question_id):
     if request.method == 'GET':
-        comments = db_data_handler.get_comment_for_question(question_id)
         return render_template('new-comment.html',
-                               question=db_data_handler.get_question(question_id),
-                               comments=comments)
+                               question=db_data_handler.get_question(question_id))
     elif request.method == 'POST':
-        comment_data = {'message': request.form.get('message'), 'answer_id': question_id,
-                        'image': util.upload_image()}
+        comment_data = {'message': request.form.get('message'),
+                        'question_id': question_id,
+                        'submission_time': datetime.now(),
+                        'edited_count': 0}
         db_data_handler.save_new_comment(comment_data)
-        return redirect('question' + question_id)
+        return redirect(url_for('display_question', question_id=question_id ))
 
 
 # ------------------- VOTES ---------------------- #

@@ -233,7 +233,11 @@ def save_new_question_data(cursor, user_input):
 
 @connection.connection_handler
 def save_new_comment(cursor, user_input):
-    return []
+    cursor.execute(
+        """
+        INSERT INTO comment (question_id, message, submission_time, edited_count)
+        VALUES (%(question_id)s, %(message)s,%(submission_time)s, %(edited_count)s);
+        """, user_input)
 
 
 @connection.connection_handler
