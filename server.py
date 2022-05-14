@@ -252,7 +252,7 @@ def decrease_answer_vote(answer_id):
 
 # ------------------- IMAGE ---------------------- #
 def image_delete_from_server(item):
-    if item['image'] != '':
+    if item['image'] is not None:
         url_path = item['image']
         if url_path is not None:
             filename = url_path[len('/uploads/'):]
