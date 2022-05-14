@@ -70,10 +70,12 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user_hash = db_data_handler.users(username)  # TODO SQL users table; SELECT WHERE username
+        user_hash = db_data_handler.users(username)
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session["username"] = username
+                session["user_id"] = user_hash['id']
+                result = session["user_id"]
                 return redirect(url_for("list_questions"))
         session["bad_login_or_password"] = True
     return render_template('login.html', status=session.get("bad_login_or_password", default=False))
@@ -94,10 +96,12 @@ def main():
 def display_question(question_id):
     question, answers = db_data_handler.get_question(question_id), db_data_handler.get_answer_for_question(question_id)
     db_data_handler.increase_question_view_count(question['id'])
+    author = db_data_handler.get_username(question['author_id'])
     if request.method == 'GET':
         return render_template('question.html', question=question, answers=answers,
                                tags=db_data_handler.get_tags(),
-                               question_tags=db_data_handler.get_question_tag_ids(question_id))
+                               question_tags=db_data_handler.get_question_tag_ids(question_id),
+                               author=db_data_handler.get_username(question['author_id']))
     return question, answers
 
 
@@ -106,19 +110,19 @@ def add_question():
     if request.method == "GET":
         return render_template("add-question.html")
     if request.method == 'POST':
+        author_id = None
+        if "username" in session:
+            author_id = session['user_id']
+        new_question = db_data_handler.save_new_question_data({
+            'title': request.form.get('title', default="not provided"),
+            'message': request.form.get('message', default="not provided"),
+            'image': upload_image(), 'author_id': author_id})
+
         #  user_id = db_data_handler.get_user_id(session.get('username'))
         #  new_question = db_data_handler.save_new_question_data({
         #       'title': request.form.get('title', default="not provided"),
         #       'message': request.form.get('message', default="not provided"),
         #       'image': upload_image(), 'author': request.form.get(get_user_id(user_id))})
-
-        question_author = None
-        if "username" in session:
-            question_author = session['username']
-        new_question = db_data_handler.save_new_question_data({
-            'title': request.form.get('title', default="not provided"),
-            'message': request.form.get('message', default="not provided"),
-            'image': upload_image(), 'question_author': question_author})
 
         return redirect('/question/' + str(new_question['id']))
 
@@ -126,7 +130,7 @@ def add_question():
 @app.route("/question/<question_id>/delete")
 def delete_question(question_id):
     image_delete_from_server(db_data_handler.get_question(question_id))
-    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(id)
+    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(question_id)
     if tags:
         for tag in tags:
             db_data_handler.delete_tag_from_question(question_id, tag.get('tag_id'))
