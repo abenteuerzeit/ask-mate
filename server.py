@@ -100,7 +100,11 @@ def display_question(question_id):
 @app.route('/add-question', methods=['GET', 'POST'])
 def add_question():
     if request.method == 'GET':
-        return render_template('add-question.html')
+        if 'username' in session:
+            return render_template('add-question.html')
+        else:
+            flash('You must be logged in to add a new question!')
+            return redirect(url_for('list_questions'))
     if request.method == 'POST':
         author_id = None
         if 'username' in session:
@@ -187,10 +191,14 @@ def delete_tag_from_question(question_id, tag_id):
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def add_answer(question_id):
     if request.method == 'GET':
-        question = db_data_handler.get_question(question_id)
-        answers = db_data_handler.get_answer_for_question(question_id)
-        question['id'] = str(question.get('id'))
-        return render_template('add-answer.html', question=question, answers=answers)
+        if 'username' in session:
+            question = db_data_handler.get_question(question_id)
+            answers = db_data_handler.get_answer_for_question(question_id)
+            question['id'] = str(question.get('id'))
+            return render_template('add-answer.html', question=question, answers=answers)
+        else:
+            flash('You must be logged in to add an answer!')
+            return redirect(url_for('display_question', question_id=question_id))
     elif request.method == 'POST':
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
                                           'image': upload_image()})
