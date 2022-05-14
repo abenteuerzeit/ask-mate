@@ -256,11 +256,14 @@ def edit_question(cursor, updated_dict):
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
     query = """
-        INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s)
+        INSERT INTO answer (submission_time, vote_number, question_id, message, image, author_id)
+        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s, %(author_id)s)
     """
-    cursor.execute(query, {'time': NOW, 'title': user_input.get('title'), 'question_id': user_input.get('question_id'),
-                           'message': user_input.get('message'), 'image': user_input.get('image')})
+    cursor.execute(query, {'time': NOW, 'title': user_input.get('title'),
+                           'question_id': user_input.get('question_id'),
+                           'message': user_input.get('message'),
+                           'image': user_input.get('image'),
+                           'author_id': user_input.get('author_id')})
     cursor.execute(set_image_to_null('answer'))
     query = """
             SELECT max(id) AS id

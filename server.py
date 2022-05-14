@@ -196,8 +196,11 @@ def add_answer(question_id):
             flash('You must be logged in to add an answer!')
             return redirect(url_for('display_question', question_id=question_id))
     elif request.method == 'POST':
+        author_id = None
+        if 'username' in session:
+            author_id = session['user_id']
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
-                                          'image': util.upload_image()})
+                                          'image': util.upload_image(), 'author_id': author_id})
         return redirect('/question/' + question_id)
 
 
