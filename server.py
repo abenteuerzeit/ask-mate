@@ -35,8 +35,7 @@ def list_questions():
                            answers=db_data_handler.search_answers(request.args.get('q')),
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
                            is_logged_in=is_logged_in,
-                           username=session.get("username")
-                           )
+                           username=session.get("username"))
 
 
 @app.route('/users', methods=['GET'])
@@ -56,19 +55,14 @@ def registration():
     elif request.method == 'POST':
         username = request.form.get("username")
         password = bcrypt.hashpw((request.form.get("password")).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        registration_data = dict()
-        registration_data['username'] = username
-        registration_data['password'] = password
-        registration_data['date'] = db_data_handler.NOW
-        db_data_handler.register_user(registration_data)
+        db_data_handler.register_user({'username': username, 'password': password, 'date': db_data_handler.NOW})
         return redirect(url_for('list_questions'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username, password = request.form.get("username"), request.form.get("password")
         user_hash = db_data_handler.users(username)
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
@@ -92,14 +86,14 @@ def main():
 
 @app.route('/question/<question_id>', methods=['GET'])
 def display_question(question_id):
-    question, answers = db_data_handler.get_question(question_id), db_data_handler.get_answer_for_question(question_id)
-    db_data_handler.increase_question_view_count(question['id'])
     if request.method == 'GET':
-        return render_template('question.html', question=question, answers=answers,
+        question = db_data_handler.get_question(question_id)
+        db_data_handler.increase_question_view_count(question['id'])
+        return render_template('question.html', question=question,
+                               answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
                                question_tags=db_data_handler.get_question_tag_ids(question_id),
                                author=db_data_handler.get_username(question['author_id']))
-    return question, answers
 
 
 @app.route("/add-question", methods=["GET", "POST"])
@@ -120,11 +114,11 @@ def add_question():
 @app.route("/question/<question_id>/delete")
 def delete_question(question_id):
     image_delete_from_server(db_data_handler.get_question(question_id))
-    answers, tags = db_data_handler.get_answer_for_question(question_id), db_data_handler.get_question_tag_ids(
-        question_id)
+    tags = db_data_handler.get_question_tag_ids(question_id)
     if tags:
         for tag in tags:
             db_data_handler.delete_tag_from_question(question_id, tag.get('tag_id'))
+    answers = db_data_handler.get_answer_for_question(question_id)
     if answers:
         for answer in answers:
             image_delete_from_server(answer)
@@ -163,7 +157,9 @@ def add_tag_to_question(question_id):
     elif request.method == 'POST':
         name = request.form.get('add_tag')
         if already_exists(name):
-            return redirect('/error/2')
+            flash("""Tag already exists! Only enter a name for a tag that does not exist. Choose a new tag 
+            by clicking on a button to assign the tag to the question.""")
+            return redirect(url_for('add_tag_to_question', question_id=question_id))
         tag_id = request.form.get('tag'),
         if name:
             db_data_handler.create_new_tag(name)
