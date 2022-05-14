@@ -213,14 +213,14 @@ def set_image_to_null(table):
 def save_new_question_data(cursor, user_input):
     image = 'NULL' if user_input.get('image') == "" else user_input.get('image')
     query = """
-            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, question_author)
-            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s, %(question_author)s)
+            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, author_id)
+            VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s, %(author_id)s)
             """
     cursor.execute(query, {'time': NOW,
                            'title': user_input.get('title'),
                            'message': user_input.get('message'),
                            'image': image,
-                           'question_author': user_input.get('question_author')})
+                           'author_id': user_input.get('author_id')})
     cursor.execute(set_image_to_null('question'))
     query = """
         SELECT max(id) AS id
@@ -382,8 +382,19 @@ def register_user(cursor, data):
 @connection.connection_handler
 def users(cursor, username):
     cursor.execute("""
-    SELECT passwordhash
+    SELECT id, passwordhash
     FROM users
     WHERE username=%s
     """, (username,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_username(cursor, user_id):
+    query = """
+    SELECT username
+    FROM users
+    WHERE id = %s
+    """
+    cursor.execute(query, (user_id,))
     return cursor.fetchone()

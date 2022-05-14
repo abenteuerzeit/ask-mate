@@ -20,8 +20,8 @@
                 {% endif %}
                 <div class="question"><p>{{ question.message }}</p></div>
                 <div class="question"><p><small>Added: {{ question.submission_time }}
-                    {% if question.question_author %}
-                        by {{ question.question_author }}
+                    {% if author %}
+                        by {{ author.username }}
                     {% endif %}
                 </small></p></div>
                 <div class="question"><h3>Tags</h3>
