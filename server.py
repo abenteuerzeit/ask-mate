@@ -69,13 +69,14 @@ def login():
                 session['username'] = username
                 session['user_id'] = user_hash['id']
                 return redirect(url_for('list_questions'))
-        session['bad_login_or_password'] = True
-    return render_template('login.html', status=session.get('bad_login_or_password', default=False))
+        flash('Bad login attempt. The username or password is invalid.')
+    return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
     session.clear()
+    flash('Successfully logged out')
     return redirect(url_for('list_questions'))
 
 
