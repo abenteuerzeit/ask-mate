@@ -275,7 +275,7 @@ def allowed_file(filename):
 
 def save_image(file):
     file_extension = file.filename.rsplit('.', 1)[1].lower()
-    count = len(fnmatch.filter(os.listdir('./sample_data/images'), '*.*'))
+    count = len(fnmatch.filter(os.listdir(UPLOAD_FOLDER), '*.*'))
     new_name = "Ask-Mate-" + str(count) + os.urandom(4).hex() + "." + file_extension
     filename = secure_filename(new_name)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -291,11 +291,11 @@ def upload_image():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
-            return 'NULL'
+            return None
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
-            return ''
+            return None
         if file and allowed_file(file.filename):
             filename = save_image(file)
             return url_for('uploaded_file', filename=filename)
@@ -305,7 +305,7 @@ def upload_image():
 def edit_delete_image(question_id):
     question = db_data_handler.get_question(question_id)
     image_delete_from_server(question)
-    question['image'] = ''
+    question['image'] = None
     db_data_handler.edit_question(question)
     return redirect('/question/' + question_id + '/edit')
 
