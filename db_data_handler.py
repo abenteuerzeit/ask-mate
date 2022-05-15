@@ -12,7 +12,7 @@ def get_questions(cursor):  # fetchall()
         FROM question
         ORDER BY submission_time
         """
-    cursor.execute(query)  # wykonaj czytanie po linii
+    cursor.execute(query)
     return cursor.fetchall()
 
 
@@ -61,13 +61,13 @@ def search_answers(cursor, search_phrase):
 
 
 @connection.connection_handler
-def get_question(cursor, id):  # fetchone()
+def get_question(cursor, question_id):  # fetchone()
     query = """
         SELECT *
         FROM question
         WHERE id = %s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (question_id,))
     return cursor.fetchone()
 
 
@@ -92,9 +92,9 @@ def get_answer_for_question(cursor, question_id):
     return cursor.fetchall()
 
 
-@connection.connection_handler
-def get_comments(cursor):
-    return []
+# @connection.connection_handler
+# def get_comments(cursor):
+#     return []
 
 
 @connection.connection_handler
@@ -121,12 +121,12 @@ def get_comment_for_answer(cursor, answer_id):
 
 
 @connection.connection_handler
-def delete_comment(cursor, id):
+def delete_comment(cursor, comment_id):
     query = """
         DELETE FROM comment
         WHERE id=%s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (comment_id,))
 
 
 @connection.connection_handler
@@ -285,21 +285,21 @@ def save_answer_data(cursor, user_input):
 
 
 @connection.connection_handler
-def delete_question(cursor, id):
+def delete_question(cursor, question_id):
     query = """
     DELETE FROM question
     WHERE question.id = %s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
-def delete_answer(cursor, id):
+def delete_answer(cursor, answer_id):
     query = """
     DELETE FROM answer
     WHERE answer.id = %s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (answer_id,))
 
 
 @connection.connection_handler
@@ -443,7 +443,6 @@ def get_username(cursor, user_id):
     return cursor.fetchone()
 
   
-#TODO Create html and flask
 @connection.connection_handler
 def get_users_name_time(cursor):
     cursor.execute("""
@@ -456,10 +455,12 @@ def get_users_name_time(cursor):
 @connection.connection_handler
 def count_user_comment_and_answer(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time, COUNT(comment.author) AS comment_num, COUNT(answer.author) AS answer_num
+    SELECT users.id, users.username, users.submission_time, 
+    COUNT(comment.author) AS comment_num, 
+    COUNT(answer.author_id) AS answer_num
     FROM users
     LEFT JOIN comment ON users.id = comment.author
-    LEFT JOIN answer ON users.id = answer.author
+    LEFT JOIN answer ON users.id = answer.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
@@ -468,9 +469,9 @@ def count_user_comment_and_answer(cursor):
 @connection.connection_handler
 def count_user_question(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time,  COUNT(question.author) AS question_num
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.author_id) AS question_num
     FROM users
-    LEFT JOIN question ON users.id = question.author
+    LEFT JOIN question ON users.id = question.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
