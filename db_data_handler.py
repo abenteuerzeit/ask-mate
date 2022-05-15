@@ -100,11 +100,14 @@ def get_comments(cursor):
 @connection.connection_handler
 def get_comment_for_question(cursor, comment_id):
     cursor.execute("""
-            SELECT id, question_id, message, submission_time, author, edited_count
+            SELECT comment.id AS id, comment.question_id, 
+            comment.message, comment.submission_time, users.username AS author, comment.edited_count
             FROM comment
+            LEFT JOIN users ON users.id = comment.author
             WHERE question_id=%s
         """, (comment_id,))
     return cursor.fetchall()
+
 
 @connection.connection_handler
 def get_comment_for_answer(cursor, answer_id):

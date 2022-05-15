@@ -50,7 +50,7 @@
                         <ul>
                             <h2>Comments to question</h2>
                             {% for item in comments_question %}
-                                <li>{{ item.message }} <small>Author's id: {{ item.author }}</small></li>
+                                <li><small>Comment from {{ item.author }}</small><br><em>{{ item.message }}</em></li>
                             {% endfor %}
                         </ul>
                     {% else %}
