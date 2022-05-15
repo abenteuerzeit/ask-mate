@@ -10,12 +10,6 @@
                 <p>
                     <a class="questionLink" href="{{ url_for('edit_question', question_id=question.id ) }}">Edit</a>
                     <a class="questionLink" href="{{ url_for('delete_question', question_id=question.id ) }}">Delete</a>
-                    {% if "username" in session %}
-                        <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Add Comment to Question </a>
-                        {% else %}
-                        <a class="questionLink" href="{{ url_for('login') }}">Log in to add comments!</a>
-                    {% endif %}
-
                 </p>
                 {% if question.image %}
                     <div class="item">
@@ -60,7 +54,12 @@
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <h5>No comments. <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Add the first one! </a></h5>
+                        <h5>No comments</h5>
+                    {% endif %}
+                    {% if "username" in session %}
+                        <a class="questionLink" href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Comment </a>
+                    {% else %}
+                        <a class="questionLink" href="{{ url_for('login') }}">Login to comment!</a>
                     {% endif %}
                 </div>
             </div>

@@ -125,3 +125,6 @@ INSERT INTO question_tag VALUES (2, 3);
 
 ALTER TABLE question
 ADD author_id int;
+
+Alter Table comment
+add author int;

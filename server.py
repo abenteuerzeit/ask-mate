@@ -62,8 +62,9 @@ def login():
         user_hash = db_data_handler.users(username)
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
-                session['username'] = username
-                session['user_id'] = user_hash['id']
+                session['user_id'], session['username'] = user_hash['id'], username
+                if 'question_id' in session:
+                    return redirect(url_for('display_question', question_id=session['question_id']))
                 return redirect(url_for('list_questions'))
         flash('Bad login attempt. The username or password is invalid.')
     return render_template('login.html')
@@ -87,6 +88,7 @@ def display_question(question_id):
         question = db_data_handler.get_question(question_id)
         db_data_handler.increase_question_view_count(question['id'])
         comments_question = db_data_handler.get_comment_for_question(question_id)
+        session['question_id'] = question_id
         return render_template('question.html', question=question,
                                answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
