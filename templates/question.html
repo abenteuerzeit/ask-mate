@@ -4,7 +4,7 @@
     <div class="questions">
         <div class="question">
             <h1>Question</h1>
-            <a class="questionLink" href="/">Go back</a><br>
+            <a class="questionLink" href="{{ url_for('list_questions') }}">Go back</a><br>
             <div class="question">
                 <h2>{{ question.title }}</h2>
                 <p>
@@ -84,16 +84,21 @@
                     <p>{{ answer.message }}</p>
                     <small>{{ answer.submission_time }}</small><br>
                     <p><small>
-                        <a class="questionLink" style="padding-right: 10px"
-                           href=" {{ url_for('add_comment_to_answer', answer_id=answer.id) }}">
-                            Comment
-                        </a>
-                        <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}" enctype="multipart/form-data">
+                        <a class="questionLink" href="#commentForm" id="show_CommentForm" onclick="myfunction();">comment</a>
+                        <div id="commentForm" style="display:none">
+                            <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">
                             <label for="message">Message</label><br>
                             <textarea name="message" id="message" required></textarea><br>
-                            <button type="submit">Submit comment</button>
-                            <br>
-                        </form>
+                            <input type="submit">
+                            </form>
+                         </div>
+                        <script>
+                            function myfunction(){
+                            document.getElementById("commentForm").style.display = "block";
+                            document.getElementById("show_CommentForm").style.display = "none";
+                            }
+                        </script>
+
                         <a class="questionLink" style="padding-right: 10px"
                            href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
                             Delete
