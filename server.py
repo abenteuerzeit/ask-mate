@@ -85,7 +85,7 @@ def main():
 @app.route('/question/<question_id>')
 def display_question(question_id):
     if request.method == 'GET':
-        question = db_data_handler.get_question(question_id)
+        question = db_data_handler.get_question_data(question_id)
         db_data_handler.increase_question_view_count(question['id'])
         comments_question = db_data_handler.get_comment_for_question(question_id)
         session['question_id'] = question_id
@@ -112,12 +112,12 @@ def add_question():
             'title': request.form.get('title', default='not provided'),
             'message': request.form.get('message', default='not provided'),
             'image': util.upload_image(), 'author_id': author_id})
-        return redirect('/question/' + str(new_question['id']))
+        return redirect(url_for('display_question', question_id=new_question.get('id')))
 
 
 @app.route('/question/<question_id>/delete')
 def delete_question(question_id):
-    util.image_delete_from_server(db_data_handler.get_question(question_id))
+    util.image_delete_from_server(db_data_handler.get_question_data(question_id))
     tags = db_data_handler.get_question_tag_ids(question_id)
     if tags:
         for tag in tags:
@@ -132,12 +132,12 @@ def delete_question(question_id):
             db_data_handler.delete_answer(answer.get('id'))
     db_data_handler.delete_question_comment(question_id)
     db_data_handler.delete_question(question_id)
-    return redirect('/')
+    return redirect(url_for('list_questions'))
 
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
-    question = db_data_handler.get_question(question_id)
+    question = db_data_handler.get_question_data(question_id)
     tag_ids, tags = db_data_handler.get_question_tag_ids(question_id), db_data_handler.get_tags()
     if request.method == 'GET':
         return render_template('edit-question.html', question=question, tag_ids=tag_ids, tags=tags)
@@ -148,7 +148,7 @@ def edit_question(question_id):
                                        'title': request.form.get('title'),
                                        'message': request.form.get('message'),
                                        'image': question['image']})
-        return redirect('/question/' + question_id)
+        return redirect(url_for('display_question', question_id=question_id))
 
 
 # ------------------- TAGS ---------------------- #
@@ -161,7 +161,7 @@ def display_tags(tag_id=None):
 
 @app.route('/question/<question_id>/new-tag', methods=['GET', 'POST'])
 def add_tag_to_question(question_id):
-    question = db_data_handler.get_question(question_id)
+    question = db_data_handler.get_question_data(question_id)
     if request.method == 'GET':
         question_tags = db_data_handler.get_question_tag_ids(question_id)
         unassigned_tags = db_data_handler.get_unassigned_tags(question_id)
@@ -178,13 +178,13 @@ def add_tag_to_question(question_id):
             tag_id = db_data_handler.get_tag_id(name)
             tag_id = tag_id.get('id')
         db_data_handler.assign_tag_to_question(question_id, tag_id)
-        return redirect(f'/question/{question_id}')
+        return redirect(url_for('display_question', question_id=question_id))
 
 
 @app.route('/question/<question_id>/tag/<tag_id>/delete')
 def delete_tag_from_question(question_id, tag_id):
     db_data_handler.delete_tag_from_question(question_id, tag_id)
-    return redirect(f'/question/{question_id}')
+    return redirect(url_for('display_question', question_id=question_id))
 
 
 # ------------------- ANSWERS ---------------------- #
@@ -192,7 +192,7 @@ def delete_tag_from_question(question_id, tag_id):
 def add_answer(question_id):
     if request.method == 'GET':
         if 'username' in session:
-            question = db_data_handler.get_question(question_id)
+            question = db_data_handler.get_question_data(question_id)
             answers = db_data_handler.get_answer_for_question(question_id)
             question['id'] = str(question.get('id'))
             return render_template('add-answer.html', question=question, answers=answers)
@@ -205,7 +205,7 @@ def add_answer(question_id):
             author_id = session['user_id']
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
                                           'image': util.upload_image(), 'author_id': author_id})
-        return redirect('/question/' + question_id)
+        return redirect(url_for('display_question', question_id=question_id))
 
 
 @app.route('/answer/<answer_id>/delete')
@@ -215,7 +215,7 @@ def delete_answer(answer_id):
         if str(answer['id']) == answer_id:
             util.image_delete_from_server(answer)
     db_data_handler.delete_answer(answer_id)
-    return redirect('/question/' + question_id)
+    return redirect(url_for('display_question', question_id=question_id))
 
 
 # ------------------- COMMENTS ---------------------- #
@@ -223,7 +223,7 @@ def delete_answer(answer_id):
 def add_comment_to_question(question_id):
     if request.method == 'GET':
         return render_template('new-comment.html',
-                               question=db_data_handler.get_question(question_id))
+                               question=db_data_handler.get_question_data(question_id))
     elif request.method == 'POST':
         if 'username' in session:
             comment_data = {'message': request.form.get('message'),
@@ -231,33 +231,54 @@ def add_comment_to_question(question_id):
                             'submission_time': datetime.now(),
                             'author': db_data_handler.get_author_id(session['username']).get("id"),
                             'edited_count': 0}
-            db_data_handler.save_new_comment(comment_data)
-        return redirect(url_for('display_question', question_id=question_id ))
+            db_data_handler.add_comment_to_question(comment_data)
+        return redirect(url_for('display_question', question_id=question_id))
+
+
+@app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
+def add_comment_to_answer(answer_id):
+    question_id = db_data_handler.get_question_id(answer_id)
+    if request.method == 'GET':
+        if 'username' in session:
+            return render_template('new-comment.html',
+                                   question=db_data_handler.get_question_data(question_id.get('question_id')))
+        else:
+            flash('You must be logged in to comment')
+            return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+    elif request.method == 'POST':
+        if 'username' in session:
+            comment_data = {'message': request.form.get('message'), 'question_id': question_id.get('question_id'),
+                            'answer_id': answer_id,
+                            'submission_time': datetime.now(),
+                            'author': db_data_handler.get_author_id(session['username']).get("id"),
+                            'edited_count': 0}
+            db_data_handler.add_comment_to_answer(comment_data)
+        return redirect(url_for('display_question', question_id=question_id))
 
 
 # ------------------- VOTES ---------------------- #
 @app.route('/question/<question_id>/vote-up')
 def increase_question_vote(question_id):
     db_data_handler.increase_question_vote(question_id)
-    return redirect('/list')
+    return redirect(url_for('list_questions'))
 
 
 @app.route('/question/<question_id>/vote-down')
 def decrease_question_vote(question_id):
     db_data_handler.decrease_question_vote(question_id)
-    return redirect('/list')
+    return redirect(url_for('list_questions'))
 
 
 @app.route('/answer/<answer_id>/vote-up')
 def increase_answer_vote(answer_id):
     answer = db_data_handler.increase_answer_vote(answer_id)
-    return redirect('/question/' + str(answer['question_id']))
+    return redirect(url_for('display_question', question_id=answer.get('question_id')))
 
 
 @app.route('/answer/<answer_id>/vote-down')
 def decrease_answer_vote(answer_id):
     answer = db_data_handler.decrease_answer_vote(answer_id)
-    return redirect('/question/' + str(answer['question_id']))
+    return redirect(url_for('display_question', question_id=answer.get('question_id')))
 
 
 # ------------------- IMAGE ---------------------- #
@@ -268,7 +289,7 @@ def uploaded_file(filename):
 
 @app.route('/question/<question_id>/delete-image')
 def edit_delete_image(question_id):
-    question = db_data_handler.get_question(question_id)
+    question = db_data_handler.get_question_data(question_id)
     util.image_delete_from_server(question)
     question['image'] = None
     db_data_handler.edit_question(question)

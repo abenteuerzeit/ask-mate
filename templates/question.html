@@ -85,7 +85,7 @@
                     <small>{{ answer.submission_time }}</small><br>
                     <p><small>
                         <a class="questionLink" style="padding-right: 10px"
-                           href="/question/{{ question.id }}/new-comment">
+                           href=" {{ url_for('add_comment_to_answer', answer_id=answer.id) }}">
                             Comment
                         </a>
                         <a class="questionLink" style="padding-right: 10px"
