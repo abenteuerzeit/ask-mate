@@ -69,11 +69,46 @@ def get_answers(cursor):
 
 
 @connection.connection_handler
+def get_answer_data(cursor, answer_id):
+    query = """
+        SELECT *
+        from answer
+        WHERE id = %s
+    """
+    cursor.execute(query, (answer_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
 def get_answer_for_question(cursor, question_id):
     query = """
         SELECT *
         from answer
         WHERE question_id =  %s
+    """
+    cursor.execute(query, (question_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_comment_for_answer(cursor, answer_id):
+    query = """
+        SELECT id, question_id, answer_id, message, submission_time, edited_count, author
+        FROM comment
+        WHERE answer_id = %s
+    """
+    cursor.execute(query, (answer_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_comment_data(cursor, question_id):
+    query = """
+        SELECT c.id AS id, answer_id, c.message AS message, c.submission_time AS submission_time, edited_count, author
+        FROM question
+        LEFT JOIN answer a on question.id = a.question_id
+        LEFT JOIN comment c on a.id = c.answer_id
+        WHERE question.id = %s
     """
     cursor.execute(query, (question_id,))
     return cursor.fetchall()
@@ -300,10 +335,12 @@ def delete_question(cursor, question_id):
 @connection.connection_handler
 def delete_answer(cursor, answer_id):
     query = """
+    DELETE FROM comment
+    WHERE answer_id = %(answer_id)s;
     DELETE FROM answer
-    WHERE answer.id = %s
+    WHERE answer.id = %(answer_id)s;
     """
-    cursor.execute(query, (answer_id,))
+    cursor.execute(query, {'answer_id': answer_id})
 
 
 @connection.connection_handler

@@ -93,7 +93,8 @@ def display_question(question_id):
                                answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
                                question_tags=db_data_handler.get_question_tag_ids(question_id),
-                               comments_question=comments_question)
+                               comments_question=comments_question,
+                               comments_answer=db_data_handler.get_comment_data(question_id))
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -210,10 +211,12 @@ def add_answer(question_id):
 
 @app.route('/answer/<answer_id>/delete')
 def delete_answer(answer_id):
-    question_id, answer_list = request.args.get('question_id'), db_data_handler.get_answers()
-    for answer in answer_list:
-        if str(answer['id']) == answer_id:
-            util.image_delete_from_server(answer)
+    # answer_list = db_data_handler.get_answers()
+    # for answer in answer_list:
+    #     if str(answer['id']) == answer_id:
+    #         util.image_delete_from_server(answer)
+    question_id = db_data_handler.get_answer_data(answer_id).get('question_id')
+    util.image_delete_from_server(db_data_handler.get_answer_data(answer_id))
     db_data_handler.delete_answer(answer_id)
     return redirect(url_for('display_question', question_id=question_id))
 
@@ -253,9 +256,9 @@ def add_comment_to_answer(answer_id):
                  'submission_time': datetime.now(),
                  'author': db_data_handler.get_author_id(session['username']).get('id'),
                  'edited_count': 0})
-        else:
-            flash('You must be logged in to comment')
-        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+            return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+        flash('You must be logged in to comment')
+        return redirect(url_for('list_questions'))
 
 
 # ------------------- VOTES ---------------------- #

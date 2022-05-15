@@ -79,12 +79,20 @@
                     <a class="questionLink" href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
                 </small><br>
                 </div>
-
                 <div class="question">
                     <p>{{ answer.message }}</p>
                     <small>{{ answer.submission_time }}</small><br>
+
+                    {% for comment in comments_answer %}
+                        {% if comment.answer_id == answer.id %}
+                            <small style="margin-left: 15px;">{{ comment.message }}</small> <br>
+                            <small style="margin-left: 20px;">{{ comment.submission_time }} by {{ comment.author }}</small><br>
+                        {% endif %}
+                    {% endfor %}
                     <p><small>
-                        <a class="questionLink" href="#commentForm" id="show_CommentForm" onclick="myfunction();">comment</a>
+                        <a class="questionLink" href="#commentForm" id="show_CommentForm" onclick="myfunction();">Comment</a>
+                     </small>
+                    </p>
                         <div id="commentForm" style="display:none">
                             <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">
                             <label for="message">Message</label><br>
@@ -100,12 +108,9 @@
                         </script>
 
                         <a class="questionLink" style="padding-right: 10px"
-                           href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
+                           href="{{ url_for('delete_answer', answer_id=answer.id) }}">
                             Delete
                         </a>
-                    </small>
-                    </p>
-
                 </div>
 
                 {% if answer.image %}
