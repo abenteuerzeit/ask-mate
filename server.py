@@ -226,12 +226,12 @@ def add_comment_to_question(question_id):
                                question=db_data_handler.get_question_data(question_id))
     elif request.method == 'POST':
         if 'username' in session:
-            comment_data = {'message': request.form.get('message'),
-                            'question_id': question_id,
-                            'submission_time': datetime.now(),
-                            'author': db_data_handler.get_author_id(session['username']).get("id"),
-                            'edited_count': 0}
-            db_data_handler.add_comment_to_question(comment_data)
+            db_data_handler.add_comment_to_question(
+                {'message': request.form.get('message'),
+                 'question_id': question_id,
+                 'submission_time': datetime.now(),
+                 'author': db_data_handler.get_author_id(session['username']).get("id"),
+                 'edited_count': 0})
         return redirect(url_for('display_question', question_id=question_id))
 
 
@@ -244,16 +244,18 @@ def add_comment_to_answer(answer_id):
                                    question=db_data_handler.get_question_data(question_id.get('question_id')))
         else:
             flash('You must be logged in to comment')
-            return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
     elif request.method == 'POST':
         if 'username' in session:
-            comment_data = {'message': request.form.get('message'), 'question_id': question_id.get('question_id'),
-                            'answer_id': answer_id,
-                            'submission_time': datetime.now(),
-                            'author': db_data_handler.get_author_id(session['username']).get("id"),
-                            'edited_count': 0}
-            db_data_handler.add_comment_to_answer(comment_data)
-        return redirect(url_for('display_question', question_id=question_id))
+            db_data_handler.add_comment_to_answer(
+                {'message': request.form.get('message'),
+                 'answer_id': answer_id,
+                 'submission_time': datetime.now(),
+                 'author': db_data_handler.get_author_id(session['username']).get('id'),
+                 'edited_count': 0})
+        else:
+            flash('You must be logged in to comment')
+        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
 
 
 # ------------------- VOTES ---------------------- #

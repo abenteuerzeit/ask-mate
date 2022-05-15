@@ -91,8 +91,8 @@ def add_comment_to_question(cursor, user_input):
 @connection.connection_handler
 def add_comment_to_answer(cursor, user_input):
     cursor.execute("""
-    INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, author)
-    VALUES (%(question_id)s, %(answer_id)s, %(message)s,%(submission_time)s, %(edited_count)s, %(author)s)    
+    INSERT INTO comment (answer_id, message, submission_time, edited_count, author)
+    VALUES (%(answer_id)s, %(message)s,%(submission_time)s, %(edited_count)s, %(author)s)    
     """, user_input)
 
 

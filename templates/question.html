@@ -88,6 +88,12 @@
                            href=" {{ url_for('add_comment_to_answer', answer_id=answer.id) }}">
                             Comment
                         </a>
+                        <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}" enctype="multipart/form-data">
+                            <label for="message">Message</label><br>
+                            <textarea name="message" id="message" required></textarea><br>
+                            <button type="submit">Submit comment</button>
+                            <br>
+                        </form>
                         <a class="questionLink" style="padding-right: 10px"
                            href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
                             Delete
