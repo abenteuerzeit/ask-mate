@@ -7,8 +7,6 @@
     <form method="post" action="{{ url_for('add_comment_to_question', question_id=question.id ) }}" enctype="multipart/form-data">
         <label for="message">Message</label><br>
         <textarea name="message" id="message" required></textarea><br>
-        <label for="file">Upload image</label><br>
-        <input type="file" name="file"><br>
         <button type="submit">Submit comment</button>
         <br>
     </form>
