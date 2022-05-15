@@ -24,7 +24,7 @@ def list_questions():
     is_logged_in = False
     if 'username' in session:
         is_logged_in = True
-
+    session['question_id'] = None
     return render_template('list.html', questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
                            results=db_data_handler.search(request.args.get('q')),
@@ -63,7 +63,7 @@ def login():
         if user_hash is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user_hash['passwordhash'].encode('utf-8')):
                 session['user_id'], session['username'] = user_hash['id'], username
-                if 'question_id' in session:
+                if session['question_id'] is not None:
                     return redirect(url_for('display_question', question_id=session['question_id']))
                 return redirect(url_for('list_questions'))
         flash('Bad login attempt. The username or password is invalid.')
