@@ -134,7 +134,7 @@
                     <a class="questionLink" href="{{ url_for('display_question', question_id=question.id,
                        change_answer_status=True, answer_id=answer.id) }}">
                         {% if answer.is_accepted %}
-                            Reject
+                            Retract
                         {% else %}
                             Accept
                         {% endif %}
