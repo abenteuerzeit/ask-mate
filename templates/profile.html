@@ -2,8 +2,10 @@
 {% block title %}Profile{% endblock %}
 {% block body %}
     <div class="container">
-        <p><a href="{{ url_for('list_questions') }}">Question list</a> </p>
-        <p><a href="{{ url_for('users') }}">User list</a> </p>
+    <nav>
+        <ul>
+        <li><a href="{{ url_for('list_questions') }}">Question list</a> </li>
+            <li><a href="{{ url_for('users') }}">User list</a> </li></ul></nav>
         <h1 style="color:#fff">Profile statistics</h1>
         <table style="color:#fff">
             <caption>Details</caption>
