@@ -36,29 +36,29 @@ def list_questions():
 
 @app.route('/users')
 def users():
-    if request.method == 'GET':
-        if 'username' in session:
-            comment_and_answer = db_data_handler.count_user_comment_and_answer()
-            question = db_data_handler.count_user_question()
-            return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
+    if 'username' not in session:
         flash('Please login to see the user list')
+        return redirect(url_for('login'))
+    if request.method == 'GET':
+        comment_and_answer = db_data_handler.count_user_comment_and_answer()
+        question = db_data_handler.count_user_question()
+        return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
     return redirect(url_for('list_questions'))
 
 
 @app.route('/user/<user_id>')
 def display_profile(user_id):
-    if 'username' in session:
-        comment_and_answer_count = db_data_handler.count_one_user_comment_and_answer(user_id)
-        question_count = db_data_handler.count_one_user_question(user_id)
-        return render_template('profile.html',
-                               comment_and_answer=comment_and_answer_count,
-                               question=question_count,
-                               questions=db_data_handler.get_user_questions(user_id),
-                               answers=db_data_handler.get_user_answers(user_id),
-                               comments=db_data_handler.get_user_comments(user_id))
-    else:
+    if 'username' not in session:
         flash('Please login to see the user page')
         return redirect(url_for('list_questions'))
+    comment_and_answer_count = db_data_handler.count_one_user_comment_and_answer(user_id)
+    question_count = db_data_handler.count_one_user_question(user_id)
+    return render_template('profile.html',
+                           comment_and_answer=comment_and_answer_count,
+                           question=question_count,
+                           questions=db_data_handler.get_user_questions(user_id),
+                           answers=db_data_handler.get_user_answers(user_id),
+                           comments=db_data_handler.get_user_comments(user_id))
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -116,16 +116,13 @@ def display_question(question_id):
 
 @app.route('/add-question', methods=['GET', 'POST'])
 def add_question():
+    if 'username' not in session:
+        flash('You must be logged in to add a new question!')
+        return redirect(url_for('list_questions'))
     if request.method == 'GET':
-        if 'username' in session:
-            return render_template('add-question.html')
-        else:
-            flash('You must be logged in to add a new question!')
-            return redirect(url_for('list_questions'))
+        return render_template('add-question.html')
     if request.method == 'POST':
-        author_id = None
-        if 'username' in session:
-            author_id = session['user_id']
+        author_id = session['user_id']
         new_question = db_data_handler.save_new_question_data({
             'title': request.form.get('title', default='not provided'),
             'message': request.form.get('message', default='not provided'),
@@ -208,19 +205,16 @@ def delete_tag_from_question(question_id, tag_id):
 # ------------------- ANSWERS ---------------------- #
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def add_answer(question_id):
+    if 'username' not in session:
+        flash('You must be logged in to add an answer!')
+        return redirect(url_for('display_question', question_id=question_id))
     if request.method == 'GET':
-        if 'username' in session:
-            question = db_data_handler.get_question_data(question_id)
-            answers = db_data_handler.get_answer_for_question(question_id)
-            question['id'] = str(question.get('id'))
-            return render_template('add-answer.html', question=question, answers=answers)
-        else:
-            flash('You must be logged in to add an answer!')
-            return redirect(url_for('display_question', question_id=question_id))
+        question = db_data_handler.get_question_data(question_id)
+        answers = db_data_handler.get_answer_for_question(question_id)
+        question['id'] = str(question.get('id'))
+        return render_template('add-answer.html', question=question, answers=answers)
     elif request.method == 'POST':
-        author_id = None
-        if 'username' in session:
-            author_id = session['user_id']
+        author_id = session['user_id']
         db_data_handler.save_answer_data({'message': request.form.get('message'), 'question_id': question_id,
                                           'image': util.upload_image(), 'author_id': author_id})
         return redirect(url_for('display_question', question_id=question_id))
@@ -228,10 +222,6 @@ def add_answer(question_id):
 
 @app.route('/answer/<answer_id>/delete')
 def delete_answer(answer_id):
-    # answer_list = db_data_handler.get_answers()
-    # for answer in answer_list:
-    #     if str(answer['id']) == answer_id:
-    #         util.image_delete_from_server(answer)
     question_id = db_data_handler.get_answer_data(answer_id).get('question_id')
     util.image_delete_from_server(db_data_handler.get_answer_data(answer_id))
     db_data_handler.delete_answer(answer_id)
@@ -241,41 +231,38 @@ def delete_answer(answer_id):
 # ------------------- COMMENTS ---------------------- #
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_question(question_id):
+    if 'username' not in session:
+        flash('You must be logged in to comment a question')
+        return redirect(url_for('display_question', question_id=question_id))
     if request.method == 'GET':
-        return render_template('new-comment.html',
-                               question=db_data_handler.get_question_data(question_id))
-    elif request.method == 'POST':
-        if 'username' in session:
-            db_data_handler.add_comment_to_question(
-                {'message': request.form.get('message'),
-                 'question_id': question_id,
-                 'submission_time': datetime.now(),
-                 'author': db_data_handler.get_author_id(session['username']).get("id"),
-                 'edited_count': 0})
+        return render_template('new-comment.html', question=db_data_handler.get_question_data(question_id))
+    if request.method == 'POST':
+        db_data_handler.add_comment_to_question(
+            {'message': request.form.get('message'),
+             'question_id': question_id,
+             'submission_time': datetime.now(),
+             'author': db_data_handler.get_author_id(session['username']).get("id"),
+             'edited_count': 0})
         return redirect(url_for('display_question', question_id=question_id))
 
 
 @app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_answer(answer_id):
     question_id = db_data_handler.get_question_id(answer_id)
-    if request.method == 'GET':
-        if 'username' in session:
-            return render_template('new-comment.html',
-                                   question=db_data_handler.get_question_data(question_id.get('question_id')))
-        else:
-            flash('You must be logged in to comment')
-        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
-    elif request.method == 'POST':
-        if 'username' in session:
-            db_data_handler.add_comment_to_answer(
-                {'message': request.form.get('message'),
-                 'answer_id': answer_id,
-                 'submission_time': datetime.now(),
-                 'author': db_data_handler.get_author_id(session['username']).get('id'),
-                 'edited_count': 0})
-            return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+    if 'username' not in session:
         flash('You must be logged in to comment')
-        return redirect(url_for('list_questions'))
+        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
+    if request.method == 'GET':
+        return render_template('new-comment.html',
+                               question=db_data_handler.get_question_data(question_id.get('question_id')))
+    elif request.method == 'POST':
+        db_data_handler.add_comment_to_answer(
+            {'message': request.form.get('message'),
+             'answer_id': answer_id,
+             'submission_time': datetime.now(),
+             'author': db_data_handler.get_author_id(session['username']).get('id'),
+             'edited_count': 0})
+        return redirect(url_for('display_question', question_id=question_id.get('question_id')))
 
 
 # ------------------- VOTES ---------------------- #
