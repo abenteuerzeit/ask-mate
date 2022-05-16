@@ -104,10 +104,12 @@ def get_comment_for_answer(cursor, answer_id):
 @connection.connection_handler
 def get_comment_data(cursor, question_id):
     query = """
-        SELECT c.id AS id, answer_id, c.message AS message, c.submission_time AS submission_time, edited_count, author
+        SELECT c.id AS id, answer_id, c.message AS message, c.submission_time AS submission_time, edited_count, 
+        u.username AS author
         FROM question
         LEFT JOIN answer a on question.id = a.question_id
         LEFT JOIN comment c on a.id = c.answer_id
+        LEFT JOIN users u ON u.id = c.author
         WHERE question.id = %s
     """
     cursor.execute(query, (question_id,))
