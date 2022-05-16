@@ -61,19 +61,20 @@
                            href="#aCommentForm" id="showACommentForm"
                            onclick="addCommentToAnswer();">Comment </a>
                         <div id="qCommentForm" style="display:none">
-{#                            <iframe class="responsive-iframe" src="{{ url_for('add_comment_to_question', question_id=question.id ) }}"></iframe>#}
-                            <form method="post" action="{{ url_for('add_comment_to_question', question_id=question.id )}}">
-                            <label for="message">Message</label><br>
-                            <textarea name="message" id="message" required></textarea><br>
-                            <input type="submit">
+                            {#                            <iframe class="responsive-iframe" src="{{ url_for('add_comment_to_question', question_id=question.id ) }}"></iframe>#}
+                            <form method="post"
+                                  action="{{ url_for('add_comment_to_question', question_id=question.id ) }}">
+                                <label for="message">Message</label><br>
+                                <textarea name="message" id="message" required></textarea><br>
+                                <input type="submit">
                             </form>
-                    </div>
-                    <script>
-                        function addCommentToAnswer() {
-                            document.getElementById("qCommentForm").style.display = "block";
-                            document.getElementById("showQCommentForm").style.display = "none";
-                        }
-                    </script>
+                        </div>
+                        <script>
+                            function addCommentToAnswer() {
+                                document.getElementById("qCommentForm").style.display = "block";
+                                document.getElementById("showQCommentForm").style.display = "none";
+                            }
+                        </script>
                     {% else %}
                         <a class="questionLink" href="{{ url_for('login') }}">Login to comment!</a>
                     {% endif %}
@@ -89,6 +90,9 @@
         {% for answer in answers %}
             <div class="questions">
                 <div class="question"><small>
+                    {% if answer.is_accepted %}
+                        <h1>&#9989;</h1>
+                    {% endif %}
                     <a class="questionLink"
                        href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
                     {{ answer.vote_number }}
@@ -127,6 +131,14 @@
                         }
                     </script>
 
+                    <a class="questionLink" href="{{ url_for('display_question', question_id=question.id,
+                       change_answer_status=True, answer_id=answer.id) }}">
+                        {% if answer.is_accepted %}
+                            Reject
+                        {% else %}
+                            Accept
+                        {% endif %}
+                    </a>
                     <a class="questionLink" style="padding-right: 10px"
                        href="{{ url_for('delete_answer', answer_id=answer.id) }}">
                         Delete

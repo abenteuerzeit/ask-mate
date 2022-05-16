@@ -252,23 +252,6 @@ def get_question_id(cursor, answer_id):
     return cursor.fetchone()
 
 
-
-
-# def set_image_to_null(table):
-#     if table == 'question':
-#         return """
-#                     UPDATE question
-#                     SET image = NULL
-#                     WHERE image = 'NULL' or image = '' or image = 'None'
-#                 """
-#     elif table == 'answer':
-#         return """
-#                     UPDATE answer
-#                     SET image = NULL
-#                     WHERE image = 'NULL' or image = '' or image = 'None'
-#                 """
-
-
 @connection.connection_handler
 def save_new_question_data(cursor, user_input):
     image = None if user_input.get('image') == "" else user_input.get('image')
@@ -282,7 +265,6 @@ def save_new_question_data(cursor, user_input):
                            'image': image,
                            'author_id': user_input.get('author_id')})
 
-    # cursor.execute(set_image_to_null('question'))
     query = """
         SELECT max(id) AS id
         from question
@@ -305,21 +287,19 @@ def edit_question(cursor, updated_dict):
                            'message': updated_dict.get('message'),
                            'image': updated_dict.get('image'),
                            'question_id': question_id})
-    # cursor.execute(set_image_to_null('question'))
 
 
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
     query = """
-        INSERT INTO answer (submission_time, vote_number, question_id, message, image, author_id)
-        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s, %(author_id)s)
+        INSERT INTO answer (submission_time, vote_number, question_id, message, image, author_id, is_accepted)
+        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s, %(author_id)s, false)
     """
     cursor.execute(query, {'time': NOW, 'title': user_input.get('title'),
                            'question_id': user_input.get('question_id'),
                            'message': user_input.get('message'),
                            'image': user_input.get('image'),
                            'author_id': user_input.get('author_id')})
-    # cursor.execute(set_image_to_null('answer'))
     query = """
             SELECT max(id) AS id
             from answer
@@ -441,7 +421,7 @@ def count_questions_with_tag(cursor):
     GROUP BY id, name
     ORDER BY amount DESC
     """
-    cursor.execute(query,)
+    cursor.execute(query, )
     return cursor.fetchall()
 
 
@@ -474,7 +454,7 @@ def users(cursor, username):
     SELECT id, passwordhash
     FROM users
     WHERE username=%s
-    """, (username, ))
+    """, (username,))
     return cursor.fetchone()
 
 
@@ -488,7 +468,7 @@ def get_username(cursor, user_id):
     cursor.execute(query, (user_id,))
     return cursor.fetchone()
 
-  
+
 @connection.connection_handler
 def get_users_name_time(cursor):
     cursor.execute("""
@@ -525,17 +505,6 @@ def count_one_user_comment_and_answer(cursor, user_id):
     GROUP BY users.id, users.username, users.submission_time
     """, (user_id,))
     return cursor.fetchall()
-
-
-# @connection.connection_handler
-# def get_user_data(cursor):
-#     cursor.execute("""
-#     SELECT u.id, username, u.submission_time AS registration_date
-#     FROM users AS u
-#     LEFT JOIN answer a ON a.author_id = u.id
-#     LEFT JOIN question q ON u.id = q.author_id
-#     """)
-#     return cursor.fetchall()
 
 
 @connection.connection_handler
@@ -599,3 +568,18 @@ def get_author_id(cursor, username):
     WHERE username = %s
     """, (username,))
     return cursor.fetchone()
+
+
+@connection.connection_handler
+def change_answer_acceptance_status(cursor, q_author_id, answer_id):
+    query = """
+    UPDATE      answer
+    SET         is_accepted = FALSE
+    WHERE       is_accepted IS NULL;
+    UPDATE      answer AS a
+    SET         is_accepted = NOT a.is_accepted
+    FROM        answer
+    LEFT JOIN   question on answer.question_id = question.id
+    WHERE       a.id = %(answer_id)s AND question.author_id = %(q_author_id)s
+    """
+    cursor.execute(query, {'q_author_id': q_author_id, 'answer_id': answer_id})
