@@ -510,6 +510,32 @@ def count_user_comment_and_answer(cursor):
 
 
 @connection.connection_handler
+def count_one_user_comment_and_answer(cursor, user_id):
+    cursor.execute("""
+    SELECT users.id, users.username, users.submission_time, 
+    COUNT(comment.author) AS comment_num, 
+    COUNT(answer.author_id) AS answer_num
+    FROM users
+    LEFT JOIN comment ON users.id = comment.author
+    LEFT JOIN answer ON users.id = answer.author_id
+    WHERE users.id = %s
+    GROUP BY users.id, users.username, users.submission_time
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+# @connection.connection_handler
+# def get_user_data(cursor):
+#     cursor.execute("""
+#     SELECT u.id, username, u.submission_time AS registration_date
+#     FROM users AS u
+#     LEFT JOIN answer a ON a.author_id = u.id
+#     LEFT JOIN question q ON u.id = q.author_id
+#     """)
+#     return cursor.fetchall()
+
+
+@connection.connection_handler
 def count_user_question(cursor):
     cursor.execute("""
     SELECT users.id, users.username, users.submission_time,  COUNT(question.author_id) AS question_num
@@ -517,6 +543,48 @@ def count_user_question(cursor):
     LEFT JOIN question ON users.id = question.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def count_one_user_question(cursor, user_id):
+    cursor.execute("""
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.author_id) AS question_num
+    FROM users
+    LEFT JOIN question ON users.id = question.author_id
+    WHERE users.id = %s
+    GROUP BY users.id, users.username, users.submission_time
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_questions(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM question
+    WHERE question.author_id = %s
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_answers(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM answer
+    WHERE answer.author_id = %s
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_comments(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM comment
+    WHERE comment.author = %s
+    """, (user_id,))
     return cursor.fetchall()
 
 

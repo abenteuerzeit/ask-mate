@@ -41,7 +41,24 @@ def users():
             comment_and_answer = db_data_handler.count_user_comment_and_answer()
             question = db_data_handler.count_user_question()
             return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
+        flash('Please login to see the user list')
     return redirect(url_for('list_questions'))
+
+
+@app.route('/user/<user_id>')
+def display_profile(user_id):
+    if 'username' in session:
+        comment_and_answer_count = db_data_handler.count_one_user_comment_and_answer(user_id)
+        question_count = db_data_handler.count_one_user_question(user_id)
+        return render_template('profile.html',
+                               comment_and_answer=comment_and_answer_count,
+                               question=question_count,
+                               questions=db_data_handler.get_user_questions(user_id),
+                               answers=db_data_handler.get_user_answers(user_id),
+                               comments=db_data_handler.get_user_comments(user_id))
+    else:
+        flash('Please login to see the user page')
+        return redirect(url_for('list_questions'))
 
 
 @app.route('/registration', methods=['GET', 'POST'])

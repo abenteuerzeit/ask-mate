@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block body %}
+    <div class="container">
+        <h1 style="color:#fff">Profile statistics</h1>
+        <table style="color:#fff">
+            <caption>Details</caption>
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Registration date</th>
+                <th>Number of asked questions</th>
+                <th>Number of answers</th>
+                <th>Number of comments</th>
+                <th>Reputation</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for c_a in comment_and_answer %}
+                <tr>
+                    <th><a href="{{ url_for('display_profile', user_id=c_a.id) }}">{{ c_a.username }}</a></th>
+                    <th>{{ c_a.submission_time }}</th>
+                    {% for q in question %}
+                        {% if c_a.username == q.username %}
+                            <th>{{ q.question_num }}</th>
+                        {% endif %}
+                    {% endfor %}
+                    <th>{{ c_a.answer_num }}</th>
+                    <th>{{ c_a.comment_num }}</th>
+                    <th>Coming Soon</th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <div>
+        <hr>
+        <h3 style="color:#fff">Question list</h3>
+        <table style="color:#fff; margin: 10px;">
+            <caption>All questions</caption>
+            <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for question in questions %}
+                <tr>
+
+                    <td><a href="{{ url_for('display_question', question_id=question.id) }}">
+                        {{ question.title }}</a></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h3 style="color:#fff">Answer list</h3>
+        <<table style="color:#fff; margin: 10px;">
+            <caption>All answers</caption>
+            <thead>
+            <tr>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for answer in answers %}
+                    <tr>
+                    <td><a href="{{ url_for('display_question', question_id=answer.question_id) }}">
+                        {{ answer.message }}</a></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h3 style="color:#fff">Comment list</h3>
+        <table style="color:#fff; margin: 10px;">
+            <caption>All comments</caption>
+            <thead>
+            <tr>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments %}
+{#                    <tr><td>{{ comment.message }}</td></tr>#}
+                    {% if comment.answer_id %}
+                        {% for answer in answers %}
+                            {% if answer.id == comment.answer_id %}
+                                <tr><td>Answer comment: <a href="{{ url_for('display_question', question_id=answer.question_id) }}">
+                                    {{ comment.message }}</a></td></tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% if comment.question_id %}
+                                <tr>
+                                <td>Question comment: <a href="{{ url_for('display_question', question_id=comment.question_id) }}">
+                                    {{ comment.message }}</a></td></tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody></table>
+        </div>
+    </div>
+{% endblock %}

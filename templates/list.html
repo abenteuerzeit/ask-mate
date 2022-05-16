@@ -7,7 +7,8 @@
     {% from 'macros.html' import get_questions with context %}
 
     {% if is_logged_in %}
-        <p style="align-self: center; color: greenyellow; text-shadow: 0px 4px black"><b>You are logged in as {{ session['username'] }}</b></p>
+        <p style="align-self: center; color: greenyellow; text-shadow: 0px 4px black">
+            <a href="{{ url_for('display_profile', user_id = session['user_id']) }}">You are logged in as {{ session['username'] }}</a></p>
         <p style="align-self: center; color: greenyellow;"><a href="{{ url_for('users') }}">List of all users</a></p>
     {% endif %}
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
