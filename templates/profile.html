@@ -82,7 +82,6 @@
             </thead>
             <tbody>
                 {% for comment in comments %}
-{#                    <tr><td>{{ comment.message }}</td></tr>#}
                     {% if comment.answer_id %}
                         {% for answer in answers %}
                             {% if answer.id == comment.answer_id %}

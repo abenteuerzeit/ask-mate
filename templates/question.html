@@ -39,8 +39,8 @@
                 <div class="question">
                     <p>
                         <small>Added: {{ question.submission_time }}
-                            {% if author %}
-                                by {{ author.username }}
+                            {% if question.username %}
+                                by {{ question.username }}
                             {% endif %}
                         </small>
                     </p>

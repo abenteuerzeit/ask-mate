@@ -50,9 +50,12 @@ def search_answers(cursor, search_phrase):
 @connection.connection_handler
 def get_question_data(cursor, question_id):  # fetchone()
     query = """
-        SELECT id, submission_time, view_number, vote_number, title, message, image, author_id
+        SELECT question.id, question.submission_time, view_number, vote_number, title, message, image, author_id, 
+        username
         FROM question
-        WHERE id = %s
+        LEFT JOIN users ON author_id = users.id
+        WHERE question.id = %s
+        
     """
     cursor.execute(query, (question_id,))
     return cursor.fetchone()
