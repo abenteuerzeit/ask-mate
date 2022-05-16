@@ -107,13 +107,12 @@ def display_question(question_id):
         comments_question = db_data_handler.get_comment_for_question(question_id)
         session['question_id'] = question_id
         if request.args.get('change_answer_status'):
-            if 'username' in session:
-                if session['user_id'] == question.get("author_id"):
-                    db_data_handler.change_answer_acceptance_status(session['user_id'], request.args.get('answer_id'))
-                else:
-                    flash("Only the question author can accept answers or withdrawal acceptance.")
-            else:
+            if 'username' not in session:
                 flash("You need to be logged in.")
+            elif session['user_id'] == question.get("author_id"):
+                db_data_handler.change_answer_acceptance_status(session['user_id'], request.args.get('answer_id'))
+            else:
+                flash("Only the question author can accept answers or withdrawal acceptance.")
         return render_template('question.html', question=question,
                                answers=db_data_handler.get_answer_for_question(question_id),
                                tags=db_data_handler.get_tags(),
