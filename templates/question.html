@@ -58,7 +58,22 @@
                     {% endif %}
                     {% if "username" in session %}
                         <a class="questionLink"
-                           href="{{ url_for('add_comment_to_question', question_id=question.id ) }}">Comment </a>
+                           href="#aCommentForm" id="showACommentForm"
+                           onclick="addCommentToAnswer();">Comment </a>
+                        <div id="qCommentForm" style="display:none">
+{#                            <iframe class="responsive-iframe" src="{{ url_for('add_comment_to_question', question_id=question.id ) }}"></iframe>#}
+                            <form method="post" action="{{ url_for('add_comment_to_question', question_id=question.id )}}">
+                            <label for="message">Message</label><br>
+                            <textarea name="message" id="message" required></textarea><br>
+                            <input type="submit">
+                            </form>
+                    </div>
+                    <script>
+                        function addCommentToAnswer() {
+                            document.getElementById("qCommentForm").style.display = "block";
+                            document.getElementById("showQCommentForm").style.display = "none";
+                        }
+                    </script>
                     {% else %}
                         <a class="questionLink" href="{{ url_for('login') }}">Login to comment!</a>
                     {% endif %}
@@ -92,13 +107,13 @@
                         {% endif %}
                     {% endfor %}
                     <p><small>
-                        <a class="questionLink" href="#commentForm" id="show_CommentForm"
+                        <a class="questionLink" href="#aCommentForm" id="showACommentForm"
                            onclick="addCommentToAnswer();">
                             Comment
                         </a>
                     </small>
                     </p>
-                    <div id="commentForm" style="display:none">
+                    <div id="aCommentForm" style="display:none">
                         <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">
                             <label for="message">Message</label><br>
                             <textarea name="message" id="message" required></textarea><br>
@@ -107,8 +122,8 @@
                     </div>
                     <script>
                         function addCommentToAnswer() {
-                            document.getElementById("commentForm").style.display = "block";
-                            document.getElementById("show_CommentForm").style.display = "none";
+                            document.getElementById("aCommentForm").style.display = "block";
+                            document.getElementById("showACommentForm").style.display = "none";
                         }
                     </script>
 
