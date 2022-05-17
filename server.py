@@ -15,9 +15,7 @@ app.config['SECRET_KEY'] = util.SECRET_KEY
 @app.route('/search')
 @app.route('/')
 def list_questions():
-    order_by, order_direction = request.args.get('order_by', 'id'), request.args.get('order_direction', 'desc')
-    if 'asc' in order_by:
-        order_by, order_direction = order_by[:-len('-asc')], 'asc'
+    order_by, order_direction = util.sort_questions()
     db_questions = db_data_handler.get_questions()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
 

@@ -41,13 +41,19 @@
     {% if questions %}
         <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
             <select style="display: inline;" name="order_by" id="order_by" form="sort">
+{#                <option value="">--Please choose an option--</option>#}
+{#                <option name="title-asc" value="title-asc">Title &#8679</option>#}
+{#                <option value="title">Title &#8681</option>#}
+{#                <option value="view_number-asc">Views &#8679</option>#}
+{#                <option value="view_number">Views &#8681</option>#}
+
                 <option value="">--Please choose an option--</option>
-                <option name="title-asc" value="title-asc">Title &#8679</option>
-                <option value="title">Title &#8681</option>
-                <option value="view_number-asc">Views &#8679</option>
-                <option value="view_number">Views &#8681</option>
+                <option name="title" value="{'order_by': 'title', 'order_direction': 'asc'}">Title &#8679</option>
+                <option name="title" value="{'order_by': 'title', 'order_direction': 'desc'}">Title &#8681</option>
+                <option name="view_number" value="{'order_by': 'view_number', 'order_direction': 'asc'}">Views &#8679</option>
+                <option name="view_number" value="{'order_by': 'view_number', 'order_direction': 'desc'}">Views &#8681</option>
             </select>
-            <form style="display: inline;" action="/list" method="get" id="sort"><input type="submit"></form>
+            <form style="display: inline;" action="{{ url_for('list_questions') }}" method="get" id="sort"><input type="submit"></form>
             <br><small> Questions ordered by {{ order_by }}: {{ order_direction }}</small></div>
         </div>
         <div class="item">
