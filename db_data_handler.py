@@ -19,16 +19,27 @@ def get_questions(cursor):
 @connection.connection_handler
 def search(cursor, search_phrase):
     if search_phrase is not None:
-        search_phrase = '%' + search_phrase + '%'
-        tag_search = search_phrase
         query = """
         SELECT  question.id, title, question.message as question_message
         FROM    question
         WHERE   LOWER(title) LIKE LOWER(%(search_phrase)s)
-        OR      LOWER(question.message) LIKE LOWER(%(search_phrase)s)
-        OR      LOWER(%(tag_search)s) IN (SELECT name FROM tag WHERE LOWER(name) LIKE LOWER(%(search_phrase)s));
+        OR      LOWER(question.message) LIKE LOWER(%(search_phrase)s);
         """
-        cursor.execute(query, {'search_phrase': search_phrase, 'tag_search': tag_search})
+        cursor.execute(query, {'search_phrase': '%' + search_phrase + '%', 'tag_search': search_phrase})
+        return cursor.fetchall()
+
+
+@connection.connection_handler
+def search_tags(cursor, search_phrase):
+    if search_phrase is not None:
+        cursor.execute("""
+        SELECT      question.id, submission_time, view_number, vote_number, title, message, image, author_id, 
+                    tag_id, name 
+        FROM        question
+        LEFT JOIN   question_tag qt on question.id = qt.question_id
+        LEFT JOIN   tag t on qt.tag_id = t.id
+        WHERE       t.name LIKE LOWER(%(search_phrase)s)""",
+        {'search_phrase': search_phrase})
         return cursor.fetchall()
 
 

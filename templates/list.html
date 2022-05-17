@@ -54,12 +54,12 @@
                     {{ get_questions(question) }}
                 {% endfor %}
             {% else %}
-                {% if not results and not answers and search_phrase %}
+                {% if not results and not answers and not tag_search and search_phrase %}
                     <div class="questions">
                         <div class="question"><h2>No results found for <em>{{ search_phrase }}</em>.</h2>
                             <p>Try a different phrase or check your spelling. </p></div>
                     </div>
-                {% elif results or answers %}
+                {% elif results or answers or tag_search%}
                     <div class="questions">
                         <div class="question">
                             <h2>Phrase: <em>{{ search_phrase }}</em></h2>
@@ -76,11 +76,18 @@
                     {% endfor %}
                     {% for answer in answers %}
                         {% for question in questions %}{% if question.id == answer.question_id %}
-                            {% if search_phrase not in question.message
-                                  and search_phrase not in question.title %}
+                            {% if search_phrase.lower() not in question.message.lower()
+                                  and search_phrase.lower() not in question.title.lower() %}
                                 {{ get_questions(question, answers, search_phrase ) }}
                             {% endif %}
                         {% endif %}{% endfor %}
+                    {% endfor %}
+                    {% for tag_search in tag_search %}
+                        {% for question in questions %}{% if question.id == tag_search.id %}
+                                {% if search_phrase.lower() not in tag_search.message.lower()
+                                      and search_phrase.lower() not in tag_search.title.lower() %}
+                                    {{ get_questions(question, answers, search_phrase ) }}
+                                {% endif %}{% endif %}{% endfor %}
                     {% endfor %}
                 {% endif %}
             {% endif %}
