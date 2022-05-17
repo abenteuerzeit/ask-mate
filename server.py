@@ -49,14 +49,18 @@ def display_profile(user_id):
     if 'username' not in session:
         flash('Please login to see the user page')
         return redirect(url_for('list_questions'))
-    comment_and_answer_count = db_data_handler.count_one_user_comment_and_answer(user_id)
-    question_count = db_data_handler.count_one_user_question(user_id)
+    count_all_user_questions = db_data_handler.count_all_user_questions(user_id)
+    count_all_user_answers = db_data_handler.count_all_user_answers(user_id)
+    count_all_user_comments = db_data_handler.count_all_user_comments(user_id)
+    user = db_data_handler.get_user(user_id)
     return render_template('profile.html',
-                           comment_and_answer=comment_and_answer_count,
-                           question=question_count,
+                           count_all_user_questions=count_all_user_questions,
+                           count_all_user_answers=count_all_user_answers,
+                           count_all_user_comments=count_all_user_comments,
                            questions=db_data_handler.get_user_questions(user_id),
                            answers=db_data_handler.get_user_answers(user_id),
-                           comments=db_data_handler.get_user_comments(user_id))
+                           comments=db_data_handler.get_user_comments(user_id),
+                           user=user)
 
 
 @app.route('/registration', methods=['GET', 'POST'])
