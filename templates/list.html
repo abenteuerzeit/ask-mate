@@ -18,8 +18,17 @@
             </div>
             <div style="margin: 25px; padding: 10px">
                 {% if results %}<h2>Search Results</h2>
-                {% else %}<h2>All questions</h2>{% endif %}
+                {% elif 'list' not in request.url_rule.rule %}
+                    <h2>Five Latest Questions</h2>
+                {% else %}
+                    <h2>All questions</h2>
+                {% endif %}
                 <div>{{ searchbox() }}</div>
+            {% if 'list' not in request.url_rule.rule %}
+                <a href="/list">List all questions</a>
+            {% else %}
+                <a href="{{ url_for('list_questions') }}">List the 5 most recent questions</a>
+            {% endif %}
             </div>
             <div style="margin: 25px; padding: 10px;">
                 {% if is_logged_in %}
@@ -37,7 +46,7 @@
                 <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
             </div>
         </div>
-    </header><div class="item">
+    </header><div class="item" style="flex: 1">
     <main>
             {% set search_phrase = request.args.get('q') %}
             {% if not search_phrase %}

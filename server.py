@@ -11,11 +11,14 @@ app.config['UPLOAD_FOLDER'] = util.UPLOAD_FOLDER
 app.config['SECRET_KEY'] = util.SECRET_KEY
 
 
-@app.route('/list')
 @app.route('/search')
+@app.route('/list')
 @app.route('/')
 def list_questions():
-    db_questions = db_data_handler.get_questions()
+    db_questions = db_data_handler.get_five_latest_questions()
+    if 'list' in request.url_rule.rule:
+        db_questions = db_data_handler.get_questions()
+
     order_by, order_direction = util.get_sorting_values()
     db_questions.sort(key=lambda question: question[order_by], reverse=(order_direction == 'desc'))
 

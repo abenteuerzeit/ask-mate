@@ -17,6 +17,17 @@ def get_questions(cursor):
 
 
 @connection.connection_handler
+def get_five_latest_questions(cursor):
+    cursor.execute("""
+    SELECT      *
+    FROM        question
+    ORDER BY    submission_time DESC
+    LIMIT       5
+    """, )
+    return cursor.fetchall()
+
+
+@connection.connection_handler
 def search_database(cursor, search_phrase):
     if search_phrase:
         search_wild = '%' + search_phrase + '%'
