@@ -60,8 +60,8 @@
                         <h5>No comments</h5>
                     {% endif %}
                     {% if "username" in session %}
-                        <a id="showQCommentForm" onclick="addCommentToQuestion();">
-                            Comment </a>
+                        <a class="questionLink" href="#qCommentForm" id="showQCommentForm" onclick="addCommentToQuestion();">
+                            Add comment </a>
                         <div id="qCommentForm" style="display:none">
                             <form method="post"
                                   action="{{ url_for('add_comment_to_question', question_id=question.id ) }}">
@@ -113,7 +113,7 @@
                     {% endfor %}
                     <p><small>
                         <a class="questionLink" href="#aCommentForm" id="showACommentForm"
-                           onclick="addCommentToAnswer();">Comment</a></small>
+                           onclick="addCommentToAnswer();">Add comment</a></small>
                     </p>
                     <div id="aCommentForm" style="display:none">
                         <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">
