@@ -19,14 +19,11 @@ ERROR_LIST = [
         'message': 'Only enter a new tag name. You can choose a this tag by clicking on the appropriate button'}]
 
 
-def sort_questions():
-    order_by = request.args.get('order_by', default='id')
-    order_direction = request.args.get('order_direction', default='desc')
-    order_dict = request.args.get('order_by')
-    if order_dict:
-        order_by = ast.literal_eval(order_dict).get('order_by')
-        order_direction = ast.literal_eval(order_dict).get('order_direction')
-    return order_by, order_direction
+def get_sorting_criteria():
+    if request.args.get('order_dict'):
+        return ast.literal_eval(request.args.get('order_dict')).get('order_by'), \
+               ast.literal_eval(request.args.get('order_dict')).get('order_direction'),
+    return request.args.get('order_dict', default='id'), request.args.get('order_direction', default='desc')
 
 
 def image_delete_from_server(item):
