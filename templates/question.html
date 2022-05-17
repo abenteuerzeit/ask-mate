@@ -48,7 +48,7 @@
                 <div class="question-comments">
                     {% if comments_question %}
                         <ul>
-                            <h2>Comments to question</h2>
+                            <h2>Comments</h2>
                             {% for item in comments_question %}
                                 <li><small>Comment from {{ item.author }}</small><br><em>{{ item.message }}</em></li>
                             {% endfor %}
@@ -57,11 +57,9 @@
                         <h5>No comments</h5>
                     {% endif %}
                     {% if "username" in session %}
-                        <a class="questionLink"
-                           href="#aCommentForm" id="showACommentForm"
-                           onclick="addCommentToAnswer();">Comment </a>
+                        <a class="questionLink" href="#qCommentForm" id="showQCommentForm" onclick="addCommentToQuestion();">
+                            Comment </a>
                         <div id="qCommentForm" style="display:none">
-                            {#                            <iframe class="responsive-iframe" src="{{ url_for('add_comment_to_question', question_id=question.id ) }}"></iframe>#}
                             <form method="post"
                                   action="{{ url_for('add_comment_to_question', question_id=question.id ) }}">
                                 <label for="message">Message</label><br>
@@ -70,7 +68,7 @@
                             </form>
                         </div>
                         <script>
-                            function addCommentToAnswer() {
+                            function addCommentToQuestion() {
                                 document.getElementById("qCommentForm").style.display = "block";
                                 document.getElementById("showQCommentForm").style.display = "none";
                             }
@@ -112,10 +110,7 @@
                     {% endfor %}
                     <p><small>
                         <a class="questionLink" href="#aCommentForm" id="showACommentForm"
-                           onclick="addCommentToAnswer();">
-                            Comment
-                        </a>
-                    </small>
+                           onclick="addCommentToAnswer();">Comment</a></small>
                     </p>
                     <div id="aCommentForm" style="display:none">
                         <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">

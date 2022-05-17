@@ -270,6 +270,12 @@ def add_comment_to_answer(answer_id):
         return redirect(url_for('display_question', question_id=question_id.get('question_id')))
 
 
+@app.route('/comments/<comment_id>/delete')
+def delete_comment(comment_id):
+
+    pass
+
+
 # ------------------- VOTES ---------------------- #
 @app.route('/question/<question_id>/vote-up')
 def increase_question_vote(question_id):
