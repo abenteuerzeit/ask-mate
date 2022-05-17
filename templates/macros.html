@@ -32,7 +32,7 @@
 {% macro fancy_search(text) -%}
     {% set search_phrase = request.args.get('q') %}
     {% for word in text.split() %}
-        {% if search_phrase.lower() in word.lower() %}
+        {% if search_phrase and search_phrase.lower() in word.lower() %}
             <mark style="background-color: greenyellow">{{ word }}</mark>
         {% else %}
             {{ word }}
@@ -41,44 +41,33 @@
 {%- endmacro %}
 
 
-{% macro search_answers(row) -%}
-    {% set search_phrase = request.args.get('q') %}
-    {% if results %}
-        {% for result in results %}
-            {% if result.id == row.id and result.answer_message
-                      and search_phrase.lower() in result.answer_message.lower() %}
-                <p style="margin-left: 50px;">
-                    ---{{ fancy_search(result.answer_message) }}</p>
-                {% if search_phrase.lower() in results.tag %}
-                    {{ get_tags(row.id) }}
-                {% endif %}
+{% macro fancy_get_tags(row) -%}
+    {% for tag in tags %}{% for q in question_tags %}{% if q.question_id == row.id and q.tag_id == tag.id %}
+        <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}">
+            {% if request.args.get('q') and request.args.get('q') in tag.name %}
+                <mark style="background-color: greenyellow"> #{{ tag.name }}</mark>
+            {% else %}
+                #{{ tag.name }}
             {% endif %}
-        {% endfor %}
-    {% endif %}
+        </a></em>
+    {% endif %}{% endfor %}{% endfor %}
 {%- endmacro %}
 
 
-{% macro get_tags(row) -%}
-    {% for tag in tags %}{% for q in question_tags %}
-        {% if q.question_id == row.id and q.tag_id == tag.id %}
-            <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ fancy_search(tag.name) }}</a></em>
-        {% endif %}{% endfor %}{% endfor %}
-{%- endmacro %}
-
-
-{% macro get_questions(row, answers, search_phrase) -%}
+{% macro get_questions(row, answers) -%}
     {% set search_phrase = request.args.get('q') %}
     <div class="questions">
         <div class="question">
             <p style="text-align: center">
-                <a class="questionLink" href="/question/{{ row.id }}/vote-up">&#8679</a><br>
+                <a class="questionLink"
+                   href="{{ url_for('increase_question_vote', question_id=row.id) }}">&#8679</a><br>
                 <small>{{ row.vote_number }}</small><br>
-                <a class="questionLink" href="/question/{{ row.id }}/vote-down">&#8681</a>
+                <a class="questionLink" href="{{ url_for('decrease_question_vote', question_id=row.id) }}">&#8681</a>
             </p>
         </div>
 
         <div class="question">
-            <h3><a class="questionLink" href="/question/{{ row.id }}">
+            <h3><a class="questionLink" href="{{ url_for('display_question', question_id=row.id) }}">
                 {% if results %}
                     {{ fancy_search( row.title ) }}
                 {% else %}
@@ -108,13 +97,8 @@ margin: auto; padding: 5px; height: 150px;"></a>
                         {% endif %}{% endfor %}
                 </ul>
             {% endif %}
-
-            <p>{% if results or tag_search %}
-                {% set tags = get_tags(row) %}
-                {{ fancy_search( tags ) }}
-            {% else %}
-                {{ get_tags(row) }}
-            {% endif %}
+            <p>
+                {{ fancy_get_tags(row) }}
             </p>
             <p style="float: none;"><small>Added: {{ row.submission_time }}</small><br></p>
         </div>

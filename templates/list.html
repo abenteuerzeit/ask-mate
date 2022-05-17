@@ -2,12 +2,9 @@
 {% block title %}List Questions{% endblock %}
 {% block body %}
 
-    {% from 'macros.html' import search_answers with context %}
-    {% from 'macros.html' import get_tags with context %}
     {% from 'macros.html' import get_questions with context %}
     {% from 'macros.html' import sort_questions_options %}
     {% from 'macros.html' import searchbox %}
-    {% from 'macros.html' import fancy_search %}
 
     <header>
         {% if is_logged_in %}
@@ -61,7 +58,7 @@
                         </div>
                     </div>
                     {% for result in results %}{% for question in questions %}{% if question.id == result.id %}
-                        {{ get_questions(question, answers, search_phrase ) }}
+                        {{ get_questions(question, answers ) }}
                     {% endif %}{% endfor %}{% endfor %}
                 {% endif %}
             {% endif %}
