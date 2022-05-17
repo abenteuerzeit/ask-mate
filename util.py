@@ -20,9 +20,10 @@ ERROR_LIST = [
 
 
 def get_sorting_criteria():
-    if request.args.get('order_dict'):
-        return ast.literal_eval(request.args.get('order_dict')).get('order_by'), \
-               ast.literal_eval(request.args.get('order_dict')).get('order_direction'),
+    sorting_criteria = request.args.get('order_dict')
+    if sorting_criteria:
+        sorting_criteria = ast.literal_eval(sorting_criteria)
+        return sorting_criteria.get('order_by'), sorting_criteria.get('order_direction'),
     return request.args.get('order_dict', default='id'), request.args.get('order_direction', default='desc')
 
 
