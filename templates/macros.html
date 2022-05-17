@@ -50,7 +50,7 @@
                 <p style="margin-left: 50px;">
                     ---{{ fancy_search(result.answer_message) }}</p>
                 {% if search_phrase.lower() in results.tag %}
-                    {{ fancy_search(get_tags(row.id)) }}
+                    {{ get_tags(row.id) }}
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -61,7 +61,7 @@
 {% macro get_tags(row) -%}
     {% for tag in tags %}{% for q in question_tags %}
         {% if q.question_id == row.id and q.tag_id == tag.id %}
-            <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ tag.name }}</a></em>
+            <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ fancy_search(tag.name) }}</a></em>
         {% endif %}{% endfor %}{% endfor %}
 {%- endmacro %}
 
