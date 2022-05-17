@@ -20,20 +20,14 @@
             </tr>
             </thead>
             <tbody>
-            {% for c_a in comment_and_answer %}
                 <tr>
-                    <th><a href="{{ url_for('display_profile', user_id=c_a.id) }}">{{ c_a.username }}</a></th>
-                    <th>{{ c_a.submission_time }}</th>
-                    {% for q in question %}
-                        {% if c_a.username == q.username %}
-                            <th>{{ q.question_num }}</th>
-                        {% endif %}
-                    {% endfor %}
-                    <th>{{ c_a.answer_num }}</th>
-                    <th>{{ c_a.comment_num }}</th>
+                    <th><a href="{{ url_for('display_profile', user_id=user.id) }}">{{ user.username }}</a></th>
+                    <th>{{ user.submission_time }}</th>
+                    <th>{{ count_all_user_questions.count_all_user_questions }}</th>
+                    <th>{{ count_all_user_answers.count_all_user_answers }}</th>
+                    <th>{{ count_all_user_comments.count_all_user_comments }}</th>
                     <th>Coming Soon</th>
                 </tr>
-            {% endfor %}
             </tbody>
         </table>
     <div>
