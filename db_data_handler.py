@@ -20,17 +20,15 @@ def get_questions(cursor):
 def search(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
+        tag_search = search_phrase
         query = """
-        SELECT question.id, title, question.message as question_message,
-                tag.name as tag
-        FROM question
-        LEFT JOIN question_tag qt on question.id = qt.question_id
-        LEFT JOIN tag on qt.tag_id = tag.id
-        WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
-            OR LOWER(question.message) LIKE LOWER(%(search_phrase)s)
-            OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        SELECT  question.id, title, question.message as question_message
+        FROM    question
+        WHERE   LOWER(title) LIKE LOWER(%(search_phrase)s)
+        OR      LOWER(question.message) LIKE LOWER(%(search_phrase)s)
+        OR      LOWER(%(tag_search)s) IN (SELECT name FROM tag WHERE LOWER(name) LIKE LOWER(%(search_phrase)s));
         """
-        cursor.execute(query, {'search_phrase': search_phrase})
+        cursor.execute(query, {'search_phrase': search_phrase, 'tag_search': tag_search})
         return cursor.fetchall()
 
 
