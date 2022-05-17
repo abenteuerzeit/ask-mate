@@ -21,7 +21,7 @@ def search(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
         query = """
-        SELECT  question.id, title, question.message as question_message,
+        SELECT question.id, title, question.message as question_message,
                 tag.name as tag
         FROM question
         LEFT JOIN question_tag qt on question.id = qt.question_id
