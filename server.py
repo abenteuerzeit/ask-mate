@@ -25,9 +25,8 @@ def list_questions():
     session['question_id'] = None
     return render_template('list.html', questions=db_questions,
                            order_by=order_by, order_direction=order_direction,
-                           results=db_data_handler.search(request.args.get('q')),
-                           tag_search=db_data_handler.search_tags(request.args.get('q')),
-                           answers=db_data_handler.search_answers(request.args.get('q')),
+                           results=db_data_handler.search_database(request.args.get('q')),
+                           answers=db_data_handler.get_search_answers(request.args.get('q')),
                            tags=db_data_handler.get_tags(), question_tags=db_data_handler.get_question_tags(),
                            is_logged_in=is_logged_in,
                            username=session.get('username'))

@@ -1,5 +1,11 @@
 <html lang="en">
 
+{% macro searchbox() -%}
+    <form action="/search" method="GET">
+        <label for="submit"><input type="text" name="q" placeholder="Enter a search phrase "></label>
+        <input type="submit" value="Search">
+    </form>
+{%- endmacro %}
 
 {% macro sort_questions_options() -%}
     <label for="order_by"> Sort question list by </label>
@@ -55,8 +61,8 @@
 {% macro get_tags(row) -%}
     {% for tag in tags %}{% for q in question_tags %}
         {% if q.question_id == row.id and q.tag_id == tag.id %}
-        <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ tag.name }}</a></em>
-    {% endif %}{% endfor %}{% endfor %}
+            <em><a class="questionLink" href="{{ url_for('display_tags', tag_id=tag.id) }}"> #{{ tag.name }}</a></em>
+        {% endif %}{% endfor %}{% endfor %}
 {%- endmacro %}
 
 
@@ -103,7 +109,7 @@ margin: auto; padding: 5px; height: 150px;"></a>
                 </ul>
             {% endif %}
 
-            <p>{% if results or tag_search  %}
+            <p>{% if results or tag_search %}
                 {% set tags = get_tags(row) %}
                 {{ fancy_search( tags ) }}
             {% else %}

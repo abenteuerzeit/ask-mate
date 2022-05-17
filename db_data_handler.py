@@ -17,34 +17,27 @@ def get_questions(cursor):
 
 
 @connection.connection_handler
-def search(cursor, search_phrase):
-    if search_phrase is not None:
+def search_database(cursor, search_phrase):
+    if search_phrase:
+        search_wild = '%' + search_phrase + '%'
         query = """
-        SELECT  question.id, title, question.message as question_message
-        FROM    question
-        WHERE   LOWER(title) LIKE LOWER(%(search_phrase)s)
-        OR      LOWER(question.message) LIKE LOWER(%(search_phrase)s);
+        SELECT DISTINCT question.id
+        FROM            question
+            FULL JOIN   answer ON question.id = answer.question_id
+            FULL JOIN   question_tag ON question.id = question_tag.question_id
+            FULL JOIN   tag ON tag.id = question_tag.tag_id
+        WHERE           LOWER(question.title) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(question.message) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        ORDER BY        question.id
         """
-        cursor.execute(query, {'search_phrase': '%' + search_phrase + '%', 'tag_search': search_phrase})
+        cursor.execute(query, {'search_phrase': search_wild})
         return cursor.fetchall()
 
 
 @connection.connection_handler
-def search_tags(cursor, search_phrase):
-    if search_phrase is not None:
-        cursor.execute("""
-        SELECT      question.id, submission_time, view_number, vote_number, title, message, image, author_id, 
-                    tag_id, name 
-        FROM        question
-        LEFT JOIN   question_tag qt on question.id = qt.question_id
-        LEFT JOIN   tag t on qt.tag_id = t.id
-        WHERE       t.name LIKE LOWER(%(search_phrase)s)""",
-        {'search_phrase': search_phrase})
-        return cursor.fetchall()
-
-
-@connection.connection_handler
-def search_answers(cursor, search_phrase):
+def get_search_answers(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
         query = """
@@ -57,14 +50,13 @@ def search_answers(cursor, search_phrase):
 
 
 @connection.connection_handler
-def get_question_data(cursor, question_id):  # fetchone()
+def get_question_data(cursor, question_id):
     query = """
         SELECT question.id, question.submission_time, view_number, vote_number, title, message, image, author_id, 
         username
         FROM question
         LEFT JOIN users ON author_id = users.id
         WHERE question.id = %s
-        
     """
     cursor.execute(query, (question_id,))
     return cursor.fetchone()
