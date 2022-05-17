@@ -19,10 +19,10 @@ ERROR_LIST = [
         'message': 'Only enter a new tag name. You can choose a this tag by clicking on the appropriate button'}]
 
 
-def get_sorting_criteria():
-    sorting_criteria = request.args.get('order_dict')
-    if sorting_criteria:
-        sorting_criteria = ast.literal_eval(sorting_criteria)
+def get_sorting_values():
+    order_dict = request.args.get('order_dict')
+    if order_dict:
+        sorting_criteria = ast.literal_eval(order_dict)
         return sorting_criteria.get('order_by'), sorting_criteria.get('order_direction'),
     return request.args.get('order_dict', default='id'), request.args.get('order_direction', default='desc')
 
