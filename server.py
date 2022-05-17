@@ -270,10 +270,21 @@ def add_comment_to_answer(answer_id):
         return redirect(url_for('display_question', question_id=question_id.get('question_id')))
 
 
-@app.route('/comments/<comment_id>/delete')
+@app.route('/comments/<comment_id>/delete', methods=['GET', 'POST'])
 def delete_comment(comment_id):
-
-    pass
+    question_id = request.args.get('question_id')
+    if request.method == 'GET':
+        return render_template('delete-comment.html', comment_id=comment_id,
+                               question_id=question_id)
+    if request.method == "POST":
+        decision = request.form.get('confirm')
+        if decision == "True":
+            if question_id:
+                db_data_handler.delete_question_comment(question_id, comment_id)
+            answer_id = db_data_handler.get_answer_id_from_comment(comment_id)
+            if answer_id:
+                db_data_handler.delete_answer_comment(answer_id.get('answer_id'), comment_id)
+        return redirect(url_for('display_question', question_id=question_id))
 
 
 # ------------------- VOTES ---------------------- #

@@ -1,5 +1,12 @@
 <html lang="en">
 
+
+{% macro delete_comment(id, question_id) -%}
+<button onclick="window.open('{{ url_for('delete_comment', comment_id=id, question_id=question_id) }}','_self','popup,width=200, height=200');return false;">
+    &#128465;
+</button>
+{%- endmacro %}
+
 {% macro searchbox() -%}
     <form action="/search" method="GET">
         <label for="submit"><input type="text" name="q" placeholder="Enter a search phrase "></label>

@@ -96,6 +96,7 @@ def get_answer_for_question(cursor, question_id):
 
 @connection.connection_handler
 def get_comment_for_answer(cursor, answer_id):
+    # should rename to get_answer_comments
     query = """
         SELECT id, question_id, answer_id, message, submission_time, edited_count, author
         FROM comment
@@ -121,6 +122,26 @@ def get_comment_data(cursor, question_id):
 
 
 @connection.connection_handler
+def get_question_id_from_comment(cursor, comment_id):
+    query = """
+    SELECT question_id FROM comment
+    WHERE id = %s
+    """
+    cursor.execute(query, (comment_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_answer_id_from_comment(cursor, comment_id):
+    query = """
+    SELECT answer_id FROM comment
+    WHERE id = %s
+    """
+    cursor.execute(query, (comment_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
 def add_comment_to_question(cursor, user_input):
     cursor.execute(
         """
@@ -138,14 +159,14 @@ def add_comment_to_answer(cursor, user_input):
 
 
 @connection.connection_handler
-def get_comment_for_question(cursor, comment_id):
+def get_comment_for_question(cursor, question_id):
     cursor.execute("""
             SELECT comment.id AS id, comment.question_id, 
             comment.message, comment.submission_time, users.username AS author, comment.edited_count
             FROM comment
             LEFT JOIN users ON users.id = comment.author
             WHERE question_id=%s
-        """, (comment_id,))
+        """, (question_id,))
     return cursor.fetchall()
 
 
@@ -170,12 +191,21 @@ def delete_comment(cursor, comment_id):
 
 
 @connection.connection_handler
-def delete_question_comment(cursor, question_id):
+def delete_question_comment(cursor, question_id, comment_id):
     query = """
         DELETE FROM comment
-        WHERE question_id=%s
+        WHERE question_id = %(question_id)s AND  id = %(comment_id)s;
     """
-    cursor.execute(query, (question_id,))
+    cursor.execute(query, {'question_id': question_id, 'comment_id': comment_id})
+
+
+@connection.connection_handler
+def delete_answer_comment(cursor, answer_id, comment_id):
+    query = """
+        DELETE FROM comment
+        WHERE answer_id = %(answer_id)s AND  id = %(comment_id)s;
+    """
+    cursor.execute(query, {'answer_id': answer_id, 'comment_id': comment_id})
 
 
 @connection.connection_handler

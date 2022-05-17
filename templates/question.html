@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
+{% from 'macros.html' import delete_comment %}
+
     <div class="questions">
         <div class="question">
             <h1>Question</h1>
@@ -49,15 +51,16 @@
                     {% if comments_question %}
                         <ul>
                             <h2>Comments</h2>
-                            {% for item in comments_question %}
-                                <li><small>Comment from {{ item.author }}</small><br><em>{{ item.message }}</em></li>
-                            {% endfor %}
+                            {% for comment in comments_question %}
+                                <li><small>Comment from {{ comment.author }}</small><br><em>{{ comment.message }}</em>
+                                    {{ delete_comment(comment.id, question.id) }}
+                                {% endfor %}
                         </ul>
                     {% else %}
                         <h5>No comments</h5>
                     {% endif %}
                     {% if "username" in session %}
-                        <a class="questionLink" href="#qCommentForm" id="showQCommentForm" onclick="addCommentToQuestion();">
+                        <a id="showQCommentForm" onclick="addCommentToQuestion();">
                             Comment </a>
                         <div id="qCommentForm" style="display:none">
                             <form method="post"
@@ -105,7 +108,7 @@
                         {% if comment.answer_id == answer.id %}
                             <small style="margin-left: 15px;">{{ comment.message }}</small> <br>
                             <small style="margin-left: 20px;">{{ comment.submission_time }}
-                                by {{ comment.author }}</small><br>
+                                by {{ comment.author }}</small>{{ delete_comment(comment.id, question.id) }} <br>
                         {% endif %}
                     {% endfor %}
                     <p><small>
