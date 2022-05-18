@@ -5,10 +5,10 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/doNotModifyThisFile.js') }}" defer></script>
 {% endblock %}
 {% block body %}
-    <div id="bonusPage" style="color: snow; margin: 20px;">
+    <div id="bonusPage" style="margin: 20px;">
         <h1>AskMate</h1>
         <h2>All Questions:</h2>
-        <button id="theme-button">Change Theme to Dark</button>
+        <button id="theme-button" onclick="toggleTxt()">Change Theme to Dark</button>
         <button id="increase-font-button" onclick="increaseFont('bonusPage', 1)">Increase page font</button>
         <button id="decrease-font-button" onclick="decreaseFont('bonusPage', -1)">Decrease page font</button><br>
         <label for="doNotModifyThisId_QuestionsFilter">Filter: </label>

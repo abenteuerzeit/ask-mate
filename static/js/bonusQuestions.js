@@ -40,7 +40,18 @@ function getFilteredItems(items, filterValue) {
 }
 
 function toggleTheme() {
-    console.log("toggle theme")
+    let body = document.body;
+    body.classList.toggle("dark-mode");
+    console.log("toggle theme");
+}
+
+function toggleTxt() {
+  var txt = document.getElementById("theme-button");
+  if (txt.innerHTML === "Change Theme to Dark") {
+    txt.innerHTML = "Change Theme to Light";
+  } else {
+    txt.innerHTML = "Change Theme to Dark";
+  }
 }
 
 function increaseFont(id, increaseFactor) {
