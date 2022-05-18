@@ -1,3 +1,4 @@
+import ast
 import fnmatch
 import os
 
@@ -7,15 +8,17 @@ from werkzeug.utils import secure_filename
 import server
 from db_data_handler import get_tags
 
-
 ALLOWED_EXTENSIONS = {'jpg', 'png'}
 UPLOAD_FOLDER = './static/images'
 SECRET_KEY = os.urandom(12).hex()
-ERROR_LIST = [
-    {'name': 'Extension Error', 'title': 'Wrong file type!',
-        'message': 'Only .jpg and .png files accepted!'},
-    {'name': 'Tag Error', 'title': 'Tag already exists!',
-        'message': 'Only enter a new tag name. You can choose a this tag by clicking on the appropriate button'}]
+
+
+def get_sorting_values():
+    order_str = request.args.get('order_dict')
+    if order_str:
+        order_dict = ast.literal_eval(order_str)
+        return order_dict.get('order_by'), order_dict.get('order_direction'),
+    return request.args.get('order_dict', default='id'), request.args.get('order_direction', default='desc')
 
 
 def image_delete_from_server(item):
@@ -63,4 +66,3 @@ def already_exists(tag):
         if tag == tag_dict.get('name'):
             return True
     return False
-

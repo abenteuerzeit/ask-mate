@@ -6,49 +6,49 @@ NOW = datetime.fromtimestamp(int(datetime.now().timestamp()))
 
 
 @connection.connection_handler
-def get_questions(cursor):  # fetchall()
+def get_questions(cursor):
     query = """
-        SELECT id, submission_time, view_number, vote_number, title, message, image
-        FROM question
+        SELECT  id, submission_time, view_number, vote_number, title, message, image
+        FROM    question
         ORDER BY submission_time
         """
-    cursor.execute(query)  # wykonaj czytanie po linii
+    cursor.execute(query)
     return cursor.fetchall()
 
 
 @connection.connection_handler
-def search(cursor, search_phrase):
-    if search_phrase is not None:
-        search_phrase = '%' + search_phrase + '%'
-        # query = """
-        # SELECT  question.id, title, question.message as question_message,
-        #         answer.message as answer_message,
-        #         tag.name as tag
-        # FROM question
-        # LEFT JOIN answer ON question.id = answer.question_id
-        # LEFT JOIN question_tag qt on question.id = qt.question_id
-        # LEFT JOIN tag on qt.tag_id = tag.id
-        # WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
-        #     OR LOWER(question.message) LIKE LOWER(%(search_phrase)s)
-        #     OR LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
-        #     OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
-        # """
+def get_five_latest_questions(cursor):
+    cursor.execute("""
+    SELECT      *
+    FROM        question
+    ORDER BY    submission_time DESC
+    LIMIT       5
+    """, )
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def search_database(cursor, search_phrase):
+    if search_phrase:
+        search_wild = '%' + search_phrase + '%'
         query = """
-        SELECT  question.id, title, question.message as question_message,
-                tag.name as tag
-        FROM question
-        LEFT JOIN question_tag qt on question.id = qt.question_id
-        LEFT JOIN tag on qt.tag_id = tag.id
-        WHERE  LOWER(title) LIKE LOWER(%(search_phrase)s)
-            OR LOWER(question.message) LIKE LOWER(%(search_phrase)s)
-            OR LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        SELECT DISTINCT question.id
+        FROM            question
+            FULL JOIN   answer ON question.id = answer.question_id
+            FULL JOIN   question_tag ON question.id = question_tag.question_id
+            FULL JOIN   tag ON tag.id = question_tag.tag_id
+        WHERE           LOWER(question.title) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(question.message) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(answer.message) LIKE LOWER(%(search_phrase)s)
+            OR          LOWER(tag.name) LIKE LOWER(%(search_phrase)s)
+        ORDER BY        question.id
         """
-        cursor.execute(query, {'search_phrase': search_phrase})
+        cursor.execute(query, {'search_phrase': search_wild})
         return cursor.fetchall()
 
 
 @connection.connection_handler
-def search_answers(cursor, search_phrase):
+def get_search_answers(cursor, search_phrase):
     if search_phrase is not None:
         search_phrase = '%' + search_phrase + '%'
         query = """
@@ -61,13 +61,15 @@ def search_answers(cursor, search_phrase):
 
 
 @connection.connection_handler
-def get_question(cursor, id):  # fetchone()
+def get_question_data(cursor, question_id):
     query = """
-        SELECT *
+        SELECT question.id, question.submission_time, view_number, vote_number, title, message, image, author_id, 
+        username
         FROM question
-        WHERE id = %s
+        LEFT JOIN users ON author_id = users.id
+        WHERE question.id = %s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (question_id,))
     return cursor.fetchone()
 
 
@@ -82,6 +84,17 @@ def get_answers(cursor):
 
 
 @connection.connection_handler
+def get_answer_data(cursor, answer_id):
+    query = """
+        SELECT *
+        from answer
+        WHERE id = %s
+    """
+    cursor.execute(query, (answer_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
 def get_answer_for_question(cursor, question_id):
     query = """
         SELECT *
@@ -93,13 +106,79 @@ def get_answer_for_question(cursor, question_id):
 
 
 @connection.connection_handler
-def get_comments(cursor):
-    return []
+def get_comment_for_answer(cursor, answer_id):
+    # should rename to get_answer_comments
+    query = """
+        SELECT id, question_id, answer_id, message, submission_time, edited_count, author
+        FROM comment
+        WHERE answer_id = %s
+    """
+    cursor.execute(query, (answer_id,))
+    return cursor.fetchall()
 
 
 @connection.connection_handler
-def get_comment_for_question(cursor, answer_id):
-    return []
+def get_comment_data(cursor, question_id):
+    query = """
+        SELECT c.id AS id, answer_id, c.message AS message, c.submission_time AS submission_time, edited_count, 
+        u.username AS author
+        FROM question
+        LEFT JOIN answer a on question.id = a.question_id
+        LEFT JOIN comment c on a.id = c.answer_id
+        LEFT JOIN users u ON u.id = c.author
+        WHERE question.id = %s
+    """
+    cursor.execute(query, (question_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_question_id_from_comment(cursor, comment_id):
+    query = """
+    SELECT question_id FROM comment
+    WHERE id = %s
+    """
+    cursor.execute(query, (comment_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_answer_id_from_comment(cursor, comment_id):
+    query = """
+    SELECT answer_id FROM comment
+    WHERE id = %s
+    """
+    cursor.execute(query, (comment_id,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def add_comment_to_question(cursor, user_input):
+    cursor.execute(
+        """
+        INSERT INTO comment (question_id, message, submission_time, edited_count, author)
+        VALUES (%(question_id)s, %(message)s,%(submission_time)s, %(edited_count)s, %(author)s);
+        """, user_input)
+
+
+@connection.connection_handler
+def add_comment_to_answer(cursor, user_input):
+    cursor.execute("""
+    INSERT INTO comment (answer_id, message, submission_time, edited_count, author)
+    VALUES (%(answer_id)s, %(message)s,%(submission_time)s, %(edited_count)s, %(author)s)    
+    """, user_input)
+
+
+@connection.connection_handler
+def get_comment_for_question(cursor, question_id):
+    cursor.execute("""
+            SELECT comment.id AS id, comment.question_id, 
+            comment.message, comment.submission_time, users.username AS author, comment.edited_count
+            FROM comment
+            LEFT JOIN users ON users.id = comment.author
+            WHERE question_id=%s
+        """, (question_id,))
+    return cursor.fetchall()
 
 
 @connection.connection_handler
@@ -114,21 +193,30 @@ def get_comment_for_answer(cursor, answer_id):
 
 
 @connection.connection_handler
-def delete_comment(cursor, id):
+def delete_comment(cursor, comment_id):
     query = """
         DELETE FROM comment
         WHERE id=%s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (comment_id,))
 
 
 @connection.connection_handler
-def delete_question_comment(cursor, question_id):
+def delete_question_comment(cursor, question_id, comment_id):
     query = """
         DELETE FROM comment
-        WHERE question_id=%s
+        WHERE question_id = %(question_id)s AND  id = %(comment_id)s;
     """
-    cursor.execute(query, (question_id,))
+    cursor.execute(query, {'question_id': question_id, 'comment_id': comment_id})
+
+
+@connection.connection_handler
+def delete_answer_comment(cursor, answer_id, comment_id):
+    query = """
+        DELETE FROM comment
+        WHERE answer_id = %(answer_id)s AND  id = %(comment_id)s;
+    """
+    cursor.execute(query, {'answer_id': answer_id, 'comment_id': comment_id})
 
 
 @connection.connection_handler
@@ -142,48 +230,60 @@ def increase_question_view_count(cursor, select_qdict):
 
 
 @connection.connection_handler
-def increase_question_vote(cursor, selected_dictionary):
+def increase_question_vote(cursor, question_id):
     query = """
         UPDATE question
         SET vote_number = vote_number + 1
         WHERE question.id = %s
     """
-    cursor.execute(query, (selected_dictionary,))
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
-def increase_answer_vote(cursor, selected_dictionary):
+def increase_answer_vote(cursor, answer_id):
     query = """
-        UPDATE answer
-        SET vote_number = vote_number + 1
-        WHERE answer.id = %s
+        UPDATE      answer AS a
+        SET         vote_number = a.vote_number + 1
+        FROM        answer
+        INNER JOIN  question ON question.id = question_id
+        WHERE       answer.id = %(answer_id)s;
+        
+        SELECT      question_id
+        FROM        answer
+        WHERE       %(answer_id)s = id;
         """
-    cursor.execute(query, (selected_dictionary,))
-    return get_question_id(cursor, selected_dictionary)
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchone()
 
 
 @connection.connection_handler
-def decrease_question_vote(cursor, selected_dictionary):
+def decrease_question_vote(cursor, question_id):
     query = """
         UPDATE question
         SET vote_number = vote_number - 1
         WHERE question.id = %s
     """
-    cursor.execute(query, (selected_dictionary,))
-    return get_question_id(cursor, selected_dictionary)
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
-def decrease_answer_vote(cursor, selected_dictionary):
+def decrease_answer_vote(cursor, answer_id):
     query = """
-        UPDATE answer
-        SET vote_number = vote_number - 1
-        WHERE answer.id = %s
-            """
-    cursor.execute(query, (selected_dictionary,))
-    return get_question_id(cursor, selected_dictionary)
+        UPDATE      answer AS a
+        SET         vote_number = a.vote_number - 1
+        FROM        answer
+        INNER JOIN  question ON question.id = question_id
+        WHERE       answer.id = %(answer_id)s;
+        
+        SELECT      question_id
+        FROM        answer
+        WHERE       %(answer_id)s = id;
+        """
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchone()
 
 
+@connection.connection_handler
 def get_question_id(cursor, answer_id):
     query = """
             SELECT question_id
@@ -194,24 +294,9 @@ def get_question_id(cursor, answer_id):
     return cursor.fetchone()
 
 
-def set_image_to_null(table):
-    if table == 'question':
-        return """
-                    UPDATE question
-                    SET image = NULL
-                    WHERE image = 'NULL' or image = '' or image = 'None'
-                """
-    elif table == 'answer':
-        return """
-                    UPDATE answer
-                    SET image = NULL
-                    WHERE image = 'NULL' or image = '' or image = 'None'
-                """
-
-
 @connection.connection_handler
 def save_new_question_data(cursor, user_input):
-    image = 'NULL' if user_input.get('image') == "" else user_input.get('image')
+    image = None if user_input.get('image') == "" else user_input.get('image')
     query = """
             INSERT INTO question (submission_time, view_number, vote_number, title, message, image, author_id)
             VALUES(%(time)s, 0, 0,  %(title)s, %(message)s, %(image)s, %(author_id)s)
@@ -222,18 +307,12 @@ def save_new_question_data(cursor, user_input):
                            'image': image,
                            'author_id': user_input.get('author_id')})
 
-    cursor.execute(set_image_to_null('question'))
     query = """
         SELECT max(id) AS id
         from question
     """
     cursor.execute(query)
     return cursor.fetchone()
-
-
-@connection.connection_handler
-def save_new_comment(cursor, user_input):
-    return []
 
 
 @connection.connection_handler
@@ -250,18 +329,19 @@ def edit_question(cursor, updated_dict):
                            'message': updated_dict.get('message'),
                            'image': updated_dict.get('image'),
                            'question_id': question_id})
-    cursor.execute(set_image_to_null('question'))
 
 
 @connection.connection_handler
 def save_answer_data(cursor, user_input):
     query = """
-        INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s)
+        INSERT INTO answer (submission_time, vote_number, question_id, message, image, author_id, is_accepted)
+        VALUES (%(time)s, 0, %(question_id)s, %(message)s, %(image)s, %(author_id)s, false)
     """
-    cursor.execute(query, {'time': NOW, 'title': user_input.get('title'), 'question_id': user_input.get('question_id'),
-                           'message': user_input.get('message'), 'image': user_input.get('image')})
-    cursor.execute(set_image_to_null('answer'))
+    cursor.execute(query, {'time': NOW, 'title': user_input.get('title'),
+                           'question_id': user_input.get('question_id'),
+                           'message': user_input.get('message'),
+                           'image': user_input.get('image'),
+                           'author_id': user_input.get('author_id')})
     query = """
             SELECT max(id) AS id
             from answer
@@ -271,21 +351,23 @@ def save_answer_data(cursor, user_input):
 
 
 @connection.connection_handler
-def delete_question(cursor, id):
+def delete_question(cursor, question_id):
     query = """
     DELETE FROM question
     WHERE question.id = %s
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, (question_id,))
 
 
 @connection.connection_handler
-def delete_answer(cursor, id):
+def delete_answer(cursor, answer_id):
     query = """
+    DELETE FROM comment
+    WHERE answer_id = %(answer_id)s;
     DELETE FROM answer
-    WHERE answer.id = %s
+    WHERE answer.id = %(answer_id)s;
     """
-    cursor.execute(query, (id,))
+    cursor.execute(query, {'answer_id': answer_id})
 
 
 @connection.connection_handler
@@ -381,7 +463,7 @@ def count_questions_with_tag(cursor):
     GROUP BY id, name
     ORDER BY amount DESC
     """
-    cursor.execute(query,)
+    cursor.execute(query, )
     return cursor.fetchall()
 
 
@@ -414,22 +496,20 @@ def users(cursor, username):
     SELECT id, passwordhash
     FROM users
     WHERE username=%s
-    """, (username, ))
+    """, (username,))
     return cursor.fetchone()
 
 
 @connection.connection_handler
-def get_username(cursor, user_id):
-    query = """
-    SELECT username
-    FROM users
-    WHERE id = %s
-    """
-    cursor.execute(query, (user_id,))
+def get_user(cursor, user_id):
+    cursor.execute("""
+        SELECT id, username, submission_time
+        FROM users
+        WHERE id = %s
+        """, (user_id, ))
     return cursor.fetchone()
 
-  
-#TODO Create html and flask
+
 @connection.connection_handler
 def get_users_name_time(cursor):
     cursor.execute("""
@@ -442,10 +522,12 @@ def get_users_name_time(cursor):
 @connection.connection_handler
 def count_user_comment_and_answer(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time, COUNT(comment.author) AS comment_num, COUNT(answer.author) AS answer_num
+    SELECT users.id, users.username, users.submission_time, 
+    COUNT(comment.author) AS comment_num, 
+    COUNT(answer.author_id) AS answer_num
     FROM users
     LEFT JOIN comment ON users.id = comment.author
-    LEFT JOIN answer ON users.id = answer.author
+    LEFT JOIN answer ON users.id = answer.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
@@ -454,10 +536,94 @@ def count_user_comment_and_answer(cursor):
 @connection.connection_handler
 def count_user_question(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time,  COUNT(question.question_author) AS question_num
+    SELECT users.id, users.username, users.submission_time,  COUNT(question.author_id) AS question_num
     FROM users
-    LEFT JOIN question ON users.id = question.question_author
+    LEFT JOIN question ON users.id = question.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
 
+@connection.connection_handler
+def count_all_user_questions(cursor, user_id):
+    query = """
+    SELECT count(*) as count_all_user_questions
+    FROM question
+    WHERE author_id = %s;
+    """
+    cursor.execute(query, (user_id, ))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def count_all_user_answers(cursor, user_id):
+    cursor.execute("""
+    SELECT count(*) as count_all_user_answers
+    FROM answer
+    WHERE author_id=%s;
+    """, (user_id, ))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def count_all_user_comments(cursor, user_id):
+    cursor.execute("""
+    SELECT count(*) as count_all_user_comments
+    FROM comment
+    WHERE author=%s;
+    """, (user_id, ))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_user_questions(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM question
+    WHERE question.author_id = %s
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_answers(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM answer
+    WHERE answer.author_id = %s
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_user_comments(cursor, user_id):
+    cursor.execute("""
+    SELECT *
+    FROM comment
+    WHERE comment.author = %s
+    """, (user_id,))
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def get_author_id(cursor, username):
+    cursor.execute("""
+    SELECT id
+    FROM users
+    WHERE username = %s
+    """, (username,))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def change_answer_acceptance_status(cursor, q_author_id, answer_id):
+    query = """
+    UPDATE      answer
+    SET         is_accepted = FALSE
+    WHERE       is_accepted IS NULL;
+    UPDATE      answer AS a
+    SET         is_accepted = NOT a.is_accepted
+    FROM        answer
+    LEFT JOIN   question on answer.question_id = question.id
+    WHERE       a.id = %(answer_id)s AND question.author_id = %(q_author_id)s
+    """
+    cursor.execute(query, {'q_author_id': q_author_id, 'answer_id': answer_id})

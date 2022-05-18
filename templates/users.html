@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Registration{% endblock %}
 {% block body %}
+    <p><a href="{{ url_for('list_questions') }}">Question list</a> </p>
     <table style="color:#fff">
     <caption>all the registered users</caption>
         <thead>
@@ -16,7 +17,7 @@
     <tbody>
         {% for c_a in comment_and_answer %}
             <tr>
-                <th>{{ c_a.username }}</th>
+                <th><a href="{{ url_for('display_profile', user_id=c_a.id) }}">{{ c_a.username }}</a></th>
                 <th>{{ c_a.submission_time }}</th>
                 {% for q in question %}
                     {% if c_a.username == q.username %}

@@ -1,15 +1,17 @@
 {% extends "layout.html" %}
 {% block title %}Question {{ question.id }}{% endblock %}
 {% block body %}
+{% from 'macros.html' import delete_comment %}
+
     <div class="questions">
         <div class="question">
             <h1>Question</h1>
-            <a class="questionLink" href="/">Go back</a><br>
+            <a class="questionLink" href="{{ url_for('list_questions') }}">Go back</a><br>
             <div class="question">
                 <h2>{{ question.title }}</h2>
                 <p>
-                    <a class="questionLink" href="{{ question.id }}/edit">Edit</a>
-                    <a class="questionLink" href="/question/{{ question.id }}/delete">Delete</a>
+                    <a class="questionLink" href="{{ url_for('edit_question', question_id=question.id ) }}">Edit</a>
+                    <a class="questionLink" href="{{ url_for('delete_question', question_id=question.id ) }}">Delete</a>
                 </p>
                 {% if question.image %}
                     <div class="item">
@@ -18,14 +20,11 @@
                         </a>
                     </div>
                 {% endif %}
-                <div class="question"><p>{{ question.message }}</p></div>
-                <div class="question"><p><small>Added: {{ question.submission_time }}
-                    {% if author %}
-                        by {{ author.username }}
-                    {% endif %}
-                </small></p></div>
-
-                <div class="question"><h3>Tags</h3>
+                <div class="question">
+                    <p>{{ question.message }}</p>
+                </div>
+                <div class="question">
+                    <h4>Tags</h4>
                     <p>
                         {% for q in question_tags %}{% for tag in tags %}{% if q.tag_id == tag.id %}
                             <em>#{{ tag.name }}
@@ -39,6 +38,48 @@
                     <p><a class="questionLink" href="/question/{{ question.id }}/new-tag">Add a new tag </a></p>
                     <p><a class="questionLink" href="{{ url_for('display_tags') }}">Tag list</a></p>
                 </div>
+                <div class="question">
+                    <p>
+                        <small>Added: {{ question.submission_time }}
+                            {% if question.username %}
+                                by {{ question.username }}
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+                <div class="question-comments">
+                    {% if comments_question %}
+                        <ul>
+                            <h2>Comments</h2>
+                            {% for comment in comments_question %}
+                                <li><small>Comment from {{ comment.author }}</small><br><em>{{ comment.message }}</em>
+                                    {{ delete_comment(comment.id, question.id) }}
+                                {% endfor %}
+                        </ul>
+                    {% else %}
+                        <h5>No comments</h5>
+                    {% endif %}
+                    {% if "username" in session %}
+                        <a class="questionLink" href="#qCommentForm" id="showQCommentForm" onclick="addCommentToQuestion();">
+                            Add comment </a>
+                        <div id="qCommentForm" style="display:none">
+                            <form method="post"
+                                  action="{{ url_for('add_comment_to_question', question_id=question.id ) }}">
+                                <label for="message">Message</label><br>
+                                <textarea name="message" id="message" required></textarea><br>
+                                <input type="submit">
+                            </form>
+                        </div>
+                        <script>
+                            function addCommentToQuestion() {
+                                document.getElementById("qCommentForm").style.display = "block";
+                                document.getElementById("showQCommentForm").style.display = "none";
+                            }
+                        </script>
+                    {% else %}
+                        <a class="questionLink" href="{{ url_for('login') }}">Login to comment!</a>
+                    {% endif %}
+                </div>
             </div>
             <div>
                 <p><a class="questionLink" href="/question/{{ question.id }}/new-answer">Add a new answer</a></p></div>
@@ -50,28 +91,56 @@
         {% for answer in answers %}
             <div class="questions">
                 <div class="question"><small>
+                    {% if answer.is_accepted %}
+                        <h1>&#9989;</h1>
+                    {% endif %}
                     <a class="questionLink"
                        href="/answer/{{ answer.id }}/vote-up?question_id={{ question.id }}">&#8679</a>
                     {{ answer.vote_number }}
                     <a class="questionLink" href="/answer/{{ answer.id }}/vote-down?question_id={{ question.id }}">&#8681</a>
                 </small><br>
                 </div>
-
                 <div class="question">
                     <p>{{ answer.message }}</p>
                     <small>{{ answer.submission_time }}</small><br>
-                    <p><small>
-                        <a class="questionLink" style="padding-right: 10px"
-                           href="/question/{{ question.id }}/new-comment">
-                            Comment
-                        </a>
-                        <a class="questionLink" style="padding-right: 10px"
-                           href="/answer/{{ answer.id }}/delete?question_id={{ question.id }}">
-                            Delete
-                        </a>
-                    </small>
-                    </p>
 
+                    {% for comment in comments_answer %}
+                        {% if comment.answer_id == answer.id %}
+                            <small style="margin-left: 15px;">{{ comment.message }}</small> <br>
+                            <small style="margin-left: 20px;">{{ comment.submission_time }}
+                                by {{ comment.author }}</small>{{ delete_comment(comment.id, question.id) }} <br>
+                        {% endif %}
+                    {% endfor %}
+                    <p><small>
+                        <a class="questionLink" href="#aCommentForm" id="showACommentForm"
+                           onclick="addCommentToAnswer();">Add comment</a></small>
+                    </p>
+                    <div id="aCommentForm" style="display:none">
+                        <form method="post" action="{{ url_for('add_comment_to_answer', answer_id=answer.id ) }}">
+                            <label for="message">Message</label><br>
+                            <textarea name="message" id="message" required></textarea><br>
+                            <input type="submit">
+                        </form>
+                    </div>
+                    <script>
+                        function addCommentToAnswer() {
+                            document.getElementById("aCommentForm").style.display = "block";
+                            document.getElementById("showACommentForm").style.display = "none";
+                        }
+                    </script>
+
+                    <a class="questionLink" href="{{ url_for('display_question', question_id=question.id,
+                       change_answer_status=True, answer_id=answer.id) }}">
+                        {% if answer.is_accepted %}
+                            Retract
+                        {% else %}
+                            Accept
+                        {% endif %}
+                    </a>
+                    <a class="questionLink" style="padding-right: 10px"
+                       href="{{ url_for('delete_answer', answer_id=answer.id) }}">
+                        Delete
+                    </a>
                 </div>
 
                 {% if answer.image %}

@@ -2,86 +2,79 @@
 {% block title %}List Questions{% endblock %}
 {% block body %}
 
-    {% from 'macros.html' import search_answers with context %}
-    {% from 'macros.html' import get_tags with context %}
     {% from 'macros.html' import get_questions with context %}
+    {% from 'macros.html' import sort_questions_options %}
+    {% from 'macros.html' import searchbox %}
 
-    {% if is_logged_in %}
-        <p style="align-self: center; color: greenyellow; text-shadow: 0px 4px black"><b>You are logged in as {{ session['username'] }}</b></p>
-        <p style="align-self: center; color: greenyellow;"><a href="{{ url_for('users') }}">List of all users</a></p>
-    {% endif %}
-    <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
-        <div style="margin: 25px; padding: 10px;"><a href="/">
-            <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100" style="float: left"></a>
-        </div>
-        <div style="margin: 25px; padding: 10px">
-            {% if results %}
-                <h2>Search Results</h2>
+    <header>
+        {% if is_logged_in %}
+            <p style="align-self: center; color: greenyellow; text-shadow: 0px 4px black">
+                <a href="{{ url_for('display_profile', user_id = session['user_id']) }}">You are logged in as {{ session['username'] }}</a></p>
+            <p style="align-self: center; color: greenyellow;"><a href="{{ url_for('users') }}">List of all users</a></p>
+        {% endif %}
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; color: whitesmoke;">
+            <div style="margin: 25px; padding: 10px;"><a href="/">
+                <img class="logo" src="/uploads/logo.jpg" alt="logo" height="100" style="float: left"></a>
+            </div>
+            <div style="margin: 25px; padding: 10px">
+                {% if results %}<h2>Search Results</h2>
+                {% elif 'list' not in request.url_rule.rule %}
+                    <h2>Five Latest Questions</h2>
+                {% else %}
+                    <h2>All questions</h2>
+                {% endif %}
+                <div>{{ searchbox() }}</div>
+            {% if 'list' not in request.url_rule.rule %}
+                <a href="/list">List all questions</a>
             {% else %}
-                <h2>All questions</h2>
+                <a href="{{ url_for('list_questions') }}">List the 5 most recent questions</a>
             {% endif %}
+            </div>
+            <div style="margin: 25px; padding: 10px;">
+                {% if is_logged_in %}
+                    <a href="{{ url_for('add_question') }}">Add a question</a><br>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('registration') }}">Register</a><br>
+                    <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+                <br>
+                <a href="{{ url_for('display_tags') }}">Tag list</a>
+            </div>
+        {% if questions %}
+            <div style="margin: 25px; padding: 10px;">{{ sort_questions_options() }}<br>
+                <small> Questions ordered by {{ order_by }}: {{ order_direction }}</small>
+            </div>
             <div>
-            <form action="/search" method="GET">
-                    <label for="submit"><input type="text" name="q" placeholder="Enter a search phrase "></label>
-                    <input type="submit" value="Search">
-            </form>
+                <h1>&#127881;</h1>
+                <a href="{{ url_for('bonus_questions') }}"><em>BONUS</em></a>
             </div>
         </div>
-        <div style="margin: 25px; padding: 10px;">
-            {% if is_logged_in %}
-                <a href="/add-question">Add a question</a><br>
-                <a href="{{ url_for('logout') }}">Logout</a>
+    </header><div class="item" style="flex: 1">
+    <main>
+            {% set search_phrase = request.args.get('q') %}
+            {% if not search_phrase %}
+                {% for question in questions %}
+                    {{ get_questions(question) }}
+                {% endfor %}
             {% else %}
-                <a href="/registration">Register</a><br>
-                <a href="{{ url_for('login') }}">Login</a>
-            {% endif %}
-            <br><a href="{{ url_for('display_tags') }}">Tag list</a>
-        </div>
-    {% if questions %}
-        <div style="margin: 25px; padding: 10px;"><label for="order_by"> Sort question list by </label>
-            <select style="display: inline;" name="order_by" id="order_by" form="sort">
-                <option value="">--Please choose an option--</option>
-                <option name="title-asc" value="title-asc">Title &#8679</option>
-                <option value="title">Title &#8681</option>
-                <option value="view_number-asc">Views &#8679</option>
-                <option value="view_number">Views &#8681</option>
-            </select>
-            <form style="display: inline;" action="/list" method="get" id="sort"><input type="submit"></form>
-            <br><small> Questions ordered by {{ order_by }}: {{ order_direction }}</small></div>
-        </div>
-        <div class="item">
-            <main>
-                {% from 'macros.html' import fancy_search %}
-                {% set search_phrase = request.args.get('q') %}
-                {% if not search_phrase %}
-                    {% for question in questions %}
-                        {{ get_questions(question) }}
-                    {% endfor %}
-                {% else %}
-                    {% if not results and not answers and search_phrase %}
-                        <div class="questions">
-                            <div class="question"><h2>No results found for <em>{{ search_phrase }}</em>.</h2>
-                                <p>Try a different phrase or check your spelling. </p></div>
+                {% if not results and search_phrase %}
+                    <div class="questions">
+                        <div class="question"><h2>No results found for <em>{{ search_phrase }}</em>.</h2>
+                            <p>Try a different phrase or check your spelling. </p></div>
+                    </div>
+                {% elif results %}
+                    <div class="questions">
+                        <div class="question"><h2>Phrase: <em>{{ search_phrase }}</em></h2>
+                            <p>The following results list questions that contain the phrase "{{ search_phrase }}" in
+                                either a question's title or message, or in an answer's message to a question.</p>
                         </div>
-                    {% elif results or answers %}
-                        <div class="questions">
-                            <div class="question">
-                                <h2>Phrase: <em>{{ search_phrase }}</em></h2>
-                                <p>The following results list questions that contain the phrase "{{ search_phrase }}" in
-                                    either a question's title or message, or in an answer's message to a question.</p>
-                            </div>
-                        </div>
-                        {% for result in results %}{% for question in questions %}{% if question.id == result.id %}
-                            {{ get_questions(question, answers, search_phrase ) }}
-                        {% endif %}{% endfor %}{% endfor %}
-                        {% for answer in answers %}{% for question in questions %}
-                            {% if question.id == answer.question_id %}
-                                {% if search_phrase not in question.message and search_phrase not in question.title %}
-                                    {{ get_questions(question, answers, search_phrase ) }}
-                                {% endif %}
-                            {% endif %}{% endfor %}{% endfor %}
-                    {% endif %}
+                    </div>
+                    {% for result in results %}{% for question in questions %}{% if question.id == result.id %}
+                        {{ get_questions(question, answers ) }}
+                    {% endif %}{% endfor %}{% endfor %}
                 {% endif %}
+            {% endif %}
         {% else %}
             <p>No questions added yet. <a href="/add-question">Add a question now!</a></p>
         {% endif %}

@@ -7,7 +7,7 @@ function getSortedItems(items, sortField, sortDirection) {
     // === SAMPLE CODE ===
     // if you have not changed the original html uncomment the code below to have an idea of the
     // effect this function has on the table
-    //
+
     if (sortDirection === "asc") {
         const firstItem = items.shift()
         if (firstItem) {
@@ -23,7 +23,7 @@ function getSortedItems(items, sortField, sortDirection) {
     return items
 }
 
-// you receive an array of objects which you must filter by all it's keys to have a value matching "filterValue"
+// you receive an array of objects which you must filter by all its keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
     console.log(items)
     console.log(filterValue)
@@ -40,13 +40,32 @@ function getFilteredItems(items, filterValue) {
 }
 
 function toggleTheme() {
-    console.log("toggle theme")
+    let body = document.body;
+    body.classList.toggle("dark-mode");
+    console.log("toggle theme");
 }
 
-function increaseFont() {
-    console.log("increaseFont")
+function toggleTxt() {
+  var txt = document.getElementById("theme-button");
+  if (txt.innerHTML === "Change Theme to Dark") {
+    txt.innerHTML = "Change Theme to Light";
+  } else {
+    txt.innerHTML = "Change Theme to Dark";
+  }
 }
 
-function decreaseFont() {
+function increaseFont(id, increaseFactor) {
+    let txt = document.getElementById(id);
+    let style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+    let currentSize = parseFloat(style);
+    txt.style.fontSize = (currentSize + increaseFactor) + 'px';
+    console.log("increaseFont");
+}
+
+function decreaseFont(id, decreaseFactor) {
+    let txt = document.getElementById(id);
+    let style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
+    let currentSize = parseFloat(style);
+    txt.style.fontSize = (currentSize + decreaseFactor) + 'px';
     console.log("decreaseFont")
 }

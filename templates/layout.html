@@ -16,11 +16,18 @@
         </p>{% endif %}
     {% endwith %}
 
+    {% block script %}{% endblock %}
+
     <style>
         html, body {
           margin: 0;
           height: 100%; /* can also use viewport units (height: 100vh) */
           background-color: indigo;
+        }
+
+        .dark-mode {
+          background-color: black;
+          color: hotpink;
         }
 
         .container {
