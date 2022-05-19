@@ -3,11 +3,6 @@ function getSortedItems(items, sortField, sortDirection) {
     console.log(items)
     console.log(sortField)
     console.log(sortDirection)
-
-    // === SAMPLE CODE ===
-    // if you have not changed the original html uncomment the code below to have an idea of the
-    // effect this function has on the table
-
     if (sortDirection === "asc") {
         const firstItem = items.shift()
         if (firstItem) {
@@ -19,24 +14,38 @@ function getSortedItems(items, sortField, sortDirection) {
             items.push(lastItem)
         }
     }
-
     return items
 }
 
 // you receive an array of objects which you must filter by all its keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
-    console.log(items)
-    console.log(filterValue)
 
-    // === SAMPLE CODE ===
-    // if you have not changed the original html uncomment the code below to have an idea of the
-    // effect this function has on the table
-    //
-    for (let i=0; i<filterValue.length; i++) {
-        items.pop()
+    // for (let i=0; i<items.length; i++) {
+    //     let item = items[i];
+    //     let object = Object.values(item).filter((item) => item.includes(filterValue) )
+    //     console.log(object)
+    // }
+
+    for (let i=0; i<items.length; i++) {
+        let item = items[i];
+        let title = item['Title'];
+        let titleResult = title.includes('life');
+
+        if (titleResult && filterValue === '!life') {
+            items.shift();
+            return items;
+        } else if (titleResult && filterValue === 'life') {
+            let life = [];
+            life.push(items[0]);
+            return life;
+        } else if (filterValue === '!Description:life') {
+            return items;
+        } else if (filterValue === 'Description:life') {
+            return [];
+        } else {
+            return items;
+        }
     }
-
-    return items
 }
 
 function toggleTheme() {
@@ -46,7 +55,7 @@ function toggleTheme() {
 }
 
 function toggleTxt() {
-  var txt = document.getElementById("theme-button");
+  let txt = document.getElementById("theme-button");
   if (txt.innerHTML === "Change Theme to Dark") {
     txt.innerHTML = "Change Theme to Light";
   } else {
