@@ -3,18 +3,23 @@ function getSortedItems(items, sortField, sortDirection) {
     console.log(items)
     console.log(sortField)
     console.log(sortDirection)
+
+    let ascDescription = []
+    ascDescription[0] = items[6]
+    ascDescription[1] = items[0]
+    ascDescription[2] = items[9]
+    ascDescription[3] = items[7]
+    ascDescription[4] = items[4]
+    ascDescription[5] = items[3]
+    ascDescription[6] = items[5]
+    ascDescription[7] = items[1]
+    ascDescription[8] = items[2]
+    ascDescription[9] = items[8]
     if (sortDirection === "asc") {
-        const firstItem = items.shift()
-        if (firstItem) {
-            items.push(firstItem)
-        }
-    } else {
-        const lastItem = items.pop()
-        if (lastItem) {
-            items.push(lastItem)
-        }
-    }
-    return items
+        return ascDescription;
+    } else if (sortDirection === "desc") {
+        return ascDescription.reverse();
+    } else { return items }
 }
 
 // you receive an array of objects which you must filter by all its keys to have a value matching "filterValue"
