@@ -41,9 +41,8 @@ def users():
         flash('Please login to see the user list')
         return redirect(url_for('login'))
     if request.method == 'GET':
-        comment_and_answer = db_data_handler.count_user_comment_and_answer()
-        question = db_data_handler.count_user_question()
-        return render_template('users.html', comment_and_answer=comment_and_answer, question=question)
+        comment_and_answer = db_data_handler.count_user_questions_comments_and_answers()
+        return render_template('users.html', comment_and_answer=comment_and_answer)
     return redirect(url_for('list_questions'))
 
 

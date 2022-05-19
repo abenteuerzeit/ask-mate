@@ -520,28 +520,20 @@ def get_users_name_time(cursor):
 
 
 @connection.connection_handler
-def count_user_comment_and_answer(cursor):
+def count_user_questions_comments_and_answers(cursor):
     cursor.execute("""
-    SELECT users.id, users.username, users.submission_time, 
-    COUNT(comment.author) AS comment_num, 
-    COUNT(answer.author_id) AS answer_num
+    SELECT users.id, users.username, users.submission_time,
+    COUNT(DISTINCT comment.id) AS comment_num,
+    COUNT(DISTINCT answer.id) AS answer_num,
+    COUNT(DISTINCT question.id) AS question_num
     FROM users
     LEFT JOIN comment ON users.id = comment.author
     LEFT JOIN answer ON users.id = answer.author_id
-    GROUP BY users.id, users.username, users.submission_time
-    """)
-    return cursor.fetchall()
-
-
-@connection.connection_handler
-def count_user_question(cursor):
-    cursor.execute("""
-    SELECT users.id, users.username, users.submission_time,  COUNT(question.author_id) AS question_num
-    FROM users
     LEFT JOIN question ON users.id = question.author_id
     GROUP BY users.id, users.username, users.submission_time
     """)
     return cursor.fetchall()
+
 
 @connection.connection_handler
 def count_all_user_questions(cursor, user_id):

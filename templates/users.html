@@ -19,11 +19,7 @@
             <tr>
                 <th><a href="{{ url_for('display_profile', user_id=c_a.id) }}">{{ c_a.username }}</a></th>
                 <th>{{ c_a.submission_time }}</th>
-                {% for q in question %}
-                    {% if c_a.username == q.username %}
-                    <th>{{ q.question_num }}</th>
-                    {% endif %}
-                {% endfor %}
+                <th>{{ c_a.question_num }}</th>
                 <th>{{ c_a.answer_num }}</th>
                 <th>{{ c_a.comment_num }}</th>
                 <th>Coming Soon</th>
