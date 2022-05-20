@@ -15,7 +15,7 @@
             {% endfor %}
         </p>{% endif %}
     {% endwith %}
-
+    <script src="static/js/bootstrap.js"></script>
     {% block script %}{% endblock %}
 
     <style>
@@ -23,6 +23,11 @@
           margin: 0;
           height: 100%; /* can also use viewport units (height: 100vh) */
           background-color: indigo;
+        }
+
+        .bonusPage {
+            background-color: indigo;
+            color: whitesmoke;
         }
 
         .dark-mode {
@@ -152,7 +157,9 @@
             border-radius: 20px;
             alignment: center;
         }
+        {% block changeStyle %}{% endblock %}
     </style>
+
 </head>
 <body>
 <div class="container">

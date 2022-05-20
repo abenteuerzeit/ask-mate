@@ -4,25 +4,33 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/bonusQuestions.js') }}" defer></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/doNotModifyThisFile.js') }}" defer></script>
 {% endblock %}
+{% block changeStyle %}
+    body {
+        color: whitesmoke;
+    }
+    {% endblock %}
+
 {% block body %}
     <div id="bonusPage" style="margin: 20px;">
         <h1>AskMate</h1>
-        <h2>All Questions:</h2>
+        <h2><a href="{{ url_for('list_questions') }}"> Back to all questions </a> </h2>
+        <h2>All Bonus Questions:</h2>
         <button id="theme-button" onclick="toggleTxt()">Change Theme to Dark</button>
-        <button id="increase-font-button" onclick="increaseFont('bonusPage', 1)">Increase page font</button>
-        <button id="decrease-font-button" onclick="decreaseFont('bonusPage', -1)">Decrease page font</button><br>
+        <button id="increase-font-button" onclick="increaseFont(1)">Increase page font</button>
+        <button id="decrease-font-button" onclick="decreaseFont(-1)">Decrease page font</button><br>
         <label for="doNotModifyThisId_QuestionsFilter">Filter: </label>
         <input data-table-body="doNotModifyThisId_QuestionsTableBody"
                style="width: 500px" id="doNotModifyThisId_QuestionsFilter"
                type="text"
                placeholder="filter questions by keywords">
+        <p>CLick on a table header to sort questions</p>
         <table>
             <thead id="doNotModifyThisId_QuestionsTableHeader">
             <tr>
-                <td>Title</td>
-                <td>Description</td>
-                <td>Vote Count</td>
-                <td>View Number</td>
+                <td style="border: solid 1px yellowgreen; margin: 2px; padding:2px;">Title</td>
+                <td style="border: solid 1px yellowgreen; margin: 2px; padding:2px;">Description</td>
+                <td style="border: solid 1px yellowgreen; margin: 2px; padding:2px;">Vote Count</td>
+                <td style="border: solid 1px yellowgreen; margin: 2px; padding:2px;">View Number</td>
             </tr>
             </thead>
             <tbody id="doNotModifyThisId_QuestionsTableBody">
