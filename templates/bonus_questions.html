@@ -7,7 +7,8 @@
 {% block body %}
     <div id="bonusPage" style="margin: 20px;">
         <h1>AskMate</h1>
-        <h2>All Questions:</h2>
+        <h2><a href="{{ url_for('list_questions') }}"> Back to all questions </a> </h2>
+        <h2>All Bonus Questions:</h2>
         <button id="theme-button" onclick="toggleTxt()">Change Theme to Dark</button>
         <button id="increase-font-button" onclick="increaseFont('bonusPage', 1)">Increase page font</button>
         <button id="decrease-font-button" onclick="decreaseFont('bonusPage', -1)">Decrease page font</button><br>
@@ -16,6 +17,7 @@
                style="width: 500px" id="doNotModifyThisId_QuestionsFilter"
                type="text"
                placeholder="filter questions by keywords">
+        <p>CLick on a table header to sort questions</p>
         <table>
             <thead id="doNotModifyThisId_QuestionsTableHeader">
             <tr>
