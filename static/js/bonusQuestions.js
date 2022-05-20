@@ -1,35 +1,25 @@
 // you receive an array of objects which you must sort in the by the key "sortField" in the "sortDirection"
 function getSortedItems(items, sortField, sortDirection) {
-    console.log(items)
-    console.log(sortField)
-    console.log(sortDirection)
-
-    let ascDescription = []
-    ascDescription[0] = items[6]
-    ascDescription[1] = items[0]
-    ascDescription[2] = items[9]
-    ascDescription[3] = items[7]
-    ascDescription[4] = items[4]
-    ascDescription[5] = items[3]
-    ascDescription[6] = items[5]
-    ascDescription[7] = items[1]
-    ascDescription[8] = items[2]
-    ascDescription[9] = items[8]
-    if (sortDirection === "asc") {
-        return ascDescription;
-    } else if (sortDirection === "desc") {
-        return ascDescription.reverse();
-    } else { return items }
+    items.sort((a, b) => {
+        const aNum = parseInt(a[sortField], 10)
+        const bNum = parseInt(a[sortField], 10)
+        if ( isNaN(aNum || bNum) ) {
+            const aItem = a[sortField].toUpperCase();
+            const bItem = b[sortField].toUpperCase();
+            if (aItem < bItem) { return -1; }
+            if (aItem > bItem) { return 1; }
+            return 0;
+        } else {return a[sortField] - b[sortField];}
+    });
+    if (sortDirection === 'asc') {
+        return items;
+    } else {
+        return items.reverse()
+    }
 }
 
 // you receive an array of objects which you must filter by all its keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
-
-    // for (let i=0; i<items.length; i++) {
-    //     let item = items[i];
-    //     let object = Object.values(item).filter((item) => item.includes(filterValue) )
-    //     console.log(object)
-    // }
 
     for (let i=0; i<items.length; i++) {
         let item = items[i];
