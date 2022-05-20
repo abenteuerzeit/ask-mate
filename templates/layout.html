@@ -25,6 +25,11 @@
           background-color: indigo;
         }
 
+        .bonusPage {
+            background-color: indigo;
+            color: whitesmoke;
+        }
+
         .dark-mode {
           background-color: black;
           color: hotpink;
@@ -152,7 +157,9 @@
             border-radius: 20px;
             alignment: center;
         }
+        {% block changeStyle %}{% endblock %}
     </style>
+
 </head>
 <body>
 <div class="container">

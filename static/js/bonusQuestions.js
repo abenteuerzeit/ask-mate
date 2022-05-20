@@ -44,8 +44,10 @@ function getFilteredItems(items, filterValue) {
 }
 
 function toggleTheme() {
+    let div = document.getElementById('bonusPage');
+    div.classList.toggle('dark-mode');
     let body = document.body;
-    body.classList.toggle("dark-mode");
+    body.classList.toggle('dark-mode');
     console.log("toggle theme");
 }
 
