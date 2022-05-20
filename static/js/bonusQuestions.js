@@ -3,13 +3,19 @@ function getSortedItems(items, sortField, sortDirection) {
     items.sort((a, b) => {
         const aNum = parseInt(a[sortField], 10)
         const bNum = parseInt(a[sortField], 10)
-        if ( isNaN(aNum || bNum) ) {
+        if (isNaN(aNum || bNum)) {
             const aItem = a[sortField].toUpperCase();
             const bItem = b[sortField].toUpperCase();
-            if (aItem < bItem) { return -1; }
-            if (aItem > bItem) { return 1; }
+            if (aItem < bItem) {
+                return -1;
+            }
+            if (aItem > bItem) {
+                return 1;
+            }
             return 0;
-        } else {return a[sortField] - b[sortField];}
+        } else {
+            return a[sortField] - b[sortField];
+        }
     });
     if (sortDirection === 'asc') {
         return items;
@@ -21,7 +27,7 @@ function getSortedItems(items, sortField, sortDirection) {
 // you receive an array of objects which you must filter by all its keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
 
-    for (let i=0; i<items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
         let item = items[i];
         let title = item['Title'];
         let titleResult = title.includes('life');
@@ -52,26 +58,25 @@ function toggleTheme() {
 }
 
 function toggleTxt() {
-  let txt = document.getElementById("theme-button");
-  if (txt.innerHTML === "Change Theme to Dark") {
-    txt.innerHTML = "Change Theme to Light";
-  } else {
-    txt.innerHTML = "Change Theme to Dark";
-  }
+    let txt = document.getElementById("theme-button");
+    if (txt.innerHTML === "Change Theme to Dark") {
+        txt.innerHTML = "Change Theme to Light";
+    } else {
+        txt.innerHTML = "Change Theme to Dark";
+    }
 }
 
-function increaseFont(id, increaseFactor) {
-    let txt = document.getElementById(id);
-    let style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-    let currentSize = parseFloat(style);
-    txt.style.fontSize = (currentSize + increaseFactor) + 'px';
-    console.log("increaseFont");
+// It looks like these functions both run twice, and I don't know why - something with object pointer event
+function increaseFont(increaseFactor) {
+    let currentSize = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('font-size'));
+    if (currentSize <= 15) {
+        document.body.style.fontSize = (currentSize + increaseFactor) + 'px';
+    }
 }
 
-function decreaseFont(id, decreaseFactor) {
-    let txt = document.getElementById(id);
-    let style = window.getComputedStyle(txt, null).getPropertyValue('font-size');
-    let currentSize = parseFloat(style);
-    txt.style.fontSize = (currentSize + decreaseFactor) + 'px';
-    console.log("decreaseFont")
+function decreaseFont(decreaseFactor) {
+    let currentSize = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('font-size'));
+    if (currentSize >= 3) {
+        document.body.style.fontSize = (currentSize + decreaseFactor) + 'px';
+    }
 }
