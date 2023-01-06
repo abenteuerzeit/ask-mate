@@ -99,7 +99,7 @@ If you make any changes to the code, you will need to stop the server and start 
 - HTML5
 - CSS3
 
-Development team
+## Development team
 - [Adrian Mróz](https://www.linkedin.com/in/abenteuerzeit/) 
 - [Piotr Palacz](https://www.linkedin.com/in/piotr-palacz-6ab556197/)
 - [Ryszard Majchrzak](https://www.linkedin.com/in/ryszard-majchrzak-795b70219/)
