@@ -1,181 +1,119 @@
-# AskMate (sprint 3)
+# AskMate
 
-## Story
+## TL;DR: 
+AskMate is a question and answer platform that allows users to ask and answer questions, upvote or downvote questions and answers, and view a list of registered users. This sprint focuses on adding features such as user registration, login, and tracking the user who created each question, answer, and comment. To install AskMate, you will need Python 3.7 or later and pip, and will also need to set up a PostgreSQL database. The application will be running on `http://localhost:5000` after running python server.py.
 
-Last week you made great progress improving your web application.
-We need some more features to make it more usable and more appealing to users.
+## Sprint 3
+This is the third sprint for the AskMate web application, which is a platform for users to ask and answer questions. The goal of this sprint is to add new features to the application, including user registration, login, and the ability to view a list of registered users. The application will also be updated to track the user who created each question, answer, and comment.
 
-The users requested new features, such as the ability to register and login.
-There are a few other feature requests which you can find in the user stories.
+In this sprint, the development team will learn about web routing and redirects, the Gitflow workflow, advanced SQL commands, user authentication with sessions, hashed passwords, the Jinja2 templating engine, and basic DOM manipulation in JavaScript.
 
-The management wants you to separate the already working features from
-the upcoming ones, so your development team need to **start using branching
-workflow and open new branches for the features you start in this sprint**.
-Just like last week, the ownership is in your hands. There are no compulsory stories,
-but of course, management would prefer if all stories were implemented.
-So first, choose the stories, then ask a mentor to validate your choice.
+The tasks for this sprint include:
+- Adding the ask-mate-3 repository as a remote to the repository from the previous sprint, then pulling and merging the code into it.
+- Implementing a registration page that allows users to create a new account with a username (email address) and password. The new account should be saved in the database and the user should be redirected to the main page upon successful registration.
+- Implementing a login page that allows registered users to log in with their username (email address) and password. Only logged-in users should be able to ask or answer questions.
+- Implementing a page that displays a list of registered users with their attributes, including username, registration date, number of asked questions, answers, comments, and reputation (if implemented).
+- Updating the application to track the user who created each question, answer, and comment.
+- Implementing a user page that displays the user's attributes and a list of the questions, answers, and comments they have created.
+- Implementing a feature that allows users to upvote or downvote questions, answers, and comments.
+- Implementing a feature that displays the current logged-in user's name on the main page.
+- Implementing a feature that allows users to edit their own questions and answers.
+- Implementing a feature that displays the number of views for each question.
 
-Just like last week, you have a **prioritized list** of new user stories that you should
-add to the unfinished stories from last week on your product backlog. Try to
-estimate these new stories as well, and, based on the estimations, decide how many
-your team can finish until the demo. As the order is important, you choose
-from the beginning of the list as much as you can.
+## Installation
+To install Ask-Mate, you will need Python 3.7 or later and pip.
+To configure the virtual environment for the Flask server, you will need to follow these steps:
 
-## What are you going to learn?
+1. Clone the repository and navigate to the root directory of the project:
 
-- Web routing and redirects
-- Gitflow workflow
-- Advanced SQL commands (`JOIN`, `GROUP BY`, and aggregate functions)
-- User authentication with sessions
-- Hashed passwords
-- HTML and the Jinja2 templating engine
-- Javascript basics DOM manipulation
+    git clone https://github.com/CodecoolGlobal/ask-mate-3-python-abenteuerzeit.git
+    cd ask-mate
 
-## Tasks
+2. Create a virtual environment and activate it:
 
-1. Since you work in a new repository, but also need the code from the previous sprint, add the `ask-mate-3` repository as a new remote to the repository of the previous sprint, then pull (merge) and push your changes into it.
-    - There is a merge commit in the project repository that contains code from the previous sprint.
+    python3 -m venv env
+    source env/bin/activate
 
-2. As a user, I would like to be able to register a new account in the system.
-    - There is a `/registration` page.
-    - The page is linked from the front page.
-    - There is a form on the `/registration` page when a request is issued with the `GET` method.
-    - The form ask for a username (or email address) and a password, then issues a `POST` request to `/registration` on submitting.
-    - After submitting, the page redirects to the main page and the new user account is saved in the database.
-    - A user account consists of an email address stored as a username, a password stored as a password hash, and a registration date.
+3. The requirements.txt file lists the Python packages that are required for the project. This will install all the necessary Python packages, including Flask, that are required for the project. These packages can be installed by running `pip install -r requirements.txt` in a terminal, while in the project directory and with the virtual environment activated. Install the required dependencies:
 
-3. As a registered user, I would like to be able to log in to the system with my previously saved username and password.
-    - There is a `/login` page.
-    - The page is linked from the front page.
-    - Theres is a form on the `/login` page when a request is issued with `GET` method.
-    - The form asks for the username (email address) and password, then issues a `POST` request to `/login` on submit.
-    - After submitting the page redirects to the main page and the user is logged in.
-    - It is only possible to ask or answer a question when logged in.
+    pip install -r requirements.txt
 
-4. There should be a page where I can list all the registered users with all their attributes.
-    - There is a `/users` page.
-    - The page is linked from the front page when logged in.
-    - The page is not accessible without logging in.
-    - Theres is a `<table>` with user data in it. The table contains the following details of a user.
-  - Username (with a link to the user page if implemented)
-  - Registration date
-  - Number of asked questions (if binding is implemented)
-  - Number of answers (if binding is implemented)
-  - Number of comments (if binding is implemented)
-  - Reputation (if implemented)
+4. You will also need a PostgreSQL database to run the project. You can download and install PostgreSQL from the [official website](https://www.postgresql.org/download/) or using your operating system's package manager.
 
-5. As a user, when I add a new question, I would like to be saved as the user who created the new question.
-    - The user ID of the logged in user is saved when a new question is added.
+5. Once you have PostgreSQL installed, create a new database and user for the project. You can do this using the `createdb` and `createuser` command-line utilities or by using a graphical tool such as [pgAdmin](https://www.pgadmin.org/).
 
-6. As a user, when I add a new answer, I would like to be saved as the user who created the new answer.
-    - The user ID of the logged in user is saved when a new answer is added.
+6. Once the database and user are created, you need to set the environment variables to the values you used in `.env`. The .env file is used to store environment variables for the project. These variables can be accessed by the application at runtime. To use these variables in the application, you will need to use a package like python-dotenv to load the variables from the file. Then, you can access the variables in your Python code using `os.environ.get("VARIABLE_NAME")`, replacing `VARIABLE_NAME` with the name of the desired variable. It is important to note that the `.env` file should not be committed to version control or shared publicly, as it may contain sensitive information like passwords. Instead, it is common to use a separate `.env.example` file that contains dummy values for the environment variables:
 
-7. As a user, when I add a new comment, I would like to be saved as the user who created the new comment.
-    - The user ID of the logged in user is saved when a new comment is added.
+    `PSQL_USER_NAME`: the username of the PostgreSQL user you created
+    `PSQL_PASSWORD`: the password of the PostgreSQL user you created
+    `PSQL_HOST`: the hostname or IP address of the machine where the PostgreSQL server is running
+    `PSQL_DB_NAME`: the name of the PostgreSQL database you created
 
-8. There should be a page where we can see all details and activities of a user.
-    - There is a `/user/<user_id>` page.
-    - The user page of a logged in user is linked from the front page.
-    - The page of every user is linked from the users list page.
-    - Theres is a list with the following deatils about the user.
-  - User ID
-  - Username (link to user page if implemented)
-  - Registration date
-  - Number of asked questions (if binding is implemented)
-  - Number of answers (if binding is implemented)
-  - Number of comments (if binding is implemented)
-  - Reputation (if implemented)
-    - There is a separate table where every **question** is listed that the user created. The related question is linked in every line.
-    - There is a separate table where every **answer** is listed that the user created. The related question is linked in every line.
-    - There is a separate table where every **comment** is listed that the user created. The related question is linked in every line.
-
-9. As a user, I would like to have the possibility to mark an answer as accepted.
-    - There is a clickable element for every answer on the question page, that can be used for marking an answer as accepted.
-    - There is an option to remove the accepted state from an answer.
-    - Only the user who asked the question can change the accepted state of answers.
-    - An accepted answer has some visual distinction from other answers.
-
-10. As a user, I would like to see a reputation system to strengthen the community. Reputation is a rough measurement of how much the community trusts a user.
-    - **A user gains reputation when:**
-- their question is voted up: +5
-- their answer is voted up: +10
-- their answer is marked "accepted": +15
-
-11. As a user, I would like to see a small drop in reputation when a user's question or answer is voted down.
-    - **A user loses reputation when:**
+7. As a user, I would like to see a small drop in reputation when a user's question or answer is voted down.
+- **A user loses reputation when:**
 - their question is voted down: −2
 - their answer is voted down: −2
 
-12. As a user, I would like to see a page that lists all existing tags and the number of questions marked with those tags.
-    - There is a `/tags` page.
-    - The page is linked from the front page and a question page.
-    - The page is accessible whithout logging in.
+Replace the `<username>`, `<password>`, `<hostname or IP address>`, and `<database name>` placeholders with the actual values you used for the database and user.
 
-13. When the user navigates to the `bonus-questions` route and types in the input box, the displayed questions are filtered to match the criteria. This must be done without page reload.
-    - When typing `life`, the only question displayed is the one titled `What is the meaning of life ?`.
-    - When typing `!life`, questions are filtered to the ones that do NOT include the word `life`. (That is nine questions in this scenario.)
-    - When typing `Description:life`, questions are filtered to those that include the word `life` in the `Description` column. (No question is displayed in this scenario.)
-    - When typing `!Description:life`, questions are filtered to those that do NOT include the word `life` in the `Description column. (All ten questions are displayed in this scenario)
+## PyCharm Virtual Environment
 
-14. When the user navigates to the `bonus-questions` route and clicks on any table header, the items are sorted based on the column. This must be done without page reload.
-    - When clicking the `Description` column, the questions are sorted in alphabetical order, based on the values from the `Description` column.
-    - When clicking the `Description` column a second time, the questions are sorted in reverse alphabetical order, based on the values from the `Description` column.
+To run this project, you will need to have Python, PyCharm, and PostgreSQL installed on your machine.
 
-15. [OPTIONAL] When the user navigates to the `bonus-questions` and clicks the `Decrease page font` or `Increase page font` button, the font size is decreased or increased in the page, respectively. This must be done without page reload.
-    - Clicking the `Increase page font` button increases the font in the page.
-    - Clicking the `Increase page font` button multiple times increases the font size to a maximum of 15. Further clicks do not result in an increase.
-    - Clicking the `Decrease page font` button decreases the font the page.
-    - Clicking the `Decrease page font` button multiple times decreases the font size to a minimum of 3. Further clicks do not result in an decrease.
+1. Clone the repository and open the project in PyCharm.
+2. Create a new Python virtual environment by going to `File > Settings > Project: [Project Name] > Project Interpreter`. Click on the gear icon and select "Add Local". Create a new virtual environment using the Python executable in your system.
+3. Activate the virtual environment by going to the terminal in PyCharm and entering the command `source venv/bin/activate`
+4. Install the required packages by navigating to the project directory in the terminal and entering the command `pip install -r requirements.txt`
+5. Create a new PostgreSQL database and add the details (username, password, host, and database name) to the `.env` file.
+6. In the terminal, navigate to the project directory and enter the command `psql -U [user name] -d [database name] -f sample_data/sample_data.sql` to load the sample data into the database.
+7. Run the server by going to `Run > Run...` in the PyCharm menu and selecting `server.py`.
+8. Open a web browser and go to `http://localhost:5000/` to view the website.
 
-## General requirements
+## Database Dump
+Before running the application, you will need to create a PostgreSQL database and user with the connection details specified in the .env file. You can then create the necessary tables in the database by running the SQL commands in the `sample_data/sample_data.sql` file.
+The sample_data folder contains a PostgreSQL database dump that can be used to populate the database with sample data. To use the sample data, you will need to have PostgreSQL installed on your machine and set up a new database for the project.
 
-- Use gitflow workflow in your team projects from now on.
+To load the sample data, open a terminal and navigate to the project directory. Then, enter the command psql -U <username> -d <database_name> -f sample_data/sample_data.sql, replacing <username> with your PostgreSQL username and <database_name> with the name of the database you created for the project. This will execute the SQL commands in the file and load the sample data into the database.
 
-## Hints
+## Start
 
-- Use the `CREATE` and `ALTER TABLE` statements to extend and change the database. For more information, see
-  [this link](https://www.w3schools.com/sql/sql_alter.asp).
-  (Do not forget to set up the foreign keys if you need them.)
-- Use one of the following methods to add a value to the timestamp column of a database.
-    - Use strings in the following format `'1999-01-08 04:05:06'`,
-    - Pass a `datetime` object to the SQL query as a parameter if you use `psycopg2` and the `datetime` module. For more information on date and time handling in psycopg2, see the Background section.
-- Insert data into the tables in the appropriate order to avoid violating foreign
-key constraints (for example, if you insert data into the `question_tag` before inserting
-  the corresponding tag ID in the tag table, the tag you refer to does not exist yet).
-  This is especially important after changing the database structure with new foreign keys.
-  Consider modifying the sample data based on your changes.
-- Optimize your previous queries by applying your knowledge of complex queries and joined tables.
-- Remeber that some user stories have prerequisites.
+Once the dependencies are installed, you can start the application by running `python server.py` in your terminal. 
+This will start the Flask development server, and the application will be available at `http://localhost:5000/` in your web browser.
+You can access it by opening your web browser and entering this address.
+If you make any changes to the code, you will need to stop the server and start it again for the changes to take effect.
 
-## Background materials
+## Features
+- Ask and answer questions on various topics
+- Upvote or downvote both questions and answers
+- View a list of registered users with their attributes and a list of the questions, answers, and comments they have created
+- User registration and login
+- Edit your own questions and answers
+- Display the number of views for each question 
 
-### Git
+## Technologies
+- Python
+- Flask
+- PostgreSQL
+- Jinja2
+- JavaScript
+- HTML5
+- CSS3
 
-- <i class="far fa-exclamation"></i> [Working with the `git remote` command](https://git-scm.com/docs/git-remote)
-- <i class="far fa-book-open"></i> [Merge vs rebase](project/curriculum/materials/pages/git/merge-vs-rebase.md)
-- <i class="far fa-book-open"></i> [Mastering git](project/curriculum/materials/pages/git/mastering-git.md)
+Development team
+- [Adrian Mróz](https://www.linkedin.com/in/abenteuerzeit/) 
+- [Piotr Palacz](https://www.linkedin.com/in/piotr-palacz-6ab556197/)
+- [Ryszard Majchrzak](https://www.linkedin.com/in/ryszard-majchrzak-795b70219/)
 
-### SQL
+## Usage
+To use the application, open your web browser and navigate to http://localhost:5000.
 
-- <i class="far fa-exclamation"></i> [Working with more complex data](project/curriculum/materials/pages/sql/sql-working-with-data.md)
-- [SQL injection](project/curriculum/materials/pages/web-security/sql-injection.md)
-- [Best practices for Python/Psycopg/Postgres](project/curriculum/materials/pages/python/tips-python-psycopg-postgres.md)
-- [Date/Time handling in psycopg2](https://www.psycopg.org/docs/usage.html?highlight=gunpoint#date-time-objects-adaptation)
-- <i class="far fa-book-open"></i> [PostgreSQL documentation page on Queries](https://www.postgresql.org/docs/current/queries.html)
-- <i class="far fa-book-open"></i> [PostgreSQL documentation page Data Manipulation](https://www.postgresql.org/docs/current/dml.html)
+You can ask and answer questions, view a list of registered users, and upvote or downvote questions, answers, and comments if you are logged in. You can also edit or delete your own questions and answers.
 
-### Workflow
+## Contributing
+If you would like to contribute to the development of AskMate, please follow the Gitflow Workflow.
 
-- <i class="far fa-exclamation"></i> [Gitflow workflow](project/curriculum/materials/pages/git/git-branching.md)
-
-### Web basics (Sessions/Flask)
-
-- <i class="far fa-exclamation"></i> [Sessions](project/curriculum/materials/pages/web/authentication-sessions.md)
-- <i class="far fa-exclamation"></i> [Salted password hashing](project/curriculum/materials/pages/web-security/salted-password-hashing.md)
-- <i class="far fa-exclamation"></i> [Flask documentation](http://flask.palletsprojects.com/) (especially the quickstart#the-request-object and quickstart#sessions part)
-- [Flask/Jinja Tips & Tricks](project/curriculum/materials/pages/web/web-with-python-tips.md)
-- [Passing data from browser](project/curriculum/materials/pages/web/passing-data-from-browser.md)
-- <i class="far fa-book-open"></i> [HTTP is stateless](project/curriculum/materials/pages/web/authentication-http-stateless.md)
-- <i class="far fa-book-open"></i> [Cookies](project/curriculum/materials/pages/web/authentication-cookies.md)
-- <i class="far fa-book-open"></i> [Jinja2 documentation](https://jinja.palletsprojects.com/en/2.10.x/templates/)
-- <i class="far fa-book-open"></i> [Collection of web resources](project/curriculum/materials/pages/web/resources.md)
+### Fork the repository.
+Create a new branch for your feature or bug fix.
+Make your changes and commit them.
+Push your branch to your fork.
+Create a pull request to the develop branch of the main repository.
