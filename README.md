@@ -26,7 +26,7 @@ To configure the virtual environment for the Flask server, you will need to foll
 
 1. Clone the repository and navigate to the root directory of the project:
     ```
-    git clone https://github.com/CodecoolGlobal/ask-mate-3-python-abenteuerzeit.git
+    git clone https://github.com/abenteuerzeit/ask-mate.git
     cd ask-mate
     ```
 2. Create a virtual environment and activate it:
