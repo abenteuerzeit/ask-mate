@@ -25,36 +25,36 @@ To install Ask-Mate, you will need Python 3.7 or later and pip.
 To configure the virtual environment for the Flask server, you will need to follow these steps:
 
 1. Clone the repository and navigate to the root directory of the project:
-
+    ```
     git clone https://github.com/CodecoolGlobal/ask-mate-3-python-abenteuerzeit.git
     cd ask-mate
-
+    ```
 2. Create a virtual environment and activate it:
-
+    ```
     python3 -m venv env
     source env/bin/activate
-
+    ```
 3. The requirements.txt file lists the Python packages that are required for the project. This will install all the necessary Python packages, including Flask, that are required for the project. These packages can be installed by running `pip install -r requirements.txt` in a terminal, while in the project directory and with the virtual environment activated. Install the required dependencies:
-
+    ```
     pip install -r requirements.txt
-
+    ```
 4. You will also need a PostgreSQL database to run the project. You can download and install PostgreSQL from the [official website](https://www.postgresql.org/download/) or using your operating system's package manager.
 
 5. Once you have PostgreSQL installed, create a new database and user for the project. You can do this using the `createdb` and `createuser` command-line utilities or by using a graphical tool such as [pgAdmin](https://www.pgadmin.org/).
 
 6. Once the database and user are created, you need to set the environment variables to the values you used in `.env`. The .env file is used to store environment variables for the project. These variables can be accessed by the application at runtime. To use these variables in the application, you will need to use a package like python-dotenv to load the variables from the file. Then, you can access the variables in your Python code using `os.environ.get("VARIABLE_NAME")`, replacing `VARIABLE_NAME` with the name of the desired variable. It is important to note that the `.env` file should not be committed to version control or shared publicly, as it may contain sensitive information like passwords. Instead, it is common to use a separate `.env.example` file that contains dummy values for the environment variables:
-
-    `PSQL_USER_NAME`: the username of the PostgreSQL user you created
-    `PSQL_PASSWORD`: the password of the PostgreSQL user you created
-    `PSQL_HOST`: the hostname or IP address of the machine where the PostgreSQL server is running
-    `PSQL_DB_NAME`: the name of the PostgreSQL database you created
-
+    ```
+    <PSQL_USER_NAME>: the username of the PostgreSQL user you created
+    <PSQL_PASSWORD>: the password of the PostgreSQL user you created
+    <PSQL_HOST>: the hostname or IP address of the machine where the PostgreSQL server is running
+    <PSQL_DB_NAME>: the name of the PostgreSQL database you created
+    ```
 7. As a user, I would like to see a small drop in reputation when a user's question or answer is voted down.
 - **A user loses reputation when:**
 - their question is voted down: −2
 - their answer is voted down: −2
 
-Replace the `<username>`, `<password>`, `<hostname or IP address>`, and `<database name>` placeholders with the actual values you used for the database and user.
+Replace the `<PSQL_USER_NAME>`, `<PSQL_PASSWORD>`, `<PSQL_HOST>`, and `<PSQL_DB_NAME>` placeholders with the actual values you used for the database and user.
 
 ## PyCharm Virtual Environment
 
