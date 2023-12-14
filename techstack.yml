@@ -1,11 +1,11 @@
 repo_name: abenteuerzeit/ask-mate
-report_id: dfbe1dd7d616cad091e89f68f480fe53
+report_id: 35f936f2ed93354825caa049060d39f5
 repo_type: Public
-timestamp: '2023-11-12T10:26:44+00:00'
+timestamp: '2023-12-14T10:29:51+00:00'
 requested_by: abenteuerzeit
 provider: github
 branch: master
-detected_tools_count: 4
+detected_tools_count: 5
 tools:
 - name: JavaScript
   description: Lightweight, interpreted, object-oriented language with first-class
@@ -47,3 +47,12 @@ tools:
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
   detection_source: Repo Metadata
+- name: HTML
+  description: Hypertext Markup Language for creating web pages.
+  website_url: http://
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/2270/no-img-open-source.png
+  detection_source: templates/add-answer.html
+  last_updated_by: abenteuerzeit
+  last_updated_on: 2022-04-20 19:59:01.000000000 Z
