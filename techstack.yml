@@ -1,11 +1,12 @@
 repo_name: abenteuerzeit/ask-mate
 report_id: dfbe1dd7d616cad091e89f68f480fe53
+version: 0.1
 repo_type: Public
-timestamp: '2023-11-12T10:26:44+00:00'
+timestamp: '2024-02-29T18:39:45+00:00'
 requested_by: abenteuerzeit
 provider: github
 branch: master
-detected_tools_count: 4
+detected_tools_count: 5
 tools:
 - name: JavaScript
   description: Lightweight, interpreted, object-oriented language with first-class
@@ -16,6 +17,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/abenteuerzeit/ask-mate
   detection_source: Repo Metadata
 - name: Python
   description: A clear and powerful object-oriented programming language, comparable
@@ -26,6 +28,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/abenteuerzeit/ask-mate
   detection_source: Repo Metadata
 - name: SQL
   description: It is a domain-specific language used in programming
@@ -35,6 +38,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/2271/default_068d33483bba6b81ee13fbd4dc7aab9780896a54.png
+  detection_source_url: https://github.com/abenteuerzeit/ask-mate/blob/master/sample_data/askmatepart2-sample-data.sql
   detection_source: sample_data/askmatepart2-sample-data.sql
   last_updated_by: appuser
   last_updated_on: 2022-04-25 09:06:26.000000000 Z
@@ -46,4 +50,15 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/abenteuerzeit/ask-mate
   detection_source: Repo Metadata
+- name: HTML
+  description: Hypertext Markup Language for creating web pages.
+  website_url: http://
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/2270/no-img-open-source.png
+  detection_source_url: https://github.com/abenteuerzeit/ask-mate/blob/master/templates/add-answer.html
+  detection_source: templates/add-answer.html
+  last_updated_by: abenteuerzeit
+  last_updated_on: 2022-04-20 19:59:01.000000000 Z
